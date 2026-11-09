@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CampaignService } from '../../services/campaign.service';
 import { AiService } from '../../services/ai.service';
@@ -15,358 +15,850 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   template: `
     <div class="create-page container">
+      <!-- Page Header -->
       <div class="create-header">
-        <h1>🚀 Start a Fundraiser</h1>
-        <p>Our AI assistant helps you write a compelling story and verifies your campaign before publishing</p>
+        <span class="sub-header-pill">Verified Crowdfunding</span>
+        <h1>Launch a Verified Fundraiser</h1>
+        <p>Our automated AI verification checks medical costs, diagnoses, and hospital bills to fast-track donor trust.</p>
       </div>
 
       <!-- Step Indicator -->
-      <div class="steps-indicator">
-        <div class="step-dot" *ngFor="let s of steps; let i = index" [class.active]="currentStep === i" [class.done]="currentStep > i">
-          <span>{{ currentStep > i ? '✓' : (i + 1) }}</span>
-          <label>{{ s }}</label>
+      <div class="steps-progress-bar">
+        <div
+          class="step-node"
+          *ngFor="let s of steps; let i = index"
+          [class.active]="currentStep === i"
+          [class.done]="currentStep > i"
+        >
+          <div class="step-circle">
+            <span *ngIf="currentStep <= i">{{ i + 1 }}</span>
+            <svg *ngIf="currentStep > i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="step-label">{{ s }}</span>
         </div>
       </div>
 
-      <form (ngSubmit)="submitCampaign()">
-
+      <form (ngSubmit)="submitCampaign()" class="wizard-form">
         <!-- Step 0: Basics -->
-        <div class="step-panel" *ngIf="currentStep === 0">
-          <h2>📋 Basic Information</h2>
-
-          <div class="form-group">
-            <label>Campaign Title *</label>
-            <input class="input" type="text" [(ngModel)]="form.title" name="title"
-              placeholder="e.g., Help Priya Beat Leukemia at Tata Memorial Hospital" required />
+        <div class="wizard-panel card" *ngIf="currentStep === 0">
+          <div class="panel-header">
+            <h2>Basic Information</h2>
+            <p>Provide foundational details regarding the cause and required funding goal.</p>
           </div>
 
           <div class="form-group">
-            <label>Category *</label>
+            <label class="form-label">Campaign Title *</label>
+            <input
+              class="input"
+              type="text"
+              [(ngModel)]="form.title"
+              name="title"
+              placeholder="e.g., Support Priya's Chemotherapy Treatment at Tata Memorial Hospital"
+              required
+            />
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label">Cause Category *</label>
             <select class="input" [(ngModel)]="form.category" name="category">
               <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
             </select>
           </div>
 
-          <div class="form-row">
+          <div class="form-row mt-3">
             <div class="form-group">
-              <label>City</label>
-              <input class="input" type="text" [(ngModel)]="form.city" name="city" placeholder="Mumbai" />
+              <label class="form-label">City</label>
+              <input class="input" type="text" [(ngModel)]="form.city" name="city" placeholder="e.g., Mumbai" />
             </div>
             <div class="form-group">
-              <label>State</label>
-              <input class="input" type="text" [(ngModel)]="form.state" name="state" placeholder="Maharashtra" />
+              <label class="form-label">State</label>
+              <input class="input" type="text" [(ngModel)]="form.state" name="state" placeholder="e.g., Maharashtra" />
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Goal Amount (₹) *</label>
-            <input class="input" type="number" [(ngModel)]="form.goal_amount" name="goal_amount"
-              placeholder="e.g., 500000" min="1000" required />
-            <small>{{ formatINR(form.goal_amount) }}</small>
+          <div class="form-group mt-3">
+            <label class="form-label">Funding Goal Amount (INR) *</label>
+            <input
+              class="input font-bold"
+              type="number"
+              [(ngModel)]="form.goal_amount"
+              name="goal_amount"
+              placeholder="e.g., 500000"
+              min="1000"
+              required
+            />
+            <small class="field-hint" *ngIf="form.goal_amount">{{ formatINR(form.goal_amount) }}</small>
           </div>
 
-          <div class="form-group">
-            <label>Campaign Deadline</label>
+          <div class="form-group mt-3">
+            <label class="form-label">Target Completion Date</label>
             <input class="input" type="date" [(ngModel)]="form.deadline" name="deadline" />
           </div>
 
-          <div class="form-group">
-            <label>Short Description (max 200 chars) *</label>
-            <textarea class="input" rows="2" [(ngModel)]="form.short_description" name="short_description"
-              placeholder="Brief one-liner about your campaign" maxlength="200" required></textarea>
-            <small>{{ form.short_description.length }}/200</small>
+          <div class="form-group mt-3">
+            <label class="form-label">Short Summary (max 200 characters) *</label>
+            <textarea
+              class="input"
+              rows="2"
+              [(ngModel)]="form.short_description"
+              name="short_description"
+              placeholder="Brief summary explaining who needs help and why."
+              maxlength="200"
+              required
+            ></textarea>
+            <small class="field-hint">{{ form.short_description.length }}/200 characters</small>
           </div>
         </div>
 
         <!-- Step 1: Story + AI Assistant -->
-        <div class="step-panel" *ngIf="currentStep === 1">
-          <h2>✍️ Your Story</h2>
-          <p class="step-desc">Write a detailed story. The more specific, the higher your AI Trust Score.</p>
-
-          <!-- Hospital Fields -->
-          <div class="form-group" *ngIf="form.category === 'MEDICAL'">
-            <label>Hospital Name</label>
-            <input class="input" type="text" [(ngModel)]="form.hospital_name" name="hospital_name"
-              placeholder="e.g., Tata Memorial Centre, AIIMS Delhi, Apollo Hospital" />
-          </div>
-          <div class="form-group" *ngIf="form.category === 'MEDICAL'">
-            <label>Patient UHID / Hospital ID</label>
-            <input class="input" type="text" [(ngModel)]="form.hospital_patient_uhid" name="hospital_patient_uhid"
-              placeholder="Patient unique ID from hospital" />
-          </div>
-          <div class="toggle-group" *ngIf="form.category === 'MEDICAL'">
-            <label class="toggle-label">
-              <input type="checkbox" [(ngModel)]="form.is_80g_tax_exempt" name="is_80g" />
-              <span>This NGO/trust has 80G Tax Exemption status</span>
-            </label>
-            <label class="toggle-label">
-              <input type="checkbox" [(ngModel)]="form.direct_hospital_transfer" name="direct_hospital" />
-              <span>Enable Direct Hospital Transfer (funds go directly to hospital NEFT)</span>
-            </label>
+        <div class="wizard-panel card" *ngIf="currentStep === 1">
+          <div class="panel-header">
+            <h2>Medical Details & Detailed Narrative</h2>
+            <p>Detailed diagnosis and specific cost breakdowns achieve higher AI Trust Scores and faster donor verification.</p>
           </div>
 
-          <!-- Story Textarea -->
-          <div class="form-group story-group">
-            <label>Full Story *</label>
+          <!-- Hospital Specific Fields -->
+          <div *ngIf="form.category === 'MEDICAL'" class="hospital-subform">
+            <div class="form-group">
+              <label class="form-label">Hospital or Clinic Name</label>
+              <input
+                class="input"
+                type="text"
+                [(ngModel)]="form.hospital_name"
+                name="hospital_name"
+                placeholder="e.g., AIIMS New Delhi, Apollo Hospital, Tata Memorial Centre"
+              />
+            </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label">Patient Hospital UHID / Registration ID</label>
+              <input
+                class="input"
+                type="text"
+                [(ngModel)]="form.hospital_patient_uhid"
+                name="hospital_patient_uhid"
+                placeholder="Unique Patient UHID issued by hospital records"
+              />
+            </div>
+
+            <div class="checkbox-stack mt-3">
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="form.is_80g_tax_exempt" name="is_80g" />
+                <span>Issue Section 80G Tax Exemption Certificates for eligible donors</span>
+              </label>
+
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="form.direct_hospital_transfer" name="direct_hospital" />
+                <span>Enable Direct Hospital Settlement (Funds route directly via NEFT/RTGS to hospital billing)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Full Narrative -->
+          <div class="form-group mt-4">
+            <label class="form-label">Complete Fundraiser Narrative *</label>
             <textarea
-              class="input story-input"
-              rows="10"
+              class="input story-textarea"
+              rows="8"
               [(ngModel)]="form.story"
               name="story"
               (ngModelChange)="onStoryChange($event)"
-              placeholder="Tell your story in detail. Include hospital name, diagnosis, treatment plan, how funds will be used..."
+              placeholder="Explain the patient's condition, diagnosis timeline, doctor's recommendations, breakdown of expenses, and family situation in detail…"
               required
             ></textarea>
           </div>
 
-          <!-- AI Story Assistant -->
-          <div class="ai-assistant-box">
-            <div class="ai-header">
-              <span>🤖 AI Story Assistant</span>
-              <small>Click to generate a compelling story based on your details</small>
+          <!-- AI Story Assistant Card -->
+          <div class="ai-assistant-card">
+            <div class="ai-card-top">
+              <div class="ai-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2">
+                  <path d="M12 2L14.4 8.6L21 11L14.4 13.4L12 20L9.6 13.4L3 11L9.6 8.6L12 2Z"/>
+                </svg>
+                <span>AI Narrative Generator</span>
+              </div>
+              <span class="ai-badge">Instant Medical Structuring</span>
             </div>
-            <div class="ai-inputs">
-              <input class="input" type="text" [(ngModel)]="aiHints.condition" name="ai_condition"
-                placeholder="Medical condition / cause (e.g., Acute Lymphoblastic Leukemia)" />
-              <input class="input" type="text" [(ngModel)]="aiHints.treatment" name="ai_treatment"
-                placeholder="Treatment needed (e.g., 6 cycles of chemotherapy + BMT)" />
-              <input class="input" type="text" [(ngModel)]="aiHints.patient" name="ai_patient"
-                placeholder="Who needs help (e.g., 8-year-old girl from Pune)" />
+            <p class="ai-intro">Need assistance writing? Provide quick bullet points and our AI will draft an authentic narrative.</p>
+
+            <div class="ai-inputs-grid">
+              <input
+                class="input"
+                type="text"
+                [(ngModel)]="aiHints.condition"
+                name="ai_condition"
+                placeholder="Diagnosis (e.g., Acute Lymphoblastic Leukemia)"
+              />
+              <input
+                class="input"
+                type="text"
+                [(ngModel)]="aiHints.treatment"
+                name="ai_treatment"
+                placeholder="Treatment Plan (e.g., 6 cycles of chemo + bone marrow transplant)"
+              />
+              <input
+                class="input"
+                type="text"
+                [(ngModel)]="aiHints.patient"
+                name="ai_patient"
+                placeholder="Patient Profile (e.g., 9-year-old child from Pune)"
+              />
             </div>
-            <button type="button" class="btn btn-secondary ai-btn" (click)="enhanceStory()" [disabled]="enhancing()">
-              {{ enhancing() ? '✨ Generating…' : '✨ Generate AI Story' }}
+
+            <button
+              type="button"
+              class="btn btn-secondary ai-generate-btn mt-3"
+              (click)="enhanceStory()"
+              [disabled]="enhancing()"
+            >
+              {{ enhancing() ? 'Drafting Story with Clinical Accuracy…' : 'Generate Structured Story' }}
             </button>
-            <div class="ai-error" *ngIf="enhanceError()">{{ enhanceError() }}</div>
+
+            <div class="field-error mt-2" *ngIf="enhanceError()">{{ enhanceError() }}</div>
           </div>
         </div>
 
         <!-- Step 2: Documents -->
-        <div class="step-panel" *ngIf="currentStep === 2">
-          <h2>📎 Supporting Documents</h2>
-          <p class="step-desc">Upload documents to increase your AI Trust Score. Medical reports, bills, and ID proofs are recommended.</p>
+        <div class="wizard-panel card" *ngIf="currentStep === 2">
+          <div class="panel-header">
+            <h2>Supporting Documentation</h2>
+            <p>Upload verification documents. Documented campaigns receive priority AI clearance.</p>
+          </div>
 
-          <div class="doc-note">
-            <div class="doc-tip">
-              <span class="doc-icon">🏥</span>
-              <div>
-                <strong>Medical Campaigns</strong>
-                <p>Hospital admission slip, doctor's prescription, estimate letter, discharge summary</p>
+          <div class="docs-checklist-grid">
+            <div class="doc-guide-item">
+              <div class="doc-icon-box">🏥</div>
+              <div class="doc-meta">
+                <strong>Medical Estimate & Prescription</strong>
+                <p>Hospital admission slip, treating physician's cost estimate, pathology report.</p>
               </div>
             </div>
-            <div class="doc-tip">
-              <span class="doc-icon">🪪</span>
-              <div>
-                <strong>Identity Proof</strong>
-                <p>Aadhaar card, PAN card of organizer or patient</p>
+            <div class="doc-guide-item">
+              <div class="doc-icon-box">🪪</div>
+              <div class="doc-meta">
+                <strong>Government ID Proof</strong>
+                <p>Aadhaar card or PAN of patient or verified family guardian.</p>
               </div>
             </div>
-            <div class="doc-tip">
-              <span class="doc-icon">📸</span>
-              <div>
-                <strong>Cover Photo</strong>
-                <p>A clear, recent photo increases donor trust significantly</p>
+            <div class="doc-guide-item">
+              <div class="doc-icon-box">📸</div>
+              <div class="doc-meta">
+                <strong>Patient Photo / Hospital Bed Photo</strong>
+                <p>Clear, unedited photograph verifying patient identity.</p>
               </div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Cover Image URL (optional)</label>
-            <input class="input" type="url" [(ngModel)]="form.cover_image_url" name="cover_image_url"
-              placeholder="https://..." />
-            <small>Paste an image URL or upload to an image hosting service</small>
+          <div class="form-group mt-4">
+            <label class="form-label">Cover Image URL</label>
+            <input
+              class="input"
+              type="url"
+              [(ngModel)]="form.cover_image_url"
+              name="cover_image_url"
+              placeholder="https://example.com/patient-image.jpg"
+            />
+            <small class="field-hint">Paste direct image URL hosted on hospital or verified drive</small>
           </div>
 
-          <div class="form-group">
-            <label>Organizer's Name *</label>
-            <input class="input" type="text" [(ngModel)]="form.organizer_name" name="organizer_name"
-              placeholder="Your full name" required />
-          </div>
-          <div class="form-group">
-            <label>Organizer's Phone</label>
-            <input class="input" type="tel" [(ngModel)]="form.organizer_phone" name="organizer_phone"
-              placeholder="+91 XXXXXXXXXX" />
+          <div class="form-row mt-3">
+            <div class="form-group">
+              <label class="form-label">Organizer Full Name *</label>
+              <input
+                class="input"
+                type="text"
+                [(ngModel)]="form.organizer_name"
+                name="organizer_name"
+                placeholder="Your legal name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Organizer Mobile Number</label>
+              <input
+                class="input"
+                type="tel"
+                [(ngModel)]="form.organizer_phone"
+                name="organizer_phone"
+                placeholder="+91 98765 43210"
+              />
+            </div>
           </div>
         </div>
 
-        <!-- Step 3: Review + Live AI Score -->
-        <div class="step-panel" *ngIf="currentStep === 3">
-          <h2>🔍 Review & AI Verification</h2>
-          <p class="step-desc">We're running AI verification on your campaign. A score ≥ 80 gets auto-approved.</p>
-
-          <!-- Summary -->
-          <div class="review-summary card">
-            <div class="review-row"><span>Title</span><strong>{{ form.title }}</strong></div>
-            <div class="review-row"><span>Category</span><strong>{{ form.category }}</strong></div>
-            <div class="review-row"><span>Goal</span><strong>₹{{ formatINR(form.goal_amount) }}</strong></div>
-            <div class="review-row" *ngIf="form.hospital_name"><span>Hospital</span><strong>{{ form.hospital_name }}</strong></div>
-            <div class="review-row" *ngIf="form.is_80g_tax_exempt"><span>80G</span><strong>✅ Eligible</strong></div>
+        <!-- Step 3: Review + Live AI Verification -->
+        <div class="wizard-panel card" *ngIf="currentStep === 3">
+          <div class="panel-header">
+            <h2>Review & AI Pre-Flight Audit</h2>
+            <p>Our algorithms assess your fundraiser for completeness, clinical plausibility, and benchmark cost fit.</p>
           </div>
 
-          <!-- Live AI Score -->
-          <div class="ai-score-panel" *ngIf="!verifying() && liveScore()">
-            <div class="score-header">
-              <span class="score-label">AI Trust Score</span>
-              <span class="score-number" [class.green]="(liveScore()?.overall_score||0)>=80" [class.amber]="(liveScore()?.overall_score||0)>=50 && (liveScore()?.overall_score||0)<80" [class.red]="(liveScore()?.overall_score||0)<50">
-                {{ liveScore()?.overall_score | number:'1.0-0' }}/100
-              </span>
-            </div>
-            <div class="score-verdict">{{ liveScore()?.decision }}</div>
-            <div class="score-explanation">{{ liveScore()?.explanation }}</div>
+          <!-- Summary Box -->
+          <div class="review-meta-box">
+            <div class="meta-line"><span>Title:</span><strong>{{ form.title }}</strong></div>
+            <div class="meta-line"><span>Category:</span><strong>{{ form.category }}</strong></div>
+            <div class="meta-line"><span>Funding Goal:</span><strong>₹{{ formatINR(form.goal_amount) }}</strong></div>
+            <div class="meta-line" *ngIf="form.hospital_name"><span>Hospital:</span><strong>{{ form.hospital_name }}</strong></div>
+            <div class="meta-line" *ngIf="form.is_80g_tax_exempt"><span>80G Tax Exemption:</span><strong class="text-green">Eligible</strong></div>
+          </div>
 
-            <div class="dimension-bars" *ngIf="liveScore()?.dimension_scores">
-              <div class="dim-row" *ngFor="let dim of getDimensions()">
-                <span>{{ dim.label }}</span>
-                <div class="dim-bar"><div [style.width.%]="dim.value" [class.bar-green]="dim.value>=70" [class.bar-amber]="dim.value>=40 && dim.value<70" [class.bar-red]="dim.value<40"></div></div>
-                <span>{{ dim.value | number:'1.0-0' }}</span>
+          <!-- Live AI Score Widget -->
+          <div class="ai-audit-result-card" *ngIf="!verifying() && liveScore()">
+            <div class="audit-card-top">
+              <div>
+                <span class="audit-tag">Automated Verification Assessment</span>
+                <h3 class="audit-decision">{{ liveScore()?.decision }}</h3>
+              </div>
+              <div
+                class="score-number-badge"
+                [class.score-green]="(liveScore()?.overall_score || 0) >= 80"
+                [class.score-amber]="(liveScore()?.overall_score || 0) >= 50 && (liveScore()?.overall_score || 0) < 80"
+                [class.score-red]="(liveScore()?.overall_score || 0) < 50"
+              >
+                {{ liveScore()?.overall_score | number:'1.0-0' }} / 100
               </div>
             </div>
 
-            <!-- Red Flags -->
-            <div class="flags-section" *ngIf="liveScore()?.red_flags && liveScore()!.red_flags!.length > 0">
-              <div class="flag-item" *ngFor="let f of liveScore()!.red_flags">⚠️ {{ f }}</div>
+            <p class="audit-explanation">{{ liveScore()?.explanation }}</p>
+
+            <!-- Dimension Bars -->
+            <div class="dim-breakdown" *ngIf="liveScore()?.dimension_scores">
+              <div class="dim-stat-row" *ngFor="let dim of getDimensions()">
+                <span class="dim-name">{{ dim.label }}</span>
+                <div class="dim-track">
+                  <div
+                    class="dim-fill"
+                    [style.width.%]="dim.value"
+                    [class.bar-green]="dim.value >= 70"
+                    [class.bar-amber]="dim.value >= 40 && dim.value < 70"
+                    [class.bar-red]="dim.value < 40"
+                  ></div>
+                </div>
+                <span class="dim-pct">{{ dim.value | number:'1.0-0' }}%</span>
+              </div>
             </div>
 
             <!-- Suggestions -->
-            <div class="suggestions" *ngIf="liveScore()?.suggestions && liveScore()!.suggestions!.length > 0">
-              <strong>💡 Improve your score:</strong>
+            <div class="suggestions-list" *ngIf="liveScore()?.suggestions && liveScore()!.suggestions!.length > 0">
+              <strong>Recommendations to Increase Trust:</strong>
               <ul>
                 <li *ngFor="let s of liveScore()!.suggestions">{{ s }}</li>
               </ul>
             </div>
           </div>
 
+          <!-- Verifying Progress -->
           <div class="verifying-state" *ngIf="verifying()">
-            <div class="spinner"></div>
-            <p>AI is analyzing your campaign…</p>
+            <div class="verifying-spinner"></div>
+            <p>Running benchmark cost models & text authenticity checks…</p>
           </div>
 
-          <button type="button" class="btn btn-outline" (click)="runVerification()" [disabled]="verifying()">
-            🔄 Re-run AI Verification
+          <button
+            type="button"
+            class="btn btn-outline btn-sm mt-3"
+            (click)="runVerification()"
+            [disabled]="verifying()"
+          >
+            Re-run AI Pre-Check
           </button>
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="step-nav">
-          <button type="button" class="btn btn-outline" *ngIf="currentStep > 0" (click)="prevStep()">← Back</button>
-          <button type="button" class="btn btn-primary" *ngIf="currentStep < 3" (click)="nextStep()">Next →</button>
-          <button type="submit" class="btn btn-primary" *ngIf="currentStep === 3" [disabled]="submitting()">
-            {{ submitting() ? 'Submitting…' : '🚀 Submit Campaign' }}
+        <!-- Wizard Navigation Footer -->
+        <div class="wizard-nav-footer">
+          <button
+            type="button"
+            class="btn btn-outline"
+            *ngIf="currentStep > 0"
+            (click)="prevStep()"
+          >
+            ← Previous Step
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary ml-auto"
+            *ngIf="currentStep < 3"
+            (click)="nextStep()"
+          >
+            Continue →
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary ml-auto"
+            *ngIf="currentStep === 3"
+            [disabled]="submitting()"
+          >
+            {{ submitting() ? 'Submitting Fundraiser for Audit…' : 'Publish Verified Fundraiser' }}
           </button>
         </div>
 
-        <div class="submit-error" *ngIf="submitError()">{{ submitError() }}</div>
+        <div class="form-error-toast mt-3" *ngIf="submitError()">{{ submitError() }}</div>
       </form>
     </div>
   `,
   styles: [`
-    .create-page { max-width: 780px; padding: var(--space-8) var(--space-4); }
-    .create-header { margin-bottom: var(--space-6); }
-    .create-header h1 { font-size: 2rem; font-weight: 800; }
-    .create-header p { color: var(--color-text-secondary); }
-
-    /* Steps */
-    .steps-indicator { display: flex; gap: 0; margin-bottom: var(--space-8); counter-reset: step; }
-    .step-dot {
-      display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;
-      font-size: 0.78rem; color: var(--color-text-secondary);
+    .create-page {
+      max-width: 820px;
+      padding: 48px var(--space-5) 80px;
     }
-    .step-dot::before {
-      content: ''; position: absolute; top: 18px; right: -50%; width: 100%; height: 2px;
-      background: #e5e7eb; z-index: 0;
+
+    .create-header {
+      margin-bottom: 36px;
     }
-    .step-dot:last-child::before { display: none; }
-    .step-dot span {
-      width: 36px; height: 36px; border-radius: 50%; background: #e5e7eb;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; z-index: 1; margin-bottom: 6px; font-size: 0.85rem;
+
+    .sub-header-pill {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      display: inline-block;
     }
-    .step-dot.active span { background: var(--color-primary); color: #fff; }
-    .step-dot.done span { background: var(--color-secondary); color: #fff; }
-    .step-dot label { text-align: center; }
 
-    /* Panel */
-    .step-panel { background: #fff; border: 1px solid #e5e7eb; border-radius: var(--radius-lg); padding: var(--space-6); margin-bottom: var(--space-4); }
-    .step-panel h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-2); }
-    .step-desc { color: var(--color-text-secondary); margin-bottom: var(--space-4); }
+    .create-header h1 {
+      font-size: clamp(2rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
 
-    .form-group { margin-bottom: var(--space-4); }
-    .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
-    .form-group small { color: var(--color-text-secondary); font-size: 0.78rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .create-header p {
+      font-size: 15px;
+      color: var(--slate-500);
+      max-width: 640px;
+    }
 
-    .story-input { font-size: 0.95rem; line-height: 1.7; }
-    .story-group { margin-top: var(--space-4); }
+    /* Steps Progress Bar */
+    .steps-progress-bar {
+      display: flex;
+      margin-bottom: 32px;
+      position: relative;
+    }
 
-    .toggle-group { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-4); }
-    .toggle-label { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer; }
-    .toggle-label input { accent-color: var(--color-primary); width: 16px; height: 16px; }
+    .step-node {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      text-align: center;
+    }
 
-    /* AI Assistant */
-    .ai-assistant-box {
-      background: linear-gradient(135deg, #fdf2f8, #fef9f0);
-      border: 1.5px solid #fbcfe8;
+    .step-node::before {
+      content: '';
+      position: absolute;
+      top: 17px;
+      right: -50%;
+      width: 100%;
+      height: 2px;
+      background: var(--slate-200);
+      z-index: 0;
+    }
+
+    .step-node:last-child::before {
+      display: none;
+    }
+
+    .step-node.done::before {
+      background: var(--secondary);
+    }
+
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--slate-100);
+      border: 2px solid var(--slate-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-500);
+      z-index: 1;
+      margin-bottom: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .step-node.active .step-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 0 0 4px var(--primary-light);
+    }
+
+    .step-node.done .step-circle {
+      background: var(--secondary);
+      border-color: var(--secondary);
+      color: #FFFFFF;
+    }
+
+    .step-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--slate-500);
+    }
+
+    .step-node.active .step-label {
+      color: var(--slate-900);
+      font-weight: 700;
+    }
+
+    /* Wizard Panel */
+    .wizard-panel {
+      padding: 36px;
+      border-radius: var(--radius-xl);
+    }
+
+    .panel-header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .panel-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+    }
+
+    .panel-header p {
+      font-size: 13.5px;
+      color: var(--slate-500);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--slate-400);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    /* Hospital Subform */
+    .hospital-subform {
+      background: var(--slate-50);
+      border: 1px solid var(--border);
+      padding: 20px;
       border-radius: var(--radius-lg);
-      padding: var(--space-4);
-      margin-top: var(--space-4);
     }
-    .ai-header { margin-bottom: var(--space-3); }
-    .ai-header span { font-weight: 700; font-size: 1rem; }
-    .ai-header small { display: block; color: var(--color-text-secondary); font-size: 0.82rem; }
-    .ai-inputs { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-3); }
-    .ai-btn { background: #7c3aed; border-color: #7c3aed; }
-    .ai-btn:hover { background: #6d28d9; }
-    .ai-error { color: #ef4444; font-size: 0.82rem; margin-top: var(--space-2); }
 
-    /* Docs */
-    .doc-note { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-6); }
-    .doc-tip { display: flex; gap: var(--space-3); align-items: flex-start; background: #f9fafb; border-radius: var(--radius-md); padding: var(--space-3); }
-    .doc-icon { font-size: 1.8rem; flex-shrink: 0; }
-    .doc-tip strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
-    .doc-tip p { font-size: 0.8rem; color: var(--color-text-secondary); margin: 0; }
+    .checkbox-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-    /* Review */
-    .review-summary { padding: var(--space-4); margin-bottom: var(--space-4); }
-    .review-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
-    .review-row:last-child { border-bottom: none; }
+    .custom-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--slate-700);
+      cursor: pointer;
+      line-height: 1.4;
+    }
 
-    /* AI Score Panel */
-    .ai-score-panel { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: var(--radius-lg); padding: var(--space-5); margin-bottom: var(--space-4); }
-    .score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); }
-    .score-label { font-weight: 600; font-size: 1rem; }
-    .score-number { font-size: 2rem; font-weight: 800; }
-    .score-number.green { color: var(--color-secondary); }
-    .score-number.amber { color: #f59e0b; }
-    .score-number.red   { color: #ef4444; }
-    .score-verdict { font-weight: 700; margin-bottom: 4px; }
-    .score-explanation { font-size: 0.88rem; color: var(--color-text-secondary); margin-bottom: var(--space-4); }
+    .custom-checkbox input {
+      margin-top: 2px;
+      accent-color: var(--primary);
+    }
 
-    .dimension-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: var(--space-3); }
-    .dim-row { display: grid; grid-template-columns: 130px 1fr 30px; gap: 8px; align-items: center; font-size: 0.82rem; }
-    .dim-bar { background: #e5e7eb; border-radius: 4px; height: 8px; overflow: hidden; }
-    .dim-bar div { height: 100%; border-radius: 4px; max-width: 100%; }
-    .bar-green { background: var(--color-secondary); }
-    .bar-amber { background: #f59e0b; }
-    .bar-red   { background: #ef4444; }
+    .story-textarea {
+      font-size: 14.5px;
+      line-height: 1.7;
+    }
 
-    .flags-section { margin-bottom: var(--space-3); }
-    .flag-item { color: #92400e; background: #fef3c7; border-radius: var(--radius-sm); padding: 6px 12px; font-size: 0.82rem; margin-bottom: 4px; }
-    .suggestions ul { margin: var(--space-2) 0 0 var(--space-4); font-size: 0.85rem; color: var(--color-text-secondary); }
-    .suggestions li { margin-bottom: 4px; }
+    /* AI Assistant Card */
+    .ai-assistant-card {
+      background: linear-gradient(135deg, #FAF5FF 0%, #FFF7ED 100%);
+      border: 1px solid #E9D5FF;
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-top: 24px;
+    }
 
-    .verifying-state { text-align: center; padding: var(--space-6) 0; }
-    .spinner {
-      width: 40px; height: 40px;
-      border: 4px solid #f3f4f6;
-      border-top-color: var(--color-primary);
+    .ai-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .ai-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #6D28D9;
+    }
+
+    .ai-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #EDE9FE;
+      color: #6D28D9;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .ai-intro {
+      font-size: 13px;
+      color: var(--slate-600);
+      margin-bottom: 14px;
+    }
+
+    .ai-inputs-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ai-generate-btn {
+      background: #7C3AED;
+      border-color: #7C3AED;
+    }
+
+    .ai-generate-btn:hover {
+      background: #6D28D9;
+      border-color: #6D28D9;
+    }
+
+    /* Docs Checklist */
+    .docs-checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .doc-guide-item {
+      padding: 16px;
+      background: var(--slate-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .doc-icon-box {
+      font-size: 20px;
+    }
+
+    .doc-meta strong {
+      font-size: 12.5px;
+      color: var(--slate-800);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .doc-meta p {
+      font-size: 11.5px;
+      color: var(--slate-500);
+      line-height: 1.4;
+    }
+
+    /* Review Meta */
+    .review-meta-box {
+      background: var(--slate-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .meta-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+    }
+
+    .meta-line span {
+      color: var(--slate-500);
+    }
+
+    /* AI Audit Result Card */
+    .ai-audit-result-card {
+      background: var(--slate-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .audit-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .audit-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .audit-decision {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-top: 2px;
+    }
+
+    .score-number-badge {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+    }
+
+    .score-green {
+      background: var(--success-light);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .score-amber {
+      background: var(--warning-light);
+      color: var(--warning);
+      border: 1px solid var(--warning-border);
+    }
+
+    .score-red {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .audit-explanation {
+      font-size: 13.5px;
+      color: var(--slate-600);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .dim-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .dim-stat-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 40px;
+      gap: 12px;
+      align-items: center;
+      font-size: 12.5px;
+    }
+
+    .dim-track {
+      height: 6px;
+      background: var(--slate-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .dim-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+    }
+
+    .bar-green { background: var(--secondary); }
+    .bar-amber { background: var(--warning); }
+    .bar-red { background: var(--danger); }
+
+    .dim-pct {
+      font-weight: 700;
+      color: var(--slate-700);
+      text-align: right;
+    }
+
+    .suggestions-list {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 12.5px;
+      color: var(--slate-600);
+    }
+
+    .suggestions-list ul {
+      margin: 6px 0 0 16px;
+    }
+
+    .verifying-state {
+      text-align: center;
+      padding: 32px 0;
+    }
+
+    .verifying-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--slate-200);
+      border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-      margin: 0 auto 12px;
+      margin: 0 auto 10px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Nav */
-    .step-nav { display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-4); }
-    .submit-error { color: #ef4444; font-size: 0.85rem; text-align: center; margin-top: var(--space-2); }
+    /* Wizard Navigation */
+    .wizard-nav-footer {
+      display: flex;
+      align-items: center;
+      margin-top: 24px;
+      gap: 12px;
+    }
+
+    .ml-auto {
+      margin-left: auto;
+    }
+
+    .form-error-toast {
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      background: var(--danger-light);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .docs-checklist-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .wizard-panel {
+        padding: 24px 20px;
+      }
+    }
   `]
 })
 export class CreateCampaignComponent implements OnInit, OnDestroy {
@@ -376,7 +868,7 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private storyChange$ = new Subject<string>();
 
-  steps = ['Basics', 'Story', 'Documents', 'Review'];
+  steps = ['Basics', 'Medical Details', 'Documents', 'Verification'];
   currentStep = 0;
   categories = CATEGORIES;
 
@@ -405,9 +897,14 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() { this.destroy$.next(); this.destroy$.complete(); }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-  onStoryChange(val: string) { this.form.story = val; }
+  onStoryChange(val: string) {
+    this.form.story = val;
+  }
 
   enhanceStory() {
     this.enhancing.set(true);
@@ -441,7 +938,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
       story: this.form.story,
       hospital_name: this.form.hospital_name,
     }).subscribe({
-      next: (res) => { this.liveScore.set(res); this.verifying.set(false); },
+      next: (res) => {
+        this.liveScore.set(res);
+        this.verifying.set(false);
+      },
       error: () => this.verifying.set(false)
     });
   }
@@ -463,7 +963,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
       if (this.currentStep === 3) this.runVerification();
     }
   }
-  prevStep() { if (this.currentStep > 0) this.currentStep--; }
+
+  prevStep() {
+    if (this.currentStep > 0) this.currentStep--;
+  }
 
   submitCampaign() {
     this.submitting.set(true);
@@ -485,7 +988,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
       is_80g_tax_exempt: this.form.is_80g_tax_exempt,
       direct_hospital_transfer: this.form.direct_hospital_transfer,
     }).subscribe({
-      next: (c) => { this.submitting.set(false); this.router.navigate(['/campaigns', c.id]); },
+      next: (c) => {
+        this.submitting.set(false);
+        this.router.navigate(['/campaigns', c.id]);
+      },
       error: (err) => {
         this.submitError.set(err?.error?.detail || 'Submission failed. Please try again.');
         this.submitting.set(false);

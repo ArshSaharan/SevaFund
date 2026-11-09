@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { SmoothScrollService } from './services/smooth-scroll.service';
 
 @Component({
   selector: 'app-root',
@@ -22,4 +23,6 @@ import { FooterComponent } from './components/footer/footer.component';
 })
 export class AppComponent {
   title = 'SevaFund India';
+  // Instantiates Lenis smooth scrolling & GSAP ScrollTrigger engine globally
+  private smoothScroll = inject(SmoothScrollService);
 }
