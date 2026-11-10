@@ -403,7 +403,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
 
     .portal-heading {
       font-size: clamp(1.8rem, 3vw, 2.4rem);
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       letter-spacing: -0.02em;
       margin-bottom: 4px;
@@ -418,7 +418,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
     .sub-header-pill {
       font-size: 11.5px;
       font-weight: 700;
-      color: #7C3AED;
+      color: var(--violet);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 4px;
@@ -440,8 +440,8 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: #7C3AED;
-      color: #FFFFFF;
+      background: var(--violet);
+      color: var(--on-violet);
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -457,7 +457,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
 
     .admin-role {
       font-size: 11px;
-      color: #7C3AED;
+      color: var(--violet);
       font-weight: 600;
     }
 
@@ -483,7 +483,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
 
     .admin-gate-card h2 {
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       margin-bottom: 6px;
     }
@@ -537,7 +537,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
     .m-val {
       font-family: var(--font-heading);
       font-size: 24px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       line-height: 1.1;
     }
@@ -584,8 +584,8 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
     .filter-pill.active {
       background: var(--primary);
       border-color: var(--primary);
-      color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(255, 107, 0, 0.25);
+      color: var(--on-primary);
+      box-shadow: 0 2px 8px var(--accent-glow);
     }
 
     /* Table Styles */
@@ -690,7 +690,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
 
     .queue-headline-row h3 {
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
     }
 
@@ -728,7 +728,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
     .ring-score {
       font-family: var(--font-heading);
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 600;
       line-height: 1;
     }
 
@@ -782,7 +782,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
 
     .btn-approve {
       background: var(--secondary);
-      color: #FFFFFF;
+      color: var(--on-secondary);
       border: none;
     }
 
@@ -791,17 +791,17 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
     }
 
     .btn-info {
-      background: #7C3AED;
-      color: #FFFFFF;
+      background: var(--violet);
+      color: var(--on-violet);
       border: none;
     }
 
     .btn-info:hover {
-      background: #6D28D9;
+      background: var(--violet-hover);
     }
 
     .btn-reject {
-      background: var(--danger);
+      background: #DC2626;
       color: #FFFFFF;
       border: none;
     }
@@ -887,9 +887,9 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
     .contact-txt { font-size: 11.5px; color: var(--slate-500); }
     .pan-txt { font-size: 11px; font-weight: 700; color: var(--info); }
     .amount-cell { display: flex; flex-direction: column; }
-    .amount-val { font-family: var(--font-heading); font-size: 15px; font-weight: 800; color: var(--slate-900); }
+    .amount-val { font-family: var(--font-heading); font-size: 15px; font-weight: 600; color: var(--slate-900); }
     .net-val { font-size: 11.5px; color: var(--success); font-weight: 600; }
-    .tax-80g-chip { font-size: 11px; font-weight: 700; background: #EDE9FE; color: #6D28D9; padding: 2px 6px; border-radius: 4px; }
+    .tax-80g-chip { font-size: 11px; font-weight: 700; background: var(--violet-soft); color: var(--violet); padding: 2px 6px; border-radius: 4px; }
 
     .loading-state, .empty-state {
       text-align: center;

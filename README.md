@@ -85,11 +85,12 @@ crowdfunding/
 |-- frontend/
 |   |-- src/
 |   |   |-- app/
-|   |   |   |-- components/    # Reusable navigation, footer, modal UI
-|   |   |   |-- pages/         # Routed views: campaigns, details, admin
-|   |   |   `-- services/      # Angular services: auth, campaigns, donations
-|   |   |-- index.html         # Includes Razorpay and Google GIS scripts
-|   |   `-- styles.css         # Tailwind CSS directives
+|   |   |   |-- animation/     # GSAP setup + scroll directives (reveal, split text, scrub text, count-up, parallax)
+|   |   |   |-- components/    # Navbar, footer, campaign card, marquee, next-chapter link
+|   |   |   |-- pages/         # Routed views: home, campaigns, campaign detail, how-it-works, trust, about, create, admin
+|   |   |   `-- services/      # Angular services: auth, campaigns, donations, theme, smooth scroll (Lenis)
+|   |   |-- index.html         # Fonts, theme bootstrap (no flash), Razorpay and Google GIS scripts
+|   |   `-- styles.css         # Design tokens (light/dark "Saffron & Paper" theme) and base styles
 |   |-- package.json
 |   `-- angular.json
 |-- tests/                     # Pytest automated test suite (17 tests)

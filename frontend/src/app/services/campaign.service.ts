@@ -10,13 +10,26 @@ export class CampaignService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
 
-  getCampaigns(page: number = 1, limit: number = 12, category?: string, search?: string): Observable<CampaignListResponse> {
+  getCampaigns(
+    page: number = 1,
+    limit: number = 12,
+    category?: string,
+    search?: string,
+    sortBy?: 'trending' | 'newest' | 'most_funded',
+    minScore?: number,
+  ): Observable<CampaignListResponse> {
     let params = new HttpParams().set('page', page).set('limit', limit);
     if (category && category !== 'ALL') {
       params = params.set('category', category);
     }
     if (search) {
       params = params.set('search', search);
+    }
+    if (sortBy) {
+      params = params.set('sort_by', sortBy);
+    }
+    if (minScore != null) {
+      params = params.set('min_score', minScore);
     }
     return this.http.get<CampaignListResponse>(`${this.apiUrl}/campaigns`, { params });
   }

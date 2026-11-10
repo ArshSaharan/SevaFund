@@ -1,0 +1,96 @@
+<!-- Header -->
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow" appReveal>How it works</p>
+    <h1 class="display-lg page-title" appSplit="words" [splitOnLoad]="true" [splitDelay]="0.1">
+      From a hospital estimate to a <em>settled bill.</em>
+    </h1>
+    <p class="lede" appReveal [revealDelay]="0.35">
+      Six steps, each one designed so that the people who give can see exactly what they are
+      giving to — and where it ends up.
+    </p>
+  </div>
+</section>
+
+<!-- Timeline -->
+<section class="section timeline-section" aria-label="The six steps">
+  <div class="container">
+    <div class="timeline" #timeline>
+      <span class="spine" aria-hidden="true"><span class="spine-fill"></span></span>
+      <ol class="steps">
+
+      <li class="step" *ngFor="let s of steps; let i = index; let odd = odd" [class.right]="odd">
+        <span class="node" aria-hidden="true"></span>
+        <div class="step-card" [appReveal]="odd ? 'right' : 'left'">
+          <span class="step-num" aria-hidden="true">{{ (i + 1).toString().padStart(2, '0') }}</span>
+          <h2 class="step-title">{{ s.title }}</h2>
+          <p class="step-text">{{ s.text }}</p>
+          <ul class="step-tags">
+            <li *ngFor="let t of s.tags">{{ t }}</li>
+          </ul>
+          <a *ngIf="s.link" [routerLink]="s.link.path" class="text-link step-link">
+            {{ s.link.label }}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- Two sides -->
+<section class="section sides" aria-labelledby="sides-title">
+  <div class="container">
+    <p class="eyebrow">Two sides of the same rupee</p>
+    <h2 id="sides-title" class="display-md sides-title" appSplit>Built for the people who give — <em>and the people who ask.</em></h2>
+
+    <div class="sides-grid" appReveal="scale" [revealStagger]="0.15">
+      <article class="side donors">
+        <p class="side-kicker">For donors</p>
+        <h3 class="side-title">Give with proof, not hope.</h3>
+        <ul class="side-list">
+          <li *ngFor="let p of donorPoints">{{ p }}</li>
+        </ul>
+        <a routerLink="/campaigns" class="btn btn-primary">Explore causes</a>
+      </article>
+
+      <article class="side organisers">
+        <p class="side-kicker">For organisers</p>
+        <h3 class="side-title">Ask once, clearly — and be believed.</h3>
+        <ul class="side-list">
+          <li *ngFor="let p of organiserPoints">{{ p }}</li>
+        </ul>
+        <a routerLink="/create" class="btn btn-ink">Start a fundraiser</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq" aria-labelledby="faq-title">
+  <div class="container faq-grid">
+    <div class="faq-head">
+      <p class="eyebrow">Questions</p>
+      <h2 id="faq-title" class="display-md" appSplit>Asked often, <em>answered plainly.</em></h2>
+    </div>
+    <div class="faq-list" appReveal [revealStagger]="0.06">
+      <details class="faq-item" *ngFor="let f of faqs">
+        <summary>
+          <span>{{ f.q }}</span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </summary>
+        <p>{{ f.a }}</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<app-next-chapter
+  link="/trust"
+  number="03"
+  title="Trust & safety"
+  description="Inside the verifier: four weighted checks and a human in the loop."
+></app-next-chapter>

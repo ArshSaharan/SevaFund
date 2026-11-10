@@ -1,0 +1,99 @@
+<!-- Header -->
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow" appReveal>Trust &amp; safety</p>
+    <h1 class="display-lg page-title" appSplit="words" [splitOnLoad]="true" [splitDelay]="0.1">
+      Trust isn’t a badge. <em>It’s a process.</em>
+    </h1>
+    <p class="lede" appReveal [revealDelay]="0.35">
+      Before a fundraiser can ask you for a rupee, our verifier scores it on four weighted checks.
+      Scroll through them and watch an example score being built.
+    </p>
+  </div>
+</section>
+
+<!-- Scrollytelling: sticky report + steps -->
+<section class="score-story" #story aria-label="How the trust score is built">
+  <div class="container story-grid">
+    <div class="story-visual">
+      <div class="report" aria-hidden="true">
+        <div class="report-head">
+          <span>Trust score · example</span>
+          <span class="report-status" #status data-tone="live">{{ bandFor(exampleScore).label }}</span>
+        </div>
+
+        <p class="report-score">
+          <span class="score-num" #scoreNum>{{ exampleScore }}</span><span class="score-of">/100</span>
+        </p>
+
+        <div class="report-rows">
+          <div class="report-row" *ngFor="let d of dimensions">
+            <span class="row-label">{{ d.label }}</span>
+            <span class="row-weight">× {{ d.weight }}%</span>
+            <span class="row-bar"><span class="row-fill" [style.--v]="d.example / 100"></span></span>
+            <span class="row-val">{{ d.example }}</span>
+          </div>
+        </div>
+
+        <div class="bands" #bandsEl [style.--score]="exampleScore">
+          <div class="band-bar">
+            <span *ngFor="let b of bands" class="band" [attr.data-tone]="b.tone"></span>
+            <span class="band-marker"></span>
+          </div>
+          <div class="band-legend">
+            <span *ngFor="let b of bands" [attr.data-tone]="b.tone">
+              <b>{{ b.range }}</b>{{ b.label }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="story-steps">
+      <article class="story-step" *ngFor="let d of dimensions; let i = index">
+        <p class="step-kicker">
+          <span class="step-index">0{{ i + 1 }}</span>
+          {{ d.label }} · {{ d.weight }}% of the score
+        </p>
+        <h2 class="display-sm step-question">{{ d.question }}</h2>
+        <p class="step-text">{{ d.text }}</p>
+        <ul class="signals">
+          <li *ngFor="let s of d.signals">{{ s }}</li>
+        </ul>
+      </article>
+
+      <article class="story-step decision">
+        <p class="step-kicker"><span class="step-index">→</span> The decision</p>
+        <h2 class="display-sm step-question">The total decides what happens next.</h2>
+        <ul class="decision-list">
+          <li data-tone="live"><b>80 and above</b> The fundraiser goes live automatically.</li>
+          <li data-tone="review"><b>50 – 79</b> A human moderator reviews it before it can go live.</li>
+          <li data-tone="info"><b>35 – 49</b> The organiser must add hospital bills or other proof.</li>
+          <li data-tone="reject"><b>Below 35</b> Rejected — typically several critical red flags.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Safeguards -->
+<section class="section safeguards" aria-labelledby="safeguards-title">
+  <div class="container">
+    <p class="eyebrow">Beyond the score</p>
+    <h2 id="safeguards-title" class="display-md safeguards-title" appSplit>Six more reasons to <em>give with confidence.</em></h2>
+    <div class="safeguard-grid" appReveal [revealStagger]="0.08">
+      <article class="safeguard" *ngFor="let s of safeguards; let i = index">
+        <span class="safeguard-num" aria-hidden="true">{{ (i + 1).toString().padStart(2, '0') }}</span>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.text }}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<app-next-chapter
+  link="/about"
+  number="04"
+  title="Why “Seva”"
+  description="The idea behind SevaFund, and the promises we hold ourselves to."
+></app-next-chapter>

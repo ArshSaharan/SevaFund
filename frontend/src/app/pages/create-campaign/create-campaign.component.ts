@@ -174,7 +174,7 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
           <div class="ai-assistant-card">
             <div class="ai-card-top">
               <div class="ai-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <path d="M12 2L14.4 8.6L21 11L14.4 13.4L12 20L9.6 13.4L3 11L9.6 8.6L12 2Z"/>
                 </svg>
                 <span>AI Narrative Generator</span>
@@ -421,7 +421,7 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
 
     .create-header h1 {
       font-size: clamp(2rem, 3.5vw, 2.6rem);
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       letter-spacing: -0.02em;
       margin-bottom: 8px;
@@ -488,14 +488,14 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
     .step-node.active .step-circle {
       background: var(--primary);
       border-color: var(--primary);
-      color: #FFFFFF;
+      color: var(--on-primary);
       box-shadow: 0 0 0 4px var(--primary-light);
     }
 
     .step-node.done .step-circle {
       background: var(--secondary);
       border-color: var(--secondary);
-      color: #FFFFFF;
+      color: var(--on-secondary);
     }
 
     .step-label {
@@ -523,7 +523,7 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
 
     .panel-header h2 {
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       margin-bottom: 4px;
     }
@@ -586,8 +586,8 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
 
     /* AI Assistant Card */
     .ai-assistant-card {
-      background: linear-gradient(135deg, #FAF5FF 0%, #FFF7ED 100%);
-      border: 1px solid #E9D5FF;
+      background: linear-gradient(135deg, var(--violet-soft) 0%, var(--primary-light) 100%);
+      border: 1px solid var(--violet-line);
       border-radius: var(--radius-lg);
       padding: 22px;
       margin-top: 24px;
@@ -606,14 +606,14 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
       gap: 6px;
       font-size: 14px;
       font-weight: 700;
-      color: #6D28D9;
+      color: var(--violet);
     }
 
     .ai-badge {
       font-size: 11px;
       font-weight: 700;
-      background: #EDE9FE;
-      color: #6D28D9;
+      background: var(--violet-soft);
+      color: var(--violet);
       padding: 2px 8px;
       border-radius: var(--radius-full);
     }
@@ -631,13 +631,14 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
     }
 
     .ai-generate-btn {
-      background: #7C3AED;
-      border-color: #7C3AED;
+      background: var(--violet);
+      border-color: var(--violet);
+      color: var(--on-violet);
     }
 
-    .ai-generate-btn:hover {
-      background: #6D28D9;
-      border-color: #6D28D9;
+    .ai-generate-btn:hover:not(:disabled) {
+      background: var(--violet-hover);
+      border-color: var(--violet-hover);
     }
 
     /* Docs Checklist */
@@ -723,7 +724,7 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
 
     .audit-decision {
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       margin-top: 2px;
     }
@@ -731,7 +732,7 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
     .score-number-badge {
       font-family: var(--font-heading);
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 600;
       padding: 6px 14px;
       border-radius: var(--radius-full);
     }
@@ -799,7 +800,7 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
     }
 
     .suggestions-list {
-      background: #FFFFFF;
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 14px 18px;

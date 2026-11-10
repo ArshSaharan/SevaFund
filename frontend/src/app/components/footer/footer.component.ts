@@ -1,256 +1,171 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, inject } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
+import { RevealDirective, SplitTextDirective, gsap, isBrowser, prefersReducedMotion } from '../../animation';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterLink],
+  imports: [NgIf, RouterLink, RevealDirective, SplitTextDirective],
   template: `
     <footer class="footer">
-      <!-- Trust Banner Strip -->
-      <div class="footer-trust-strip">
-        <div class="container trust-strip-inner">
-          <div class="trust-pill">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      <!-- Closing statement (hidden where the visitor is already acting) -->
+      <div class="container footer-cta" *ngIf="showCta()">
+        <p class="eyebrow">The last chapter is yours</p>
+        <h2 class="display-lg cta-title" appSplit>
+          Give with your <em>eyes&nbsp;open.</em>
+        </h2>
+        <div class="cta-row" appReveal [revealDelay]="0.2">
+          <a routerLink="/campaigns" class="btn btn-primary btn-lg">
+            Explore verified causes
+            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
             </svg>
-            <span>AI Cost Audited</span>
-          </div>
-          <div class="trust-divider"></div>
-          <div class="trust-pill">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
-            <span>0% Platform Fee</span>
-          </div>
-          <div class="trust-divider"></div>
-          <div class="trust-pill">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            <span>Section 80G Tax Exemption</span>
-          </div>
-          <div class="trust-divider"></div>
-          <div class="trust-pill">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            <span>Direct Hospital NEFT</span>
-          </div>
+          </a>
+          <a routerLink="/create" class="btn btn-ghost-night btn-lg">Start a fundraiser</a>
         </div>
       </div>
 
-      <!-- Main Directory Columns -->
-      <div class="container footer-main">
-        <div class="footer-grid">
-          <!-- Col 1: Brand Info -->
-          <div class="footer-col brand-col">
-            <div class="footer-brand">
-              <div class="brand-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L3 7V12C3 17.5 6.8 21.7 12 23C17.2 21.7 21 17.5 21 12V7L12 2Z" fill="#FF6B00" fill-opacity="0.2" stroke="#FF6B00" stroke-width="2"/>
-                  <path d="M9 12L11 14L15 10" stroke="#00A86B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <span class="brand-name">SevaFund<span class="brand-highlight">India</span></span>
-            </div>
-            <p class="brand-desc">
-              India's first AI-audited medical and emergency crowdfunding network.
-              Every rupee is tracked with institutional verification, zero platform markup, and direct hospital settlements.
-            </p>
-            <div class="national-tag">
-              <span class="in-flag">🇮🇳</span>
-              <span>Proudly built for Indian healthcare accessibility</span>
-            </div>
-          </div>
-
-          <!-- Col 2: Supported Causes -->
-          <div class="footer-col">
-            <h4 class="col-title">Supported Causes</h4>
-            <ul class="col-links">
-              <li><a routerLink="/" [queryParams]="{category: 'MEDICAL'}">Cancer & Chemotherapy</a></li>
-              <li><a routerLink="/" [queryParams]="{category: 'MEDICAL'}">Pediatric Heart Surgeries</a></li>
-              <li><a routerLink="/" [queryParams]="{category: 'MEDICAL'}">Organ Transplants (Liver/Kidney)</a></li>
-              <li><a routerLink="/" [queryParams]="{category: 'EMERGENCY'}">Accident & ICU Emergency</a></li>
-              <li><a routerLink="/" [queryParams]="{category: 'EDUCATION'}">Higher Education Grants</a></li>
-              <li><a routerLink="/" [queryParams]="{category: 'ANIMALS'}">Animal Rescue & Care</a></li>
-            </ul>
-          </div>
-
-          <!-- Col 3: Trust & Verification -->
-          <div class="footer-col">
-            <h4 class="col-title">Trust & Safety</h4>
-            <ul class="col-links">
-              <li><span class="static-link">AI Cost Benchmark Audits</span></li>
-              <li><span class="static-link">Hospital UHID Cross-Verification</span></li>
-              <li><span class="static-link">Direct Vendor / Hospital Payout</span></li>
-              <li><span class="static-link">Section 80G Tax Exemption</span></li>
-              <li><span class="static-link">256-bit Bank-Grade Encryption</span></li>
-              <li><a routerLink="/admin">Moderator Portal</a></li>
-            </ul>
-          </div>
-
-          <!-- Col 4: Payment Partners -->
-          <div class="footer-col">
-            <h4 class="col-title">Payment Networks</h4>
-            <p class="payments-desc">
-              Accepting zero-surcharge contributions via instant UPI, RuPay, and leading Indian banks.
-            </p>
-            <div class="payment-badges-row">
-              <span class="pay-chip">UPI</span>
-              <span class="pay-chip">GPay</span>
-              <span class="pay-chip">PhonePe</span>
-              <span class="pay-chip">Paytm</span>
-              <span class="pay-chip">RuPay</span>
-              <span class="pay-chip">Netbanking</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Bar -->
-      <div class="footer-bottom">
-        <div class="container bottom-inner">
-          <p class="copyright">
-            © 2026 SevaFund India Technologies Private Limited. All rights reserved.
+      <!-- Directory -->
+      <div class="container footer-grid" appReveal [revealStagger]="0.08">
+        <div class="footer-col brand-col">
+          <p class="brand-desc">
+            AI-audited medical and emergency crowdfunding for India — zero platform fee,
+            receipts for every rupee, and direct hospital settlement.
           </p>
-          <div class="bottom-links">
-            <span class="bottom-item">Terms of Service</span>
-            <span class="dot-sep">•</span>
-            <span class="bottom-item">Privacy Policy</span>
-            <span class="dot-sep">•</span>
-            <span class="bottom-item">AML / KYC Policy</span>
-            <span class="dot-sep">•</span>
-            <span class="bottom-item">80G Compliance</span>
-          </div>
+          <span class="national-tag">Built for Indian healthcare access</span>
         </div>
+
+        <nav class="footer-col" aria-label="Causes">
+          <h3 class="col-title">Causes</h3>
+          <ul class="col-links">
+            <li><a routerLink="/campaigns" [queryParams]="{ category: 'MEDICAL' }">Medical treatment</a></li>
+            <li><a routerLink="/campaigns" [queryParams]="{ category: 'EMERGENCY' }">Accident &amp; ICU emergency</a></li>
+            <li><a routerLink="/campaigns" [queryParams]="{ category: 'EDUCATION' }">Education grants</a></li>
+            <li><a routerLink="/campaigns" [queryParams]="{ category: 'COMMUNITY' }">Community</a></li>
+            <li><a routerLink="/campaigns" [queryParams]="{ category: 'ANIMALS' }">Animal rescue &amp; care</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col" aria-label="Platform">
+          <h3 class="col-title">Platform</h3>
+          <ul class="col-links">
+            <li><a routerLink="/how-it-works">How it works</a></li>
+            <li><a routerLink="/trust">Trust &amp; safety</a></li>
+            <li><a routerLink="/about">About SevaFund</a></li>
+            <li><a routerLink="/create">Start a fundraiser</a></li>
+            <li><a routerLink="/admin">Moderator portal</a></li>
+          </ul>
+        </nav>
+
+        <div class="footer-col">
+          <h3 class="col-title">Pay with</h3>
+          <div class="payment-badges-row">
+            <span class="pay-chip">UPI</span>
+            <span class="pay-chip">GPay</span>
+            <span class="pay-chip">PhonePe</span>
+            <span class="pay-chip">Paytm</span>
+            <span class="pay-chip">RuPay</span>
+            <span class="pay-chip">Netbanking</span>
+          </div>
+          <p class="payments-desc">Section 80G receipts issued instantly for eligible fundraisers.</p>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="container footer-bottom">
+        <p>© 2026 SevaFund India Technologies Private Limited</p>
+        <p class="legal">Terms · Privacy · AML / KYC · 80G compliance</p>
+      </div>
+
+      <!-- Oversized wordmark -->
+      <div class="wordmark-wrap" aria-hidden="true">
+        <span class="wordmark" #wordmark>SevaFund</span>
       </div>
     </footer>
   `,
   styles: [`
     .footer {
-      background: var(--slate-900);
-      color: var(--slate-300);
-      margin-top: 80px;
-      border-top: 1px solid var(--slate-800);
+      position: relative;
+      background: var(--night);
+      color: var(--on-night-2);
+      overflow: hidden;
+      --ink: var(--on-night);
     }
 
-    /* Trust Strip */
-    .footer-trust-strip {
-      background: var(--slate-950);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 16px 0;
+    /* Hairlines inset to the content edges (not the container's padding box) */
+    .footer-cta,
+    .footer-bottom {
+      background: linear-gradient(var(--night-line), var(--night-line)) no-repeat;
+      background-size: calc(100% - 2 * var(--gutter)) 1px;
     }
 
-    .trust-strip-inner {
+    .footer-cta {
+      padding-top: clamp(88px, 12vw, 160px);
+      padding-bottom: clamp(56px, 8vw, 96px);
+      background-position: center bottom;
+    }
+
+    .footer-cta .eyebrow { color: var(--accent); }
+
+    .cta-title {
+      color: var(--on-night);
+      margin: 20px 0 36px;
+      max-width: 12ch;
+    }
+
+    .cta-title em { color: var(--accent); }
+
+    .cta-row {
       display: flex;
-      align-items: center;
-      justify-content: space-around;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .trust-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--slate-300);
+    .btn-ghost-night {
+      color: var(--on-night);
+      border-color: var(--night-line);
+      background: transparent;
     }
 
-    .trust-pill svg {
-      color: var(--secondary);
-    }
-
-    .trust-divider {
-      width: 1px;
-      height: 18px;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* Main Footer */
-    .footer-main {
-      padding: 60px 0 50px;
+    .btn-ghost-night:hover {
+      border-color: var(--on-night-2);
+      background: rgba(255, 244, 230, 0.05);
     }
 
     .footer-grid {
       display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
       gap: 40px;
-    }
-
-    .brand-col {
-      padding-right: 20px;
-    }
-
-    .footer-brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .brand-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-name {
-      font-family: var(--font-heading);
-      font-size: 20px;
-      font-weight: 800;
-      color: #FFFFFF;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-highlight {
-      color: var(--primary);
+      padding-top: 64px;
+      padding-bottom: 56px;
     }
 
     .brand-desc {
-      font-size: 13.5px;
-      color: var(--slate-400);
-      line-height: 1.6;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--on-night-2);
+      max-width: 34ch;
       margin-bottom: 20px;
     }
 
     .national-tag {
       display: inline-flex;
-      align-items: center;
-      gap: 8px;
       padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--night-line);
       border-radius: var(--radius-full);
       font-size: 12px;
-      color: var(--slate-300);
-      font-weight: 500;
+      color: var(--on-night);
     }
 
-    .in-flag {
-      font-size: 14px;
-    }
-
-    /* Column Styles */
     .col-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--on-night);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.14em;
       margin-bottom: 18px;
     }
 
@@ -261,103 +176,123 @@ import { RouterLink } from '@angular/router';
       gap: 10px;
     }
 
-    .col-links a,
-    .static-link {
-      font-size: 13.5px;
-      color: var(--slate-400);
-      transition: color 0.15s ease;
-      cursor: pointer;
+    .col-links a {
+      font-size: 14.5px;
+      color: var(--on-night-2);
+      transition: color 0.2s ease, padding-left 0.35s var(--ease-expo);
     }
 
     .col-links a:hover {
-      color: var(--primary);
-    }
-
-    .payments-desc {
-      font-size: 13px;
-      color: var(--slate-400);
-      line-height: 1.5;
-      margin-bottom: 14px;
+      color: var(--accent);
+      padding-left: 4px;
     }
 
     .payment-badges-row {
       display: flex;
-      gap: 6px;
       flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
     }
 
     .pay-chip {
-      display: inline-block;
-      padding: 4px 8px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-sm);
-      font-size: 11px;
+      padding: 4px 10px;
+      border: 1px solid var(--night-line);
+      border-radius: var(--radius-full);
+      font-size: 12px;
       font-weight: 600;
-      color: var(--slate-300);
+      color: var(--on-night);
     }
 
-    /* Bottom Bar */
+    .payments-desc {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
     .footer-bottom {
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 24px 0;
-      font-size: 12.5px;
-      color: var(--slate-500);
-    }
-
-    .bottom-inner {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
+      padding-top: 24px;
+      padding-bottom: 24px;
+      background-position: center top;
+      font-size: 12.5px;
     }
 
-    .bottom-links {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .wordmark-wrap {
+      overflow: hidden;
+      line-height: 0.78;
+      margin-top: 8px;
     }
 
-    .bottom-item {
-      cursor: pointer;
-      transition: color 0.15s ease;
+    .wordmark {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 23.5vw;
+      letter-spacing: -0.06em;
+      text-align: center;
+      color: transparent;
+      background: linear-gradient(180deg, rgba(255, 244, 230, 0.14) 0%, rgba(255, 244, 230, 0.02) 85%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      white-space: nowrap;
+      user-select: none;
     }
 
-    .bottom-item:hover {
-      color: var(--slate-300);
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .brand-col { grid-column: span 2; }
     }
 
-    .dot-sep {
-      color: var(--slate-700);
-    }
-
-    @media (max-width: 992px) {
-      .footer-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 32px;
-      }
-      .brand-col {
-        grid-column: span 2;
-        padding-right: 0;
-      }
-      .trust-divider {
-        display: none;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .footer-grid {
-        grid-template-columns: 1fr;
-      }
-      .brand-col {
-        grid-column: span 1;
-      }
-      .bottom-inner {
-        flex-direction: column;
-        text-align: center;
-      }
+    @media (max-width: 560px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .brand-col { grid-column: span 1; }
+      .footer-bottom { flex-direction: column; }
     }
   `]
 })
-export class FooterComponent {}
+export class FooterComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('wordmark') wordmarkRef!: ElementRef<HTMLElement>;
+
+  private zone = inject(NgZone);
+  private router = inject(Router);
+  private ctx?: gsap.Context;
+
+  /** No "start a fundraiser" pitch on the pages where you are already doing it. */
+  readonly showCta = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => !/^\/(create|admin)\b/.test(e.urlAfterRedirects)),
+    ),
+    { initialValue: true },
+  );
+
+  ngAfterViewInit(): void {
+    if (!isBrowser || prefersReducedMotion()) return;
+
+    // The wordmark rises out of the page edge as the reader reaches the very end.
+    this.zone.runOutsideAngular(() => {
+      this.ctx = gsap.context(() => {
+        gsap.fromTo(
+          this.wordmarkRef.nativeElement,
+          { yPercent: 60 },
+          {
+            yPercent: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: this.wordmarkRef.nativeElement,
+              start: 'top bottom',
+              end: 'clamp(bottom bottom)',
+              scrub: true,
+            },
+          },
+        );
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.ctx?.revert();
+  }
+}

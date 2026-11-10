@@ -1,26 +1,29 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, NgZone, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { CampaignService } from '../../services/campaign.service';
 import { DonationService } from '../../services/donation.service';
 import { AuthService } from '../../services/auth.service';
 import { Campaign } from '../../models/campaign.model';
+import { SmoothScrollService } from '../../services/smooth-scroll.service';
+import { RevealDirective } from '../../animation';
 
 @Component({
   selector: 'app-campaign-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, RevealDirective],
   template: `
     <!-- Top Back Breadcrumb Bar -->
     <div class="breadcrumb-strip">
       <div class="container breadcrumb-inner">
-        <a routerLink="/" class="back-nav-btn">
+        <a routerLink="/campaigns" class="back-nav-btn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
-          <span>Back to All Campaigns</span>
+          <span>All causes</span>
         </a>
       </div>
     </div>
@@ -35,7 +38,7 @@ import { Campaign } from '../../models/campaign.model';
     <div class="error-state container card" *ngIf="!loading() && !campaign()">
       <h2>Fundraiser Not Found</h2>
       <p>The campaign you requested may have been fulfilled, moved, or is under compliance audit.</p>
-      <a routerLink="/" class="btn btn-primary mt-3">Return to Home</a>
+      <a routerLink="/campaigns" class="btn btn-primary mt-3">Browse causes</a>
     </div>
 
     <!-- Main Detail Layout -->
@@ -43,7 +46,7 @@ import { Campaign } from '../../models/campaign.model';
       <!-- Left Column: Story, Updates, Supporters -->
       <div class="story-column">
         <!-- Cover Image -->
-        <div class="cover-card card">
+        <div class="cover-card card" appReveal="clip">
           <img
             [src]="c.cover_image_url || '/assets/default-campaign.jpg'"
             [alt]="c.title"
@@ -52,7 +55,7 @@ import { Campaign } from '../../models/campaign.model';
         </div>
 
         <!-- Meta Header Strip -->
-        <div class="campaign-header-block">
+        <div class="campaign-header-block" appReveal>
           <div class="meta-pills-row">
             <span class="badge badge-primary">{{ c.category }}</span>
 
@@ -89,13 +92,13 @@ import { Campaign } from '../../models/campaign.model';
         </div>
 
         <!-- Story Article Body -->
-        <div class="story-content card">
+        <div class="story-content card" appReveal>
           <h2 class="subhead">The Patient's Story</h2>
           <div class="story-prose" [innerHTML]="formatStory(c.story)"></div>
         </div>
 
         <!-- Campaign Updates Section -->
-        <div class="updates-card card" *ngIf="c.updates && c.updates.length > 0">
+        <div class="updates-card card" *ngIf="c.updates && c.updates.length > 0" appReveal>
           <h3 class="subhead">Verified Updates</h3>
           <div class="update-entry" *ngFor="let u of c.updates">
             <span class="update-date">{{ u.created_at | date:'mediumDate' }}</span>
@@ -104,7 +107,7 @@ import { Campaign } from '../../models/campaign.model';
         </div>
 
         <!-- Recent Supporters List -->
-        <div class="donors-card card">
+        <div class="donors-card card" appReveal>
           <div class="donors-header">
             <h3 class="subhead">Recent Supporters</h3>
             <span class="donor-total-count">{{ donors().length }} Contributions</span>
@@ -133,7 +136,7 @@ import { Campaign } from '../../models/campaign.model';
 
       <!-- Right Column: Sticky Donation Card & AI Trust Panel -->
       <div class="donation-sidebar">
-        <div class="sticky-card-wrap">
+        <div class="sticky-card-wrap" appReveal [revealDelay]="0.15">
           <div class="donate-panel card">
             <!-- Funding Progress -->
             <div class="progress-hero">
@@ -156,7 +159,7 @@ import { Campaign } from '../../models/campaign.model';
             <div class="ai-inspection-box" *ngIf="c.ai_trust_score || c.authenticity_score">
               <div class="ai-box-header">
                 <div class="ai-box-title">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00A86B" stroke-width="2.5">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="ai-shield" aria-hidden="true">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   </svg>
                   <span>AI Cost Benchmark Score</span>
@@ -185,7 +188,7 @@ import { Campaign } from '../../models/campaign.model';
 
             <!-- 80G Tax Exemption Note -->
             <div class="tax-saver-banner" *ngIf="c.is_80g_tax_exempt">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
               </svg>
@@ -454,7 +457,7 @@ import { Campaign } from '../../models/campaign.model';
 
     .campaign-headline {
       font-size: clamp(1.8rem, 3vw, 2.5rem);
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       line-height: 1.2;
       letter-spacing: -0.02em;
@@ -498,7 +501,7 @@ import { Campaign } from '../../models/campaign.model';
 
     .subhead {
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       margin-bottom: 18px;
       letter-spacing: -0.01em;
@@ -642,7 +645,7 @@ import { Campaign } from '../../models/campaign.model';
     .raised-huge {
       font-family: var(--font-heading);
       font-size: 28px;
-      font-weight: 800;
+      font-weight: 600;
       color: var(--slate-900);
       letter-spacing: -0.02em;
       line-height: 1.1;
@@ -665,7 +668,7 @@ import { Campaign } from '../../models/campaign.model';
 
     .progress-fill-bar {
       height: 100%;
-      background: linear-gradient(90deg, #FF6B00 0%, #FFA048 100%);
+      background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--leaf)));
       border-radius: var(--radius-full);
       transition: width 0.8s var(--ease-expo);
       max-width: 100%;
@@ -693,6 +696,8 @@ import { Campaign } from '../../models/campaign.model';
       align-items: center;
       margin-bottom: 10px;
     }
+
+    .ai-shield { color: var(--leaf); }
 
     .ai-box-title {
       display: inline-flex;
@@ -752,8 +757,9 @@ import { Campaign } from '../../models/campaign.model';
     .tax-saver-banner {
       display: flex;
       gap: 10px;
-      background: #F5F3FF;
-      border: 1px solid #DDD6FE;
+      background: var(--violet-soft);
+      border: 1px solid var(--violet-line);
+      color: var(--violet);
       padding: 12px;
       border-radius: var(--radius-md);
       margin-bottom: 20px;
@@ -764,7 +770,7 @@ import { Campaign } from '../../models/campaign.model';
       display: flex;
       flex-direction: column;
       font-size: 12px;
-      color: #5B21B6;
+      color: var(--violet);
       line-height: 1.4;
     }
 
@@ -895,7 +901,7 @@ import { Campaign } from '../../models/campaign.model';
       background: var(--success-light);
       color: var(--success);
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -996,6 +1002,9 @@ export class CampaignDetailComponent implements OnInit {
   private campaignService = inject(CampaignService);
   private donationService = inject(DonationService);
   public authService = inject(AuthService);
+  private titleService = inject(Title);
+  private smoothScroll = inject(SmoothScrollService);
+  private zone = inject(NgZone);
 
   campaign = signal<Campaign | null>(null);
   loading = signal(true);
@@ -1039,7 +1048,10 @@ export class CampaignDetailComponent implements OnInit {
         next: (c) => {
           this.campaign.set(c);
           this.loading.set(false);
+          this.titleService.setTitle(`${c.title} · SevaFund India`);
           this.loadDonors(+id);
+          // Page height changed: re-measure scroll triggers (footer, reveals).
+          this.zone.runOutsideAngular(() => setTimeout(() => this.smoothScroll.refresh(), 0));
         },
         error: () => this.loading.set(false)
       });
@@ -1079,7 +1091,7 @@ export class CampaignDetailComponent implements OnInit {
               email: this.donorEmail || undefined,
               contact: this.donorPhone ? (this.donorPhone.startsWith('+91') ? this.donorPhone : `+91${this.donorPhone}`) : undefined
             },
-            theme: { color: '#FF6B00' },
+            theme: { color: '#F26B1D' },
             handler: (response: any) => {
               this.completeDonation({
                 gateway_order_id: response.razorpay_order_id || order.order_id,

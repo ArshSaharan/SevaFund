@@ -1,0 +1,200 @@
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero" #hero aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+  </div>
+
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow no-rule hero-eyebrow">
+        <span class="live-dot" aria-hidden="true"></span>
+        AI-verified medical crowdfunding · 0% platform fee
+      </p>
+
+      <h1 id="hero-title" class="display-xl hero-title" appSplit="words" [splitOnLoad]="true" [splitDelay]="0.2">
+        Every rupee, <em>accounted&nbsp;for.</em>
+      </h1>
+
+      <p class="lede hero-lede">
+        SevaFund checks hospital estimates and treatment costs before a fundraiser goes live —
+        then settles funds directly with the hospital. Give knowing exactly where it goes.
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/campaigns" class="btn btn-primary btn-lg">
+          Explore verified causes
+          <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a routerLink="/how-it-works" class="btn btn-outline btn-lg">See how it works</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="receipt-wrap">
+        <div
+          class="receipt"
+          role="img"
+          aria-label="Example verification report: heart surgery request of ₹3,20,000 with all four checks passed, a trust score of 94 and a Verified stamp."
+        >
+          <div class="receipt-top">
+            <span>Verification report</span>
+            <span class="receipt-tag">Example</span>
+          </div>
+          <p class="receipt-title">Heart surgery for a 7-year-old</p>
+          <p class="receipt-meta">Pune · Hospital estimate on letterhead</p>
+
+          <div class="receipt-amount">
+            <span>Requested</span>
+            <strong>₹3,20,000</strong>
+          </div>
+
+          <ul class="receipt-checks">
+            <li>Cost within hospital benchmark</li>
+            <li>Hospital, doctor &amp; UHID named</li>
+            <li>No red-flag language</li>
+            <li>2 supporting documents</li>
+          </ul>
+
+          <div class="receipt-score">
+            <span>Trust score</span>
+            <span class="score-track"><span class="score-fill"></span></span>
+            <strong>94</strong>
+          </div>
+
+          <span class="stamp">Verified</span>
+        </div>
+      </div>
+
+      <span class="float-chip chip-a" [appParallax]="-0.14" aria-hidden="true">
+        <span class="chip-dot"></span> 0% platform fee
+      </span>
+      <span class="float-chip chip-b" [appParallax]="0.12" aria-hidden="true">80G receipt issued ✓</span>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
+    <span>Scroll to follow a rupee</span>
+    <span class="cue-line"></span>
+  </div>
+</section>
+
+<app-marquee [items]="trustPoints"></app-marquee>
+
+<!-- ═══════════════════════ WHY WE EXIST ═══════════════════════ -->
+<section class="section problem" aria-labelledby="problem-label">
+  <div class="container problem-inner">
+    <p id="problem-label" class="eyebrow" appReveal>Why SevaFund exists</p>
+    <p class="problem-text" appScrubText>
+      When a family is handed a hospital bill they can’t pay, strangers want to help.
+      But donors can’t easily tell real need from inflated costs — and once the money
+      moves, it’s hard to see where it went.
+    </p>
+    <p class="problem-coda" appReveal>
+      We built SevaFund to close that gap.
+      <a routerLink="/about" class="text-link">Read our story</a>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOLLOW ONE RUPEE (pinned) ═══════════════════ -->
+<section class="journey" #journey aria-labelledby="journey-title">
+  <div class="container journey-head">
+    <p class="eyebrow">Follow one rupee</p>
+    <h2 id="journey-title" class="display-md" appSplit>
+      From your phone to the <em>hospital ledger.</em>
+    </h2>
+  </div>
+
+  <div class="journey-track" #track>
+    <article class="chapter" *ngFor="let c of chapters">
+      <div class="chapter-copy">
+        <span class="chapter-num" data-anim aria-hidden="true">{{ c.num }}</span>
+        <p class="chapter-kicker" data-anim>{{ c.kicker }}</p>
+        <h3 class="chapter-title" data-anim>{{ c.title }}</h3>
+        <p class="chapter-text" data-anim>{{ c.text }}</p>
+      </div>
+
+      <app-journey-visual class="chapter-visual" data-anim [kind]="c.visual" [auditRows]="auditRows"></app-journey-visual>
+    </article>
+  </div>
+
+  <div class="container journey-rail" aria-hidden="true">
+    <div class="rail">
+      <span class="rail-fill"></span>
+      <span class="rail-coin">₹</span>
+    </div>
+    <ol class="rail-labels">
+      <li class="rail-label" *ngFor="let c of chapters">{{ c.num }} · {{ c.kicker }}</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═══════════════════════ IMPACT BAND ═══════════════════════ -->
+<section class="impact" #impact aria-labelledby="impact-title">
+  <div class="impact-card">
+    <div class="container">
+      <p class="eyebrow">The story so far</p>
+      <h2 id="impact-title" class="display-md impact-title" appSplit>Small gifts, <em>adding up.</em></h2>
+
+      <dl class="stats">
+        <div class="stat">
+          <dt>Raised directly for patients</dt>
+          <dd><span [appCountUp]="2.4" [countDecimals]="1" countPrefix="₹" countSuffix="Cr+">₹2.4Cr+</span></dd>
+        </div>
+        <div class="stat">
+          <dt>Patients supported</dt>
+          <dd><span [appCountUp]="1200" countSuffix="+">1,200+</span></dd>
+        </div>
+        <div class="stat">
+          <dt>AI verification rate</dt>
+          <dd><span [appCountUp]="98.4" [countDecimals]="1" countSuffix="%">98.4%</span></dd>
+        </div>
+        <div class="stat">
+          <dt>Platform fee, always</dt>
+          <dd>0%</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FEATURED CAUSES ═══════════════════════ -->
+<section class="section featured" #featuredSection aria-labelledby="featured-title">
+  <div class="container">
+    <div class="featured-head">
+      <div>
+        <p class="eyebrow">Live now</p>
+        <h2 id="featured-title" class="display-md" appSplit>Verified causes, <em>open for support.</em></h2>
+      </div>
+      <a routerLink="/campaigns" class="text-link">
+        See all causes
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+    <div class="featured-grid" *ngIf="featuredState() === 'loading'" aria-busy="true">
+      <div class="skeleton featured-skel" *ngFor="let s of [1, 2, 3]"></div>
+    </div>
+
+    <div class="featured-grid" *ngIf="featuredState() === 'ready'">
+      <app-campaign-card *ngFor="let c of featured()" [campaign]="c" class="featured-item"></app-campaign-card>
+    </div>
+
+    <p class="featured-empty" *ngIf="featuredState() === 'empty'">
+      New verified fundraisers are on their way.
+      <a routerLink="/create" class="text-link">Start one</a>
+    </p>
+  </div>
+</section>
+
+<app-next-chapter
+  link="/how-it-works"
+  number="02"
+  title="How it works"
+  description="Six steps from a hospital estimate to a settled bill."
+></app-next-chapter>

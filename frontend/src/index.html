@@ -1,21 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
-  <title>SevaFund India — AI-Verified Crowdfunding for Healthcare</title>
-  <meta name="description" content="India's first AI-verified crowdfunding platform. Transparent medical fundraising with 0% platform fee, UPI payments, and Section 80G tax benefits.">
+  <base href="/">
+  <title>SevaFund India — Every rupee, accounted for</title>
+  <meta name="description" content="AI-verified medical crowdfunding for India. Transparent fundraising with 0% platform fee, UPI payments, Section 80G tax receipts and direct hospital settlement.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#FF6B00">
+  <meta name="theme-color" content="#FBF7F0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0F0C09" media="(prefers-color-scheme: dark)">
   <meta name="robots" content="index, follow">
 
-  <meta property="og:title" content="SevaFund India — AI-Verified Crowdfunding">
+  <meta property="og:title" content="SevaFund India — Every rupee, accounted for">
   <meta property="og:description" content="Transparent medical fundraising with AI verification, 0% platform fee, and direct hospital transfers.">
   <meta property="og:type" content="website">
 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF6B00'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' fill='white' font-family='system-ui' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23F26B1D'/%3E%3Cpath d='M10 17.5l4 4 8-9' fill='none' stroke='%231A0E05' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@400;500;600;700&display=swap">
+  <!-- Devanagari glyphs for the "सेवा" wordmark only (subset via text=) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&text=%E0%A4%B8%E0%A5%87%E0%A4%B5%E0%A4%BE&display=swap">
+
+  <!-- Apply the saved / system theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var stored = localStorage.getItem('sevafund-theme');
+        if (stored === 'light' || stored === 'dark') {
+          theme = stored;
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark';
+        }
+      } catch (e) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>
