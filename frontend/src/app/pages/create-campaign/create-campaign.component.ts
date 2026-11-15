@@ -5,7 +5,7 @@ import { RouterModule, Router } from '@angular/router';
 import { CampaignService } from '../../services/campaign.service';
 import { AiService } from '../../services/ai.service';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, finalize, takeUntil } from 'rxjs/operators';
 
 const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL', 'ANIMALS'];
 
@@ -251,6 +251,33 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
             </div>
           </div>
 
+            <div class="form-group mt-4">
+              <label class="form-label" for="proof-document-type">Document type</label>
+              <select id="proof-document-type" class="input" [(ngModel)]="documentType" name="proof_document_type">
+                <option value="HOSPITAL_ESTIMATE">Hospital estimate or prescription</option>
+                <option value="DISCHARGE_SUMMARY">Discharge summary or medical report</option>
+                <option value="GOVERNMENT_ID">Government ID</option>
+                <option value="OTHER">Other supporting document</option>
+              </select>
+            </div>
+            <div class="form-group mt-4">
+              <label class="form-label" for="proof-documents">Supporting documents</label>
+              <input
+                id="proof-documents"
+                class="input"
+                type="file"
+                accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+                multiple
+                (change)="onDocumentsSelected($event)"
+              />
+              <small class="field-hint">PDF or UTF-8 text, up to 20 MB each. Retrieved passages are sent to AI verification as evidence.</small>
+              <small class="field-hint" *ngIf="uploadingDocs()">Uploading documents…</small>
+              <div class="field-error mt-2" *ngIf="uploadError()">{{ uploadError() }}</div>
+              <ul *ngIf="uploadedDocuments.length">
+                <li *ngFor="let doc of uploadedDocuments">{{ doc.title }} — ready for evidence retrieval</li>
+              </ul>
+            </div>
+
           <div class="form-group mt-4">
             <label class="form-label">Cover Image URL</label>
             <input
@@ -322,6 +349,17 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
             </div>
 
             <p class="audit-explanation">{{ liveScore()?.explanation }}</p>
+
+            <div class="suggestions-list" *ngIf="liveScore()?.supporting_evidence?.length">
+              <strong>Document evidence considered:</strong>
+              <ul>
+                <li *ngFor="let evidence of liveScore()!.supporting_evidence">
+                  <strong>{{ evidence.document_title }}</strong>
+                  <span *ngIf="evidence.page"> · page {{ evidence.page }}</span>
+                  <p>{{ evidence.excerpt }}</p>
+                </li>
+              </ul>
+            </div>
 
             <!-- Dimension Bars -->
             <div class="dim-breakdown" *ngIf="liveScore()?.dimension_scores">
@@ -886,6 +924,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
   enhanceError = signal('');
   verifying = signal(false);
   liveScore = signal<any>(null);
+  uploadedDocuments: any[] = [];
+  documentType = 'HOSPITAL_ESTIMATE';
+  uploadingDocs = signal(false);
+  uploadError = signal('');
   submitting = signal(false);
   submitError = signal('');
 
@@ -931,6 +973,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
   }
 
   runVerification() {
+    if (this.uploadingDocs()) {
+      this.uploadError.set('Wait for document uploads to finish before running verification.');
+      return;
+    }
     this.verifying.set(true);
     this.aiService.preCheckVerification({
       title: this.form.title,
@@ -938,6 +984,7 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
       goal_amount: this.form.goal_amount,
       story: this.form.story,
       hospital_name: this.form.hospital_name,
+      documents: this.uploadedDocuments,
     }).subscribe({
       next: (res) => {
         this.liveScore.set(res);
@@ -945,6 +992,25 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
       },
       error: () => this.verifying.set(false)
     });
+  }
+
+  onDocumentsSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files || []);
+    if (!files.length) return;
+    this.uploadError.set('');
+    this.uploadingDocs.set(true);
+    let remaining = files.length;
+    for (const file of files) {
+      this.aiService.uploadProofDocument(file, this.documentType).pipe(finalize(() => {
+        remaining--;
+        if (remaining === 0) this.uploadingDocs.set(false);
+      })).subscribe({
+        next: (document) => this.uploadedDocuments.push(document),
+        error: (err) => this.uploadError.set(err?.error?.detail || `Could not upload ${file.name}.`),
+      });
+    }
+    input.value = '';
   }
 
   getDimensions(): { label: string; value: number }[] {
@@ -960,6 +1026,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
 
   nextStep() {
     if (this.currentStep < 3) {
+      if (this.currentStep === 2 && this.uploadingDocs()) {
+        this.uploadError.set('Wait for document uploads to finish before continuing.');
+        return;
+      }
       this.currentStep++;
       if (this.currentStep === 3) this.runVerification();
     }
@@ -970,6 +1040,10 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
   }
 
   submitCampaign() {
+    if (this.uploadingDocs()) {
+      this.uploadError.set('Wait for document uploads to finish before submitting.');
+      return;
+    }
     this.submitting.set(true);
     this.submitError.set('');
     this.campaignService.createCampaign({
@@ -988,6 +1062,7 @@ export class CreateCampaignComponent implements OnInit, OnDestroy {
       hospital_patient_uhid: this.form.hospital_patient_uhid || undefined,
       is_80g_tax_exempt: this.form.is_80g_tax_exempt,
       direct_hospital_transfer: this.form.direct_hospital_transfer,
+      proof_documents: this.uploadedDocuments,
     }).subscribe({
       next: (c) => {
         this.submitting.set(false);

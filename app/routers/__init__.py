@@ -5,6 +5,7 @@ from app.routers.updates import router as updates_router
 from app.routers.payouts import router as payouts_router
 from app.routers.ai import router as ai_router
 from app.routers.admin import router as admin_router
+from app.routers.documents import router as documents_router
 
 __all__ = [
     "auth_router",
@@ -13,5 +14,6 @@ __all__ = [
     "updates_router",
     "payouts_router",
     "ai_router",
-    "admin_router"
+    "admin_router",
+    "documents_router"
 ]

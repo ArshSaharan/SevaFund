@@ -18,6 +18,14 @@ class BenchmarkComparison(BaseModel):
     benchmark_status: str  # "WITHIN_NORMAL_RANGE", "SLIGHTLY_ELEVATED", "SUSPICIOUSLY_EXCESSIVE", "UNCATALOGED"
     insight: str
 
+class EvidenceReference(BaseModel):
+    document_title: str
+    doc_type: str = "OTHER"
+    file_url: Optional[str] = None
+    page: Optional[int] = None
+    excerpt: str
+    relevance: float = 0.0
+
 class VerificationResult(BaseModel):
     authenticity_score: float = Field(..., description="Overall calculated authenticity score from 0 to 100")
     risk_level: str = Field(..., description="LOW, MEDIUM, HIGH, CRITICAL")
@@ -28,6 +36,7 @@ class VerificationResult(BaseModel):
     red_flags: List[str] = []
     positive_signals: List[str] = []
     missing_requirements: List[str] = []
+    supporting_evidence: List[EvidenceReference] = []
     confidence: float = 0.95
     model_used: str = "crowdfund-trust-v1"
 

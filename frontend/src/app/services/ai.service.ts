@@ -51,6 +51,19 @@ export class AiService {
     return this.http.post<VerificationResult>(`${this.apiUrl}/verify-request`, data);
   }
 
+  uploadProofDocument(file: File, docType = 'OTHER'): Observable<{
+    doc_type: string;
+    title: string;
+    file_url: string;
+    verified: boolean;
+  }> {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('doc_type', docType);
+    form.append('title', file.name);
+    return this.http.post<any>('http://localhost:8000/api/documents/upload', form);
+  }
+
   checkCostBenchmark(category: string, description: string, requestedAmount: number): Observable<BenchmarkComparison> {
     return this.http.post<BenchmarkComparison>(`${this.apiUrl}/benchmark-cost`, {
       category,

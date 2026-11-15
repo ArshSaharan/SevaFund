@@ -107,6 +107,14 @@ export interface VerificationResult {
   missing_requirements?: string[];
   confidence?: number;
   model_used?: string;
+  supporting_evidence?: Array<{
+    document_title: string;
+    doc_type: string;
+    file_url?: string;
+    page?: number;
+    excerpt: string;
+    relevance: number;
+  }>;
 }
 
 export interface StoryEnhanceResponse {

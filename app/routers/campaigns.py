@@ -25,6 +25,11 @@ def format_campaign_response(campaign: Campaign) -> dict:
         except Exception:
             docs = []
 
+    # Private uploads are only consumed by server-side retrieval, not served as public URLs.
+    for document in docs:
+        if str(document.get("file_url", "")).startswith("/private-documents/"):
+            document["file_url"] = None
+
     return {
         "id": campaign.id,
         "creator_id": campaign.creator_id,
@@ -231,6 +236,7 @@ def update_campaign(
 @router.post("/{campaign_id}/verify", response_model=VerificationResult)
 async def verify_campaign(
     campaign_id: int,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -240,6 +246,8 @@ async def verify_campaign(
     campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
     if not campaign:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Campaign not found")
+    if campaign.creator_id != current_user.id and current_user.role != "ADMIN":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to review private campaign evidence")
 
     docs = []
     if campaign.proof_documents_json:

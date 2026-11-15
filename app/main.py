@@ -9,7 +9,8 @@ from app.routers import (
     updates_router,
     payouts_router,
     ai_router,
-    admin_router
+    admin_router,
+    documents_router
 )
 
 # Initialize database schema tables
@@ -63,6 +64,7 @@ app.include_router(updates_router, prefix=settings.API_PREFIX)
 app.include_router(payouts_router, prefix=settings.API_PREFIX)
 app.include_router(ai_router, prefix=settings.API_PREFIX)
 app.include_router(admin_router, prefix=settings.API_PREFIX)
+app.include_router(documents_router, prefix=settings.API_PREFIX)
 
 @app.get("/", tags=["Health"])
 def root_index():
