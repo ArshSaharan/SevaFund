@@ -86,7 +86,7 @@ All 8 are in `scenarios.json`.
   - unresolved-information approvals: APPROVED on DA-02 or DA-07.
 - **Workload:** manual reviews (FLAG_FOR_REVIEW + REJECTED), information requests (NEEDS_MORE_INFORMATION), verification errors (counted separately), and approvals pending confirmation.
 - **API reliability:** successful requests divided by HTTP requests, per prompt, with failure categories.
-- **Latency:** wall-clock seconds per successful request: mean, median and p95 by nearest rank. With 8 or fewer requests, p95 is the maximum.
+- **Latency:** seconds inside each successful HTTP request (measured around the request itself, so 6 s pacing is excluded): mean, median and p95 by nearest rank. With 8 or fewer requests, p95 is the maximum.
 - **Scoring failures:** a request that failed is scored by the system's real fail-closed decision. A request that was never made (because the run stopped) is excluded and reported as missing.
 - **Uncertainty:** Wilson 95% intervals are reported. There are no significance tests and no claims of improvement.
 - **Result labels:** every number in the report carries one of three labels:

@@ -1,0 +1,10 @@
+{
+  "registered_at_utc": "2026-11-16T20:12:43.099429+00:00",
+  "files": {
+    "evaluation/date_aware_dev_eval/scenarios.json": "5c73f4c0fff1ac43580008468cba9d79ba546449d6284c79a9e85cfc9138ed75",
+    "evaluation/date_aware_dev_eval/PREREGISTRATION.md": "f200b67f6c9731da2748cf59cb7e9c1b8473e6780050316c88743dc8d242d98a",
+    "evaluation/run_date_aware_dev_eval.py": "f20b2ce869a4efa7348a07a474f7891aebbb9b56b8841794aa79536d165e9a03",
+    "tests/test_date_aware_dev_eval.py": "5a84590b86b80f757f61356f83978eadfb0255aebcd6121fb794b9dae3405fa6"
+  },
+  "rule": "Commit this manifest before any API call. The scenarios, labels, metrics and safety criteria in these files are not changed after results are seen."
+}
