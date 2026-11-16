@@ -225,3 +225,79 @@ def test_pilot_selection_is_balanced_across_labels_and_categories():
     assert sorted(c["ground_truth"] for c in pilot) == ["borderline", "fraudulent", "legitimate"]
     assert len({c["input"]["category"] for c in pilot}) == 3
     assert [c["case_id"] for c in fw.pilot_cases(rows, 1)] == [c["case_id"] for c in pilot]
+
+
+# ------------------------------------------------ controls for the 10-group evaluation
+def run_capped(cases, store, fake, generation=None, embedding=None, max_calls=1000, stop_after=None):
+    limits = {k: v for k, v in (("generation", generation), ("embedding", embedding)) if v is not None}
+    transport = fw.BudgetedTransport(fake, "test-key", max_calls, stage_limits=limits,
+                                     already_used=store.cumulative_calls())
+    return asyncio.run(fw.execute(cases, fw.CONFIGS, store, transport, "f" * 64,
+                                  max_transient_generation_failures=stop_after))
+
+
+def test_per_stage_caps_are_enforced_independently(dataset, tmp_path):
+    fake = FakeGemini()
+    state = run_capped(fw.load_cases(dataset), fw.Store(tmp_path / "s"), fake, generation=4, embedding=10)
+    assert fake.calls.count("generation") == 4 and state["stopped_reason"] == "BUDGET_EXHAUSTED"
+    assert state["cumulative_calls"]["generation"] == 4
+
+
+def test_budget_is_cumulative_across_resumed_runs(dataset, tmp_path):
+    cases = fw.load_cases(dataset)
+    first = FakeGemini(fail_after=3, category="QUOTA_EXHAUSTED")
+    state = run_capped(cases, fw.Store(tmp_path / "s"), first, generation=5)
+    assert state["stopped_reason"] == "QUOTA_EXHAUSTED"
+    used = state["cumulative_calls"]["generation"]          # successful and refused requests both count
+    assert used == first.calls.count("generation") + 1
+    second = FakeGemini()
+    state = run_capped(cases, fw.Store(tmp_path / "s"), second, generation=5)
+    assert second.calls.count("generation") == 5 - used     # only the remaining approved budget is spent
+    assert state["cumulative_calls"]["generation"] == 5 and state["stopped_reason"] == "BUDGET_EXHAUSTED"
+
+
+def test_early_stop_after_second_timeout_or_server_error(dataset, tmp_path):
+    fake = FakeGemini(fail_after=0, category="READ_TIMEOUT")
+    state = run_capped(fw.load_cases(dataset), fw.Store(tmp_path / "s"), fake, stop_after=1)
+    assert state["stopped_reason"] == "EARLY_STOP_TRANSIENT_FAILURES"
+    assert state["transient_generation_failures_total"] == 2
+    again = FakeGemini()
+    resumed = run_capped(fw.load_cases(dataset), fw.Store(tmp_path / "s"), again, stop_after=1)
+    assert again.calls == [] and resumed["stopped_reason"] == "EARLY_STOP_TRANSIENT_FAILURES"
+
+
+def test_explanations_are_recorded_for_gemini_and_v3(dataset, tmp_path):
+    store = fw.Store(tmp_path / "s")
+    run(fw.load_cases(dataset)[:2], store, FakeGemini(recommendation="FLAG_FOR_REVIEW"))
+    gemini = next(r for r in store.cache.values() if r["config"] == "gemini_rag" and r["stage"] == "result")
+    hybrid = next(r for r in store.cache.values() if r["config"] == "hybrid")
+    assert {"summary", "red_flag_texts", "missing_requirements", "risk_level"} <= set(gemini)
+    assert {"v3_reasons", "v3_finding_codes", "escalated_by_gemini"} <= set(hybrid)
+
+
+def test_eval_v1_selection_and_report_on_a_fake_run(tmp_path):
+    """The 10-group selection is valid and the report renders from a fake (network-free) run."""
+    import sys
+    sys.path.insert(0, str(ROOT / "evaluation"))
+    import report_gemini_eval_v1 as rep
+    from select_gemini_eval_v1_cases import build
+    rows, manifest = build()
+    assert len({m["group"] for m in manifest}) == 10
+    assert sorted(m["label"] for m in manifest).count("fraudulent") == 4
+    assert {m["category"] for m in manifest} == {"MEDICAL", "EDUCATION", "COMMUNITY"}
+    selection_dir = tmp_path / "sel"
+    selection_dir.mkdir()
+    (selection_dir / "cases.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    (selection_dir / "selection.json").write_text(json.dumps({"classification": "diagnostic", "cases": manifest}))
+    experiment = tmp_path / "exp"
+    state = run_capped(rows, fw.Store(experiment), FakeGemini(recommendation="FLAG_FOR_REVIEW"), generation=20, embedding=10,
+                       stop_after=1)
+    assert state["cumulative_calls"] == {"generation": 20, "embedding": 10}
+    freeze = tmp_path / "freeze.json"
+    freeze.write_text(json.dumps({"git_head": "x", "working_tree_clean": True,
+                                  "files": {"app/services/rag.py": rep.sha(ROOT / "app/services/rag.py")}}))
+    report = rep.build(experiment, selection_dir / "selection.json", tmp_path / "none.json", freeze)
+    text = rep.render(report, "Interpretation.")
+    assert report["metrics"]["gemini_rag"]["tp"] == 4 and report["metrics"]["gemini_rag"]["legit_escalated"] == 4
+    for section in ("## 1.", "## 4.", "## 7.", "## 9.", "## 11."):
+        assert section in text

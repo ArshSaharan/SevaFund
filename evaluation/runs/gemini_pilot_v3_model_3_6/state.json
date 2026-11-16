@@ -1,0 +1,16 @@
+{
+  "updated_at": "2026-11-16T13:37:09.523373+00:00",
+  "completed_this_run": {
+    "heuristics_only": 3,
+    "heuristics_lexical": 3,
+    "gemini_no_rag": 3,
+    "gemini_rag": 3,
+    "hybrid": 3
+  },
+  "stopped_reason": null,
+  "calls_this_run": {
+    "generation": 6,
+    "embedding": 3
+  },
+  "resume": null
+}

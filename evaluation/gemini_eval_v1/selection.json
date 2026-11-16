@@ -1,0 +1,117 @@
+{
+  "classification": "Diagnostic testing on previously available synthetic data; not independent validation.",
+  "rules": "Select the 10-group diagnostic sample for the controlled Gemini 3.6 Flash evaluation (v1).\n\nDIAGNOSTIC TESTING ON PREVIOUSLY AVAILABLE SYNTHETIC DATA - NOT INDEPENDENT VALIDATION.\nEvery case comes from a corpus that was already used to develop or evaluate earlier versions.\n\nSelection rules (fixed before any Gemini call):\n  * 10 distinct scenario groups: 4 legitimate, 4 fraudulent, 2 borderline; medical 4, education 3, community 3.\n  * The three groups used in the two earlier 3-case pilots are excluded.\n  * Groups chosen for the challenge types requested (see REASONS); within a 300-case group, variant 4 is taken\n    (the 10 variants differ only in names, amounts and places).\n  * No legitimate group in the 300-case corpus has incomplete evidence, so one legitimate case with a preliminary\n    record is taken from the 150-case corpus (variant 2 of its family is the incomplete-evidence variant).\nSource corpora are read only; the selected rows are copied into evaluation/gemini_eval_v1/cases.jsonl.",
+  "cases": [
+    {
+      "case_id": "V3T-064",
+      "group": "internally_consistent_but_forged_clinic_file",
+      "category": "MEDICAL",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Fraud with internally consistent but fabricated paperwork (estimate and service note agree); no red-flag keywords; frozen V3 approves this group."
+    },
+    {
+      "case_id": "V3T-244",
+      "group": "supplier_ledger_closed",
+      "category": "COMMUNITY",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Fraud contradicted by an independent record (supplier ledger shows the invoice already paid and the account closed); frozen V3 misses this group."
+    },
+    {
+      "case_id": "V3T-154",
+      "group": "equipment_dispatch_shortfall",
+      "category": "EDUCATION",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Fraud via an inconsistent quantity/amount (request for 54 tablets vs 31 recorded in the asset register); no red-flag keywords."
+    },
+    {
+      "case_id": "V3T-044",
+      "group": "patient_and_record_crossing",
+      "category": "MEDICAL",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Fraud via a contradiction between the campaign and its documents (pharmacy ledger is for a different patient and file)."
+    },
+    {
+      "case_id": "V3T-084",
+      "group": "family_cost_share_unclear",
+      "category": "MEDICAL",
+      "label": "borderline",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Borderline: preliminary estimate with family contribution and net balance unconfirmed; frozen V3 approves this group (unsafe-approval test)."
+    },
+    {
+      "case_id": "V3T-194",
+      "group": "account_image_without_issue_date",
+      "category": "EDUCATION",
+      "label": "borderline",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Borderline: cropped account screenshot without issue date or registrar seal; no red-flag keywords; frozen V3 approves this group."
+    },
+    {
+      "case_id": "V3T-224",
+      "group": "compost_route_cold_store",
+      "category": "COMMUNITY",
+      "label": "legitimate",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Legitimate community project whose wording matches known fraud lexicons (false-positive stress test)."
+    },
+    {
+      "case_id": "V3T-104",
+      "group": "accessible_exam_studio",
+      "category": "EDUCATION",
+      "label": "legitimate",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Legitimate education access costs with a matching invoice and registration record; no red-flag keywords."
+    },
+    {
+      "case_id": "V3T-024",
+      "group": "island_burn_recovery",
+      "category": "MEDICAL",
+      "label": "legitimate",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Legitimate medical rehabilitation with unusual travel and lodging costs justified by a separate quote."
+    },
+    {
+      "case_id": "E150-102",
+      "group": "hill_footpath_lighting",
+      "category": "COMMUNITY",
+      "label": "legitimate",
+      "source_corpus": "independent_test_150.jsonl",
+      "source_sha256": "099016d5da873766fccbd199337a153de62da1ee2b6c1bb8f35b9c5b43b510e0",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Legitimate community project with incomplete supporting evidence (preliminary record; final authorization stamp still being processed)."
+    }
+  ],
+  "cases_jsonl_sha256": "ce6e4bed21764366fe12a33a7055805a4f0b5c6771d9b3cd3ed92a98964a703c"
+}

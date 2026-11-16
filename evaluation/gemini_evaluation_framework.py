@@ -67,6 +67,11 @@ class BudgetExhausted(GeminiAPIError):
         super().__init__("framework", "BUDGET_EXHAUSTED")
 
 
+# Generation failures that count towards the early-stop rule (timeouts and server-side errors).
+TRANSIENT_FAILURES = {"READ_TIMEOUT", "CONNECT_TIMEOUT", "WRITE_TIMEOUT", "POOL_TIMEOUT", "TIMEOUT", "SERVER_ERROR",
+                      "NETWORK_ERROR"}
+
+
 class DataAuthorizationError(RuntimeError):
     pass
 
@@ -211,6 +216,15 @@ class Store:
     def save_state(self, state: dict) -> None:
         self.state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
 
+    def cumulative_calls(self) -> Counter:
+        """HTTP requests already made by earlier runs of this experiment (budgets are per experiment)."""
+        if not self.state_path.exists():
+            return Counter()
+        return Counter(json.loads(self.state_path.read_text()).get("cumulative_calls", {}))
+
+    def transient_generation_failures(self) -> int:
+        return sum(f["stage"] == "generation" and f["category"] in TRANSIENT_FAILURES for f in self.failures())
+
 
 class BudgetedTransport:
     """Wraps the real (or a fake) POST function: enforces --max-calls, paces requests and counts them.
@@ -218,13 +232,17 @@ class BudgetedTransport:
     Retries inside the shared client are disabled (max_attempts=1), so every counted call is exactly one
     HTTP request against the quota; a failed request is recorded and retried on a later (resumed) run."""
 
-    def __init__(self, post: Transport, api_key: str, max_calls: int, min_interval_seconds: float = 0.0):
+    def __init__(self, post: Transport, api_key: str, max_calls: int, min_interval_seconds: float = 0.0,
+                 stage_limits: Optional[Dict[str, int]] = None, already_used: Optional[Counter] = None):
         self.post, self.api_key, self.max_calls = post, api_key, max_calls
         self.min_interval, self._last = min_interval_seconds, 0.0
+        self.stage_limits = stage_limits or {}
+        self.already_used = Counter(already_used or {})        # calls made by earlier runs of the experiment
         self.calls = Counter()
 
     async def __call__(self, url, api_key, payload, stage, timeout_seconds, max_attempts=1):
-        if sum(self.calls.values()) >= self.max_calls:
+        used = self.already_used + self.calls
+        if sum(used.values()) >= self.max_calls or used[stage] >= self.stage_limits.get(stage, self.max_calls):
             raise BudgetExhausted()
         wait = self.min_interval - (time.monotonic() - self._last)
         if wait > 0:
@@ -346,7 +364,11 @@ async def run_gemini(case: dict, chunks: Optional[List[dict]], transport: Budget
     decision = _legacy_decision(result)
     return {"decision": decision, "flagged": decision in ("FLAG_FOR_REVIEW", "REJECTED") or bool(result.red_flags),
             "red_flags": len(result.red_flags), "authenticity_score": result.authenticity_score,
-            "generation_latency_ms": (time.perf_counter() - started) * 1000, "model": result.model_used}
+            "generation_latency_ms": (time.perf_counter() - started) * 1000, "model": result.model_used,
+            "risk_level": result.risk_level, "summary": result.summary, "red_flag_texts": list(result.red_flags),
+            "missing_requirements": list(result.missing_requirements),
+            "positive_signals": list(result.positive_signals),
+            "dimension_scores": result.dimension_scores.model_dump()}
 
 
 def hybrid_decision(case: dict, gemini_rag: Optional[dict]) -> dict:
@@ -354,7 +376,8 @@ def hybrid_decision(case: dict, gemini_rag: Optional[dict]) -> dict:
     from app.services.development_approval_workflow import AutomatedOutcome, start
     from app.services.development_verifier_v3 import verify_case
     from evaluate_development_verifier_v3 import v3_input
-    v3 = verify_case(v3_input(case["input"])).decision.value
+    v3_result = verify_case(v3_input(case["input"]))
+    v3 = v3_result.decision.value
     if v3 in ("FLAG_FOR_REVIEW", "REJECTED", "VERIFICATION_ERROR"):
         decision = v3
     elif gemini_rag is None:
@@ -366,14 +389,22 @@ def hybrid_decision(case: dict, gemini_rag: Optional[dict]) -> dict:
     state = start(AutomatedOutcome(decision=decision, category=case["input"]["category"],
                                    beneficiary_type=case["input"].get("beneficiary_type"))).state.value
     return {"decision": decision, "flagged": decision in ("FLAG_FOR_REVIEW", "REJECTED"), "v3_decision": v3,
-            "workflow_state": state}
+            "workflow_state": state, "v3_reasons": v3_result.reasons[:6],
+            "v3_finding_codes": sorted({f.code for f in v3_result.findings}),
+            "v3_information_requests": v3_result.information_requests[:4],
+            "escalated_by_gemini": decision == "FLAG_FOR_REVIEW" and v3 not in ("FLAG_FOR_REVIEW", "REJECTED")}
 
 
 # ------------------------------------------------------------------- execute
 async def execute(cases: List[dict], configs: List[str], store: Store, transport: Optional[BudgetedTransport],
-                  dataset_sha: str, data_authorization: Optional[str] = None) -> dict:
-    """Run every (config, case) job not already cached.  Stops cleanly on quota/auth/budget errors."""
+                  dataset_sha: str, data_authorization: Optional[str] = None,
+                  max_transient_generation_failures: Optional[int] = None) -> dict:
+    """Run every (config, case) job not already cached.  Stops cleanly on quota/auth/budget errors and, if
+    `max_transient_generation_failures` is set, as soon as timeouts/server errors exceed it (all runs counted)."""
     stopped, completed = None, Counter()
+    if max_transient_generation_failures is not None and \
+            store.transient_generation_failures() > max_transient_generation_failures:
+        stopped = "EARLY_STOP_TRANSIENT_FAILURES"
     model = settings.GEMINI_MODEL
     for case in cases:
         outgoing = redact(case) if data_authorization and not case.get("synthetic") else case
@@ -421,8 +452,14 @@ async def execute(cases: List[dict], configs: List[str], store: Store, transport
                             "exception_type": exc.exception_type, "duration_seconds": exc.duration_seconds})
                 if exc.category in STOP_CATEGORIES:
                     stopped = exc.category
+                elif (max_transient_generation_failures is not None and exc.stage == "generation"
+                      and store.transient_generation_failures() > max_transient_generation_failures):
+                    stopped = "EARLY_STOP_TRANSIENT_FAILURES"
+    cumulative = store.cumulative_calls() + (transport.calls if transport else Counter())
     state = {"updated_at": datetime.now(timezone.utc).isoformat(), "completed_this_run": dict(completed),
              "stopped_reason": stopped, "calls_this_run": dict(transport.calls) if transport else {},
+             "cumulative_calls": dict(cumulative),
+             "transient_generation_failures_total": store.transient_generation_failures(),
              "resume": "Re-run the same command; cached results are skipped." if stopped else None}
     store.save_state(state)
     return state
@@ -499,6 +536,10 @@ def main(argv=None):
     parser.add_argument("--daily-generation-quota", type=int, default=20)
     parser.add_argument("--daily-embedding-quota", type=int, default=1000)
     parser.add_argument("--max-calls", type=int)
+    parser.add_argument("--max-generation-calls", type=int, help="per-experiment cap on generation requests")
+    parser.add_argument("--max-embedding-calls", type=int, help="per-experiment cap on embedding requests")
+    parser.add_argument("--stop-after-transient-failures", type=int,
+                        help="stop when generation timeouts/server errors exceed this number (all runs counted)")
     parser.add_argument("--min-interval-seconds", type=float, default=6.0,
                         help="pause between API requests (default 6s, i.e. at most 10 requests per minute)")
     parser.add_argument("--pilot-per-label", type=int,
@@ -529,8 +570,13 @@ def main(argv=None):
         if not args.max_calls:
             raise SystemExit("Refusing to call Gemini without an explicit --max-calls budget")
         from app.services.gemini_api import post_json
-        transport = BudgetedTransport(post_json, settings.GEMINI_API_KEY, args.max_calls, args.min_interval_seconds)
+        limits = {k: v for k, v in (("generation", args.max_generation_calls), ("embedding", args.max_embedding_calls))
+                  if v is not None}
+        transport = BudgetedTransport(post_json, settings.GEMINI_API_KEY, args.max_calls, args.min_interval_seconds,
+                                      stage_limits=limits)
     store = Store(directory)
+    if transport is not None:
+        transport.already_used = store.cumulative_calls()
     plan_path = directory / "plan.json"
     if plan_path.exists() and json.loads(plan_path.read_text())["case_ids"] != plan["case_ids"]:
         raise SystemExit("This experiment's saved plan uses different case IDs; use a new --experiment name")
@@ -540,7 +586,8 @@ def main(argv=None):
         (directory / "report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(result, indent=2))
         return result
-    state = asyncio.run(execute(cases, configs, store, transport, plan["dataset_sha256"], args.data_authorization))
+    state = asyncio.run(execute(cases, configs, store, transport, plan["dataset_sha256"], args.data_authorization,
+                                args.stop_after_transient_failures))
     print(json.dumps(state, indent=2))
     return state
 
