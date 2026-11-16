@@ -39,6 +39,9 @@ class VerificationResult(BaseModel):
     supporting_evidence: List[EvidenceReference] = []
     confidence: float = 0.95
     model_used: str = "crowdfund-trust-v1"
+    # Set only when local heuristics were used instead of Gemini. Contains a
+    # sanitized category, never the provider's message or request contents.
+    fallback_reason: Optional[str] = None
 
 class StoryEnhanceRequest(BaseModel):
     category: str

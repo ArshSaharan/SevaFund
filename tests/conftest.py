@@ -9,6 +9,17 @@ TEST_DATABASE_URL = "sqlite:///./test_crowdfund.db"
 test_engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
+@pytest.fixture(autouse=True)
+def no_live_gemini(monkeypatch):
+    """Tests must never spend the real Gemini quota; force the local fallback."""
+    from app.config import settings
+    from app.services.ai_verifier import ai_verifier
+    monkeypatch.setattr(settings, "GEMINI_API_KEY", "")
+    monkeypatch.setattr(ai_verifier, "api_key", "")
+    from app.services.ai_assistant import ai_assistant
+    monkeypatch.setattr(ai_assistant, "api_key", "")
+
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
     Base.metadata.create_all(bind=test_engine)
