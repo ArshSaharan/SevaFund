@@ -52,8 +52,13 @@ ai_verifier_module = importlib.import_module("app.services.ai_verifier")
 from app.services.gemini_api import GeminiAPIError
 
 CONFIGS = ["heuristics_only", "heuristics_lexical", "gemini_no_rag", "gemini_rag", "hybrid"]
-API_CONFIGS = {"gemini_no_rag", "gemini_rag", "hybrid"}
-CALLS_PER_CASE = {"gemini_no_rag": {"generation": 1}, "gemini_rag": {"embedding": 1, "generation": 1}, "hybrid": {}}
+# Opt-in development configurations for the improved system (hybrid v2): the dated prompt (one generation call,
+# sharing gemini_rag's retrieval) and the revised escalation policy (no call).
+V2_CONFIGS = ["gemini_rag_dated", "hybrid_v2"]
+ALL_CONFIGS = CONFIGS + V2_CONFIGS
+API_CONFIGS = {"gemini_no_rag", "gemini_rag", "hybrid", "gemini_rag_dated", "hybrid_v2"}
+CALLS_PER_CASE = {"gemini_no_rag": {"generation": 1}, "gemini_rag": {"embedding": 1, "generation": 1}, "hybrid": {},
+                  "gemini_rag_dated": {"generation": 1}, "hybrid_v2": {}}
 # Any of these stops the run (resume later) instead of hammering the API.
 STOP_CATEGORIES = {"QUOTA_EXHAUSTED", "RATE_LIMIT", "RESOURCE_EXHAUSTED", "AUTHENTICATION", "PERMISSION_DENIED",
                    "MODEL_NOT_FOUND", "BUDGET_EXHAUSTED"}
@@ -153,6 +158,8 @@ def build_plan(cases: List[dict], configs: List[str], dataset: Path, per_cluster
     for config in configs:
         for stage, count in CALLS_PER_CASE.get(config, {}).items():
             calls[stage] += count * len(cases)
+    if "gemini_rag_dated" in configs and "gemini_rag" not in configs:
+        calls["embedding"] += len(cases)                 # retrieval is shared; it is fetched once per case
     separate = max(math.ceil(calls["generation"] / daily_generation_quota) if daily_generation_quota else 0,
                    math.ceil(calls["embedding"] / daily_embedding_quota) if daily_embedding_quota else 0)
     shared = math.ceil(sum(calls.values()) / daily_generation_quota) if daily_generation_quota else 0
@@ -395,6 +402,50 @@ def hybrid_decision(case: dict, gemini_rag: Optional[dict]) -> dict:
             "escalated_by_gemini": decision == "FLAG_FOR_REVIEW" and v3 not in ("FLAG_FOR_REVIEW", "REJECTED")}
 
 
+def reference_date_for(case: dict):
+    """The case's submission date if recorded, else today's UTC date (recorded with every result)."""
+    from datetime import date as _date
+    submitted = case["input"].get("submitted_on")
+    return (_date.fromisoformat(submitted) if submitted else datetime.now(timezone.utc).date()), \
+        (_date.fromisoformat(submitted) if submitted else None)
+
+
+async def run_gemini_dated(case: dict, chunks: List[dict], transport: BudgetedTransport) -> dict:
+    """Hybrid-v2 Gemini call: dated prompt with categorised, quoted concerns (development path only)."""
+    from app.services.development_gemini_verification import verify_with_gemini
+    reference, submitted = reference_date_for(case)
+    outcome = await verify_with_gemini(case["input"], chunks, reference, submitted, transport=transport,
+                                       api_key=transport.api_key, model=settings.GEMINI_MODEL)
+    if outcome.status != "OK":
+        raise GeminiAPIError("generation", outcome.failure_category or "UNKNOWN")
+    return {"decision": outcome.decision, "flagged": outcome.decision in ("FLAG_FOR_REVIEW", "REJECTED")
+            or bool(outcome.red_flag_texts), "red_flags": len(outcome.red_flag_texts),
+            "red_flag_texts": outcome.red_flag_texts, "missing_requirements": outcome.missing_requirements,
+            "concerns": outcome.concerns, "summary": outcome.summary, "risk_level": outcome.risk_level,
+            "generation_latency_ms": (outcome.latency_seconds or 0) * 1000, "model": outcome.model,
+            "reference_date": reference.isoformat()}
+
+
+def hybrid_v2_decision(case: dict, dated: dict, chunks: List[dict]) -> dict:
+    """Frozen V3 + dated Gemini under the hybrid-v2 policy, then the approval workflow."""
+    from app.services.development_gemini_verification import assess_dates, combine
+    from app.services.development_verifier_v3 import verify_case
+    from evaluate_development_verifier_v3 import v3_input
+    from datetime import date as _date
+    data = case["input"]
+    v3 = verify_case(v3_input(data))
+    reference = _date.fromisoformat(dated["reference_date"])
+    dates = assess_dates([(d.get("title", ""), d.get("content", "")) for d in data.get("documents", [])], reference)
+    campaign_text = " ".join(str(data.get(k) or "") for k in ("title", "story", "beneficiary_name", "city", "state"))
+    out = combine(v3.decision.value, {"status": "OK", **dated}, chunks, campaign_text, dates, category=data["category"],
+                  beneficiary_type=data.get("beneficiary_type"), v3_information_requests=v3.information_requests)
+    return {"decision": out.decision, "flagged": out.decision in ("FLAG_FOR_REVIEW", "REJECTED"),
+            "v3_decision": v3.decision.value, "workflow_state": out.workflow_state, "triggers": out.triggers,
+            "reasons": out.reasons, "information_requests": out.information_requests[:6],
+            "unverified_concerns": out.unverified_concerns, "vetoed_concerns": out.vetoed_concerns,
+            "policy_version": out.policy_version}
+
+
 # ------------------------------------------------------------------- execute
 async def execute(cases: List[dict], configs: List[str], store: Store, transport: Optional[BudgetedTransport],
                   dataset_sha: str, data_authorization: Optional[str] = None,
@@ -423,7 +474,7 @@ async def execute(cases: List[dict], configs: List[str], store: Store, transport
                     record = await run_offline(config, outgoing)
                 elif config == "gemini_no_rag":
                     record = await run_gemini(outgoing, None, transport)
-                elif config == "gemini_rag":
+                elif config in ("gemini_rag", "gemini_rag_dated"):
                     retrieval_key = store.key("gemini_rag", case["case_id"], "retrieval", stage_fp)
                     cached = store.get(retrieval_key)
                     if cached:
@@ -435,8 +486,17 @@ async def execute(cases: List[dict], configs: List[str], store: Store, transport
                                                   "stage": "retrieval", "chunks": chunks,
                                                   "retrieval": retrieval_metrics(outgoing, chunks),
                                                   "latency_ms": (time.perf_counter() - started) * 1000})
-                    record = await run_gemini(outgoing, chunks, transport)
+                    if config == "gemini_rag":
+                        record = await run_gemini(outgoing, chunks, transport)
+                    else:
+                        record = await run_gemini_dated(outgoing, chunks, transport)
                     record["retrieval"] = retrieval_metrics(outgoing, chunks)
+                elif config == "hybrid_v2":                 # reuses the cached dated Gemini result; no call
+                    dated = store.get(store.key("gemini_rag_dated", case["case_id"], "result", stage_fp))
+                    retrieved = store.get(store.key("gemini_rag", case["case_id"], "retrieval", stage_fp))
+                    if dated is None:
+                        continue
+                    record = hybrid_v2_decision(outgoing, dated, (retrieved or {}).get("chunks", []))
                 else:                                       # hybrid reuses the cached gemini_rag result
                     rag_key = store.key("gemini_rag", case["case_id"], "result", stage_fp)
                     rag_record = store.get(rag_key)
@@ -549,7 +609,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     configs = [c for c in args.configs.split(",") if c]
-    unknown = set(configs) - set(CONFIGS)
+    unknown = set(configs) - set(ALL_CONFIGS)
     if unknown:
         raise SystemExit(f"Unknown configurations: {sorted(unknown)}")
     loaded = load_cases(args.dataset, args.data_authorization)

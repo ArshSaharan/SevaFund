@@ -301,3 +301,48 @@ def test_eval_v1_selection_and_report_on_a_fake_run(tmp_path):
     assert report["metrics"]["gemini_rag"]["tp"] == 4 and report["metrics"]["gemini_rag"]["legit_escalated"] == 4
     for section in ("## 1.", "## 4.", "## 7.", "## 9.", "## 11."):
         assert section in text
+
+
+# ---------------------------------------------------------------- hybrid v2 configurations
+class FakeDatedGemini(FakeGemini):
+    """Returns the dated schema (structured concerns) for generation requests."""
+
+    async def __call__(self, url, api_key, payload, stage, timeout_seconds, max_attempts=2):
+        if stage == "generation" and self.fail_after is not None and self.calls.count("generation") >= self.fail_after:
+            raise GeminiAPIError(stage, self.category, 503)
+        self.calls.append(stage)
+        self.payloads.append(json.dumps(payload))
+        if stage == "embedding":
+            return {"embeddings": [{"values": [1.0, float(i % 3), 0.5]} for i in range(len(payload["requests"]))]}
+        body = {**verification_json("NEEDS_MORE_INFO", ["Diagnosis not specified"]),
+                "concerns": [{"category": "MISSING_INFORMATION", "description": "Diagnosis not specified"}]}
+        return {"candidates": [{"content": {"parts": [{"text": json.dumps(body)}]}, "finishReason": "STOP"}]}
+
+
+def test_v2_configs_share_retrieval_and_cost_one_generation_call(dataset, tmp_path):
+    cases = fw.load_cases(dataset)
+    plan = fw.build_plan(cases, ["gemini_rag", "hybrid", "gemini_rag_dated", "hybrid_v2"], dataset, None, 1, 20, 1000)
+    assert plan["api_calls_required"] == {"generation": 12, "embedding": 6}
+    fake = FakeDatedGemini()
+    transport = fw.BudgetedTransport(fake, "test-key", 100)
+    asyncio.run(fw.execute(cases, ["gemini_rag", "gemini_rag_dated", "hybrid_v2"], fw.Store(tmp_path / "s"), transport, "f" * 64))
+    assert fake.calls.count("embedding") == 6 and fake.calls.count("generation") == 12
+    store = fw.Store(tmp_path / "s")
+    dated = [r for r in store.cache.values() if r.get("config") == "gemini_rag_dated"]
+    v2 = [r for r in store.cache.values() if r.get("config") == "hybrid_v2"]
+    assert len(dated) == 6 and all("reference_date" in r for r in dated)
+    assert any("VERIFICATION DATE" in p for p in fake.payloads)
+    assert len(v2) == 6 and all(r["workflow_state"] != "VERIFIED_ACTIVE" for r in v2)
+    # a generic information gap on Gemini's information request never escalates under hybrid v2
+    assert all(r["decision"] != "FLAG_FOR_REVIEW" or r["v3_decision"] in ("FLAG_FOR_REVIEW", "REJECTED") for r in v2)
+
+
+def test_dated_call_failure_is_recorded_and_counts_toward_the_stop_rule(dataset, tmp_path):
+    fake = FakeDatedGemini(fail_after=0, category="SERVER_ERROR")
+    transport = fw.BudgetedTransport(fake, "test-key", 100)
+    store = fw.Store(tmp_path / "s")
+    state = asyncio.run(fw.execute(fw.load_cases(dataset), ["gemini_rag_dated", "hybrid_v2"], store, transport, "f" * 64,
+                                   max_transient_generation_failures=1))
+    assert state["stopped_reason"] == "EARLY_STOP_TRANSIENT_FAILURES"
+    assert fake.calls.count("generation") == 0 and state["transient_generation_failures_total"] == 2
+    assert not [r for r in store.cache.values() if r.get("config") == "hybrid_v2"]
