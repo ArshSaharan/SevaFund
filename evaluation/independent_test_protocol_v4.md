@@ -74,6 +74,12 @@ independent contacts, plus the campaign-supplied ones to test that they are neve
 makes it possible to measure what the approval workflow is for: **how many fraudulent campaigns
 reach VERIFIED_ACTIVE**, and how many contacts that costs.
 
+**Tooling.** Authors follow `evaluation/independent_test_v4/AUTHORING_GUIDE.md` (with `example_case.json`).
+The coordinator validates each submission and seals it with
+`evaluation/validate_independent_submission.py validate <file> --seal <manifest>`, which checks structure,
+group sizes, quotas, pattern shares, keyword-free cases and near-duplicates. The external-confirmation step is
+exercised with the same contact records as `evaluation/confirmation_pilot_protocol.md`.
+
 ## 4. Labelling
 
 - Two labellers per case, working independently and blind to every engine's output. Each assigns:
@@ -82,7 +88,9 @@ reach VERIFIED_ACTIVE**, and how many contacts that costs.
   - whether the fraud is *detectable from the dossier* or only *through external confirmation*;
   - `gold_evidence_titles`: the documents that establish the decisive fact, used for
     retrieval recall@k and MRR.
-- Disagreements are adjudicated by a third person. Report Cohen's κ before adjudication.
+- Disagreements are adjudicated by a third person. Report Cohen's κ before adjudication
+  (`validate_independent_submission.py agreement sheet_a.csv sheet_b.csv`; template
+  `independent_test_v4/labeling_sheet_template.csv`).
 - Labels are hashed and frozen before any engine runs. A label is never changed after results are
   seen.
 

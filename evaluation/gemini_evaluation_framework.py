@@ -54,7 +54,9 @@ from app.services.gemini_api import GeminiAPIError
 CONFIGS = ["heuristics_only", "heuristics_lexical", "gemini_no_rag", "gemini_rag", "hybrid"]
 API_CONFIGS = {"gemini_no_rag", "gemini_rag", "hybrid"}
 CALLS_PER_CASE = {"gemini_no_rag": {"generation": 1}, "gemini_rag": {"embedding": 1, "generation": 1}, "hybrid": {}}
-STOP_CATEGORIES = {"QUOTA_EXHAUSTED", "AUTHENTICATION", "PERMISSION_DENIED", "MODEL_NOT_FOUND", "BUDGET_EXHAUSTED"}
+# Any of these stops the run (resume later) instead of hammering the API.
+STOP_CATEGORIES = {"QUOTA_EXHAUSTED", "RATE_LIMIT", "RESOURCE_EXHAUSTED", "AUTHENTICATION", "PERMISSION_DENIED",
+                   "MODEL_NOT_FOUND", "BUDGET_EXHAUSTED"}
 APPROVAL_ENV = "SEVAFUND_GEMINI_EVAL_APPROVED"
 DEFAULT_DATASET = Path(__file__).with_name("final_test_scenarios_v3.jsonl")
 Transport = Callable[..., Awaitable[Dict[str, Any]]]
@@ -105,6 +107,25 @@ def redact(case: dict) -> dict:
     return dict(case, input=data)
 
 
+def pilot_cases(cases: List[dict], per_label: int) -> List[dict]:
+    """Small balanced pilot: `per_label` cases per ground-truth label, rotating through categories
+    and taking each from a different scenario family.  Deterministic."""
+    chosen = []
+    categories = sorted({c["input"]["category"] for c in cases})
+    for label in ("legitimate", "fraudulent", "borderline"):
+        pool = sorted((c for c in cases if c["ground_truth"] == label), key=lambda c: c["case_id"])
+        used_families = set()
+        for i in range(per_label):
+            category = categories[(i + ("legitimate", "fraudulent", "borderline").index(label)) % len(categories)]
+            pick = next((c for c in pool if c["input"]["category"] == category
+                         and c.get("scenario_family") not in used_families and c not in chosen), None)
+            pick = pick or next((c for c in pool if c not in chosen), None)
+            if pick:
+                chosen.append(pick)
+                used_families.add(pick.get("scenario_family"))
+    return sorted(chosen, key=lambda c: c["case_id"])
+
+
 def sample_cases(cases: List[dict], per_cluster: Optional[int], seed: int, cluster_key: str) -> List[dict]:
     """Deterministic stratified sample: k cases per (cluster, label).  Same IDs for every configuration."""
     if not per_cluster:
@@ -127,8 +148,9 @@ def build_plan(cases: List[dict], configs: List[str], dataset: Path, per_cluster
     for config in configs:
         for stage, count in CALLS_PER_CASE.get(config, {}).items():
             calls[stage] += count * len(cases)
-    days = max(math.ceil(calls["generation"] / daily_generation_quota) if daily_generation_quota else 0,
-               math.ceil(calls["embedding"] / daily_embedding_quota) if daily_embedding_quota else 0)
+    separate = max(math.ceil(calls["generation"] / daily_generation_quota) if daily_generation_quota else 0,
+                   math.ceil(calls["embedding"] / daily_embedding_quota) if daily_embedding_quota else 0)
+    shared = math.ceil(sum(calls.values()) / daily_generation_quota) if daily_generation_quota else 0
     return {
         "dataset": str(dataset), "dataset_sha256": hashlib.sha256(dataset.read_bytes()).hexdigest(),
         "configs": configs, "case_ids": [c["case_id"] for c in cases], "cases": len(cases),
@@ -136,7 +158,13 @@ def build_plan(cases: List[dict], configs: List[str], dataset: Path, per_cluster
         "labels": dict(Counter(c["ground_truth"] for c in cases)),
         "api_calls_required": dict(calls), "api_calls_total": sum(calls.values()),
         "assumed_daily_quota": {"generation": daily_generation_quota, "embedding": daily_embedding_quota},
-        "estimated_days_at_quota": days,
+        "estimated_days_at_quota": {
+            "if_embedding_quota_is_separate_per_model": separate,
+            "if_all_calls_share_the_generation_quota": shared,
+            "excludes": "failed requests (each consumes quota and is retried on a later run) and any other use "
+                        "of the same API key; check the project's per-model limits in Google AI Studio",
+        },
+        "http_requests_per_counted_call": 1,
         "model": settings.GEMINI_MODEL, "embedding_model": settings.GEMINI_EMBEDDING_MODEL,
         "billing": "No billing change is made by this framework. Quotas are an operator-supplied assumption.",
     }
@@ -185,17 +213,25 @@ class Store:
 
 
 class BudgetedTransport:
-    """Wraps the real (or a fake) POST function: enforces --max-calls and counts calls per stage."""
+    """Wraps the real (or a fake) POST function: enforces --max-calls, paces requests and counts them.
 
-    def __init__(self, post: Transport, api_key: str, max_calls: int):
+    Retries inside the shared client are disabled (max_attempts=1), so every counted call is exactly one
+    HTTP request against the quota; a failed request is recorded and retried on a later (resumed) run."""
+
+    def __init__(self, post: Transport, api_key: str, max_calls: int, min_interval_seconds: float = 0.0):
         self.post, self.api_key, self.max_calls = post, api_key, max_calls
+        self.min_interval, self._last = min_interval_seconds, 0.0
         self.calls = Counter()
 
-    async def __call__(self, url, api_key, payload, stage, timeout_seconds, max_attempts=2):
+    async def __call__(self, url, api_key, payload, stage, timeout_seconds, max_attempts=1):
         if sum(self.calls.values()) >= self.max_calls:
             raise BudgetExhausted()
+        wait = self.min_interval - (time.monotonic() - self._last)
+        if wait > 0:
+            await asyncio.sleep(wait)
         self.calls[stage] += 1
-        return await self.post(url, self.api_key, payload, stage, timeout_seconds, max_attempts=max_attempts)
+        self._last = time.monotonic()
+        return await self.post(url, self.api_key, payload, stage, timeout_seconds, max_attempts=1)
 
 
 @contextmanager
@@ -463,6 +499,10 @@ def main(argv=None):
     parser.add_argument("--daily-generation-quota", type=int, default=20)
     parser.add_argument("--daily-embedding-quota", type=int, default=1000)
     parser.add_argument("--max-calls", type=int)
+    parser.add_argument("--min-interval-seconds", type=float, default=6.0,
+                        help="pause between API requests (default 6s, i.e. at most 10 requests per minute)")
+    parser.add_argument("--pilot-per-label", type=int,
+                        help="small balanced pilot: N cases per label across categories (overrides sampling)")
     parser.add_argument("--data-authorization")
     parser.add_argument("--output-root", type=Path, default=Path(__file__).with_name("runs"))
     args = parser.parse_args(argv)
@@ -471,8 +511,9 @@ def main(argv=None):
     unknown = set(configs) - set(CONFIGS)
     if unknown:
         raise SystemExit(f"Unknown configurations: {sorted(unknown)}")
-    cases = sample_cases(load_cases(args.dataset, args.data_authorization), args.sample_per_cluster or None,
-                         args.seed, args.cluster_key)
+    loaded = load_cases(args.dataset, args.data_authorization)
+    cases = (pilot_cases(loaded, args.pilot_per_label) if args.pilot_per_label
+             else sample_cases(loaded, args.sample_per_cluster or None, args.seed, args.cluster_key))
     directory = args.output_root / args.experiment
     plan = build_plan(cases, configs, args.dataset, args.sample_per_cluster or None, args.seed,
                       args.daily_generation_quota, args.daily_embedding_quota)
@@ -488,7 +529,7 @@ def main(argv=None):
         if not args.max_calls:
             raise SystemExit("Refusing to call Gemini without an explicit --max-calls budget")
         from app.services.gemini_api import post_json
-        transport = BudgetedTransport(post_json, settings.GEMINI_API_KEY, args.max_calls)
+        transport = BudgetedTransport(post_json, settings.GEMINI_API_KEY, args.max_calls, args.min_interval_seconds)
     store = Store(directory)
     plan_path = directory / "plan.json"
     if plan_path.exists() and json.loads(plan_path.read_text())["case_ids"] != plan["case_ids"]:

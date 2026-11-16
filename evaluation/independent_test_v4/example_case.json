@@ -1,0 +1,56 @@
+{
+  "case_id": "T4-MED-0001-A",
+  "scenario_group": "T4-MED-0001",
+  "author_id": "A07",
+  "provenance": "synthetic",
+  "synthetic": true,
+  "category": "MEDICAL",
+  "author_intended_label": "fraudulent",
+  "pattern": "consistent_fabrication",
+  "input": {
+    "title": "Hip replacement for my mother",
+    "category": "MEDICAL",
+    "story": "My mother Kamala slipped at home in September and the surgeons say she needs a total hip replacement before the end of the month...",
+    "goal_amount": 285000,
+    "goal_currency": "INR",
+    "beneficiary_name": "Kamala Venkatesh",
+    "beneficiary_type": "SELF",
+    "city": "Mysuru",
+    "state": "Karnataka",
+    "submitted_on": "2026-12-03",
+    "documents": [
+      {
+        "title": "Pre-operative estimate",
+        "doc_type": "HOSPITAL_ESTIMATE",
+        "content": "Cauvery Orthopaedic Centre, Mysuru ... Patient: Kamala Venkatesh ... Total hip arthroplasty ... Estimate Rs. 2,85,000 ... For queries: +91 98860 41122"
+      },
+      {
+        "title": "Orthopaedic consultation note",
+        "doc_type": "CLINICAL_NOTE",
+        "content": "Cauvery Orthopaedic Centre ... X-ray shows displaced neck-of-femur fracture ... advised THR ..."
+      }
+    ]
+  },
+  "gold_evidence_titles": [
+    "Pre-operative estimate"
+  ],
+  "external_environment": {
+    "BENEFICIARY": {
+      "independent_response": "CONFIRMED",
+      "note": "Real person; KYC passes."
+    },
+    "PAYMENT_DESTINATION": {
+      "independent_response": "CONTRADICTED",
+      "note": "Payout account belongs to an unrelated individual."
+    },
+    "INSTITUTION": {
+      "independent_response": "CONTRADICTED",
+      "note": "The centre's listed switchboard has no record of this patient.",
+      "campaign_supplied_contact": {
+        "printed_in_uploads": true,
+        "response": "CONFIRMED",
+        "note": "The number on the estimate reaches a confederate."
+      }
+    }
+  }
+}

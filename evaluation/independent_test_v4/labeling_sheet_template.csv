@@ -1,0 +1,2 @@
+case_id,labeller_id,label,expected_workflow_end_state,detectable_from_dossier,detectable_by_external_confirmation,gold_evidence_titles,notes
+T4-MED-0001-A,L1,fraudulent,FLAG_FOR_REVIEW,no,yes,Pre-operative estimate,

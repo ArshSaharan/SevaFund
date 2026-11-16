@@ -1,0 +1,42 @@
+{
+  "dataset": "/Users/arshsaharan/Code/crowdfunding/evaluation/final_test_scenarios_v3.jsonl",
+  "dataset_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+  "configs": [
+    "heuristics_only",
+    "heuristics_lexical",
+    "gemini_no_rag",
+    "gemini_rag",
+    "hybrid"
+  ],
+  "case_ids": [
+    "V3T-071",
+    "V3T-131",
+    "V3T-201"
+  ],
+  "cases": 3,
+  "sample_per_cluster": 2,
+  "seed": 20261116,
+  "labels": {
+    "borderline": 1,
+    "fraudulent": 1,
+    "legitimate": 1
+  },
+  "api_calls_required": {
+    "generation": 6,
+    "embedding": 3
+  },
+  "api_calls_total": 9,
+  "assumed_daily_quota": {
+    "generation": 20,
+    "embedding": 1000
+  },
+  "estimated_days_at_quota": {
+    "if_embedding_quota_is_separate_per_model": 1,
+    "if_all_calls_share_the_generation_quota": 1,
+    "excludes": "failed requests (each consumes quota and is retried on a later run) and any other use of the same API key; check the project's per-model limits in Google AI Studio"
+  },
+  "http_requests_per_counted_call": 1,
+  "model": "gemini-3.8-flash",
+  "embedding_model": "gemini-embedding-001",
+  "billing": "No billing change is made by this framework. Quotas are an operator-supplied assumption."
+}

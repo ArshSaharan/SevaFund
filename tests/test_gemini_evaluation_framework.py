@@ -194,3 +194,34 @@ def test_retrieval_metrics_use_gold_evidence_when_available():
     case = {"input": {"documents": [{"title": "Bill"}, {"title": "Ledger"}]}, "gold_evidence_titles": ["Ledger"]}
     metrics = fw.retrieval_metrics(case, [{"title": "Bill"}, {"title": "Ledger"}])
     assert metrics["document_coverage"] == 1.0 and metrics["gold_recall_at_k"] == 1.0 and metrics["gold_mrr"] == 0.5
+
+
+def test_every_counted_call_is_exactly_one_http_request_and_rate_limit_stops(dataset, tmp_path):
+    seen = []
+
+    async def recording(url, api_key, payload, stage, timeout_seconds, max_attempts=2):
+        seen.append(max_attempts)
+        raise GeminiAPIError(stage, "RATE_LIMIT", 429)
+    state = run(fw.load_cases(dataset), fw.Store(tmp_path / "s"), recording)
+    assert seen == [1]                                   # no hidden retries; stopped after the first 429
+    assert state["stopped_reason"] == "RATE_LIMIT"
+
+
+def test_plan_reports_both_quota_scenarios(dataset):
+    plan = fw.main(["plan", "--dataset", str(dataset), "--sample-per-cluster", "0"])
+    days = plan["estimated_days_at_quota"]
+    assert days["if_embedding_quota_is_separate_per_model"] == 1      # 12 generation calls / 20 per day
+    assert days["if_all_calls_share_the_generation_quota"] == 1       # 18 calls / 20 per day
+    full = fw.build_plan([{"case_id": str(i), "ground_truth": "legitimate", "input": {}} for i in range(60)],
+                         fw.CONFIGS, dataset, 2, 1, 20, 1000)
+    assert full["estimated_days_at_quota"] == {**full["estimated_days_at_quota"],
+                                               "if_embedding_quota_is_separate_per_model": 6,
+                                               "if_all_calls_share_the_generation_quota": 9}
+
+
+def test_pilot_selection_is_balanced_across_labels_and_categories():
+    rows = fw.load_cases(ROOT / "evaluation/final_test_scenarios_v3.jsonl")
+    pilot = fw.pilot_cases(rows, 1)
+    assert sorted(c["ground_truth"] for c in pilot) == ["borderline", "fraudulent", "legitimate"]
+    assert len({c["input"]["category"] for c in pilot}) == 3
+    assert [c["case_id"] for c in fw.pilot_cases(rows, 1)] == [c["case_id"] for c in pilot]

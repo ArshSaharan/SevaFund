@@ -233,8 +233,11 @@ client disabled and a fake Gemini transport.
 
   Every guard runs before anything is written. The framework never changes billing.
 
-**Prepared plan:** 60 cases × 5 configurations; 120 generation calls and 60 embedding calls; about
-**6 days** at a 20-calls-per-day free-tier generation quota. The configured model is
+**Prepared plan:** 60 cases × 5 configurations; 120 generation calls and 60 embedding calls (180 HTTP
+requests). At a 20-per-day limit this needs **6 days only if embeddings have their own per-model
+quota, and 9 days if all requests share it**, before any failed requests (each consumes quota and is
+retried later) and any other use of the key. *Corrected 2026-11-16: the original text gave only the
+6-day figure; see `docs/confirmation_and_gemini_pilot.md`.* The configured model is
 `gemini-3.8-flash`.
 
 **When approved, run:**

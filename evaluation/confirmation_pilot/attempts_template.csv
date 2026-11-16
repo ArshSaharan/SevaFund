@@ -1,0 +1,2 @@
+campaign_id,check,attempt,contact_origin,contact_source,contact_reference,outcome,started_at,finished_at,minutes_spent,verifier_id,notes
+PILOT-0001,INSTITUTION,1,independent,OFFICIAL_DIRECTORY,+91 80 2222 0000,UNREACHABLE,2026-12-01T10:00:00+05:30,2026-12-01T10:12:00+05:30,12,V-01,switchboard did not answer

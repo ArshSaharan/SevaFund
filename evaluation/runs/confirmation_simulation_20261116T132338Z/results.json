@@ -1,0 +1,1447 @@
+{
+  "created_utc": "2026-11-16T13:23:38.844585+00:00",
+  "simulation": true,
+  "replications": 500,
+  "seed": 20261116,
+  "assumptions": {
+    "reference": {
+      "p_unreachable": 0.25,
+      "p_legit_record_mismatch": 0.02,
+      "p_fraud_kyc_pass": 0.7,
+      "p_fraud_payee_lookalike": 0.2,
+      "p_spoofed_directory": 0.02,
+      "p_insider_collusion": 0.02,
+      "p_fraud_fake_contact": 0.8,
+      "p_fake_contact_printed": 0.7,
+      "p_legit_wrong_contact": 0.05,
+      "p_careless_verifier": 0.1,
+      "p_borderline_inconclusive": 0.5,
+      "median_response_hours": {
+        "BENEFICIARY": 2.0,
+        "PAYMENT_DESTINATION": 4.0,
+        "INSTITUTION": 24.0
+      },
+      "minutes_per_attempt": {
+        "BENEFICIARY": 3.0,
+        "PAYMENT_DESTINATION": 3.0,
+        "INSTITUTION": 15.0
+      },
+      "retry_after_hours": 24.0,
+      "max_attempts_per_check": 3,
+      "horizon_days": 14.0
+    },
+    "careful_verifiers": {
+      "p_unreachable": 0.25,
+      "p_legit_record_mismatch": 0.02,
+      "p_fraud_kyc_pass": 0.7,
+      "p_fraud_payee_lookalike": 0.2,
+      "p_spoofed_directory": 0.02,
+      "p_insider_collusion": 0.02,
+      "p_fraud_fake_contact": 0.8,
+      "p_fake_contact_printed": 0.7,
+      "p_legit_wrong_contact": 0.05,
+      "p_careless_verifier": 0.0,
+      "p_borderline_inconclusive": 0.5,
+      "median_response_hours": {
+        "BENEFICIARY": 2.0,
+        "PAYMENT_DESTINATION": 4.0,
+        "INSTITUTION": 24.0
+      },
+      "minutes_per_attempt": {
+        "BENEFICIARY": 3.0,
+        "PAYMENT_DESTINATION": 3.0,
+        "INSTITUTION": 15.0
+      },
+      "retry_after_hours": 24.0,
+      "max_attempts_per_check": 3,
+      "horizon_days": 14.0
+    },
+    "low_responsiveness": {
+      "p_unreachable": 0.5,
+      "p_legit_record_mismatch": 0.02,
+      "p_fraud_kyc_pass": 0.7,
+      "p_fraud_payee_lookalike": 0.2,
+      "p_spoofed_directory": 0.02,
+      "p_insider_collusion": 0.02,
+      "p_fraud_fake_contact": 0.8,
+      "p_fake_contact_printed": 0.7,
+      "p_legit_wrong_contact": 0.05,
+      "p_careless_verifier": 0.1,
+      "p_borderline_inconclusive": 0.5,
+      "median_response_hours": {
+        "BENEFICIARY": 2.0,
+        "PAYMENT_DESTINATION": 4.0,
+        "INSTITUTION": 24.0
+      },
+      "minutes_per_attempt": {
+        "BENEFICIARY": 3.0,
+        "PAYMENT_DESTINATION": 3.0,
+        "INSTITUTION": 15.0
+      },
+      "retry_after_hours": 24.0,
+      "max_attempts_per_check": 3,
+      "horizon_days": 14.0
+    },
+    "adversarial": {
+      "p_unreachable": 0.25,
+      "p_legit_record_mismatch": 0.02,
+      "p_fraud_kyc_pass": 0.9,
+      "p_fraud_payee_lookalike": 0.5,
+      "p_spoofed_directory": 0.1,
+      "p_insider_collusion": 0.05,
+      "p_fraud_fake_contact": 0.8,
+      "p_fake_contact_printed": 0.4,
+      "p_legit_wrong_contact": 0.05,
+      "p_careless_verifier": 0.2,
+      "p_borderline_inconclusive": 0.5,
+      "median_response_hours": {
+        "BENEFICIARY": 2.0,
+        "PAYMENT_DESTINATION": 4.0,
+        "INSTITUTION": 24.0
+      },
+      "minutes_per_attempt": {
+        "BENEFICIARY": 3.0,
+        "PAYMENT_DESTINATION": 3.0,
+        "INSTITUTION": 15.0
+      },
+      "retry_after_hours": 24.0,
+      "max_attempts_per_check": 3,
+      "horizon_days": 14.0
+    }
+  },
+  "populations": {
+    "final_test_300": {
+      "campaigns": 140,
+      "labels": {
+        "legitimate": 100,
+        "fraudulent": 20,
+        "borderline": 20
+      },
+      "scenarios": {
+        "reference": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.992,
+              "p2.5": 0.95,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 0.17,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.932,
+              "p2.5": 0.88,
+              "p97.5": 0.97
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 1.994,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 15.336,
+              "p2.5": 10,
+              "p97.5": 21
+            },
+            "successful independent confirmations (count)": {
+              "mean": 353.728,
+              "p2.5": 345,
+              "p97.5": 362
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 139.74,
+              "p2.5": 116,
+              "p97.5": 164
+            },
+            "campaigns with false institution contact": {
+              "mean": 10.682,
+              "p2.5": 6,
+              "p97.5": 17
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 1.128,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "... caught by upload contact matching": {
+              "mean": 0.776,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "... accepted towards activation": {
+              "mean": 0.124,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 41.535,
+              "p2.5": 34.25,
+              "p97.5": 51.52
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 54.309,
+              "p2.5": 46.31,
+              "p97.5": 62.9
+            },
+            "verification attempts per campaign": {
+              "mean": 3.685,
+              "p2.5": 3.5143,
+              "p97.5": 3.85
+            },
+            "verifier minutes per campaign": {
+              "mean": 25.227,
+              "p2.5": 23.7643,
+              "p97.5": 26.8714
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 140,
+            "final_states": {
+              "VERIFIED_ACTIVE": 108,
+              "FLAG_FOR_REVIEW": 21,
+              "ELIGIBLE_PENDING_CONFIRMATION": 11
+            },
+            "successful_independent_confirmations": {
+              "count": 362,
+              "per_independent_attempt": 0.6988,
+              "by_check": {
+                "PAYMENT_DESTINATION": 122,
+                "INSTITUTION": 109,
+                "BENEFICIARY": 131
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 10,
+              "by_label": {
+                "fraudulent": 5,
+                "legitimate": 4,
+                "borderline": 1
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 1,
+              "of_which_accepted_towards_activation": 0,
+              "of_which_caught_by_upload_contact_matching": 1,
+              "of_which_mislabelled_and_undetectable": 0
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 136,
+              "per_attempt": 0.262,
+              "by_outcome": {
+                "UNREACHABLE": 127,
+                "INCONCLUSIVE": 9
+              },
+              "campaigns_still_pending_at_horizon": 11
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 97,
+                "mean": 53.31,
+                "median": 46.14,
+                "p90": 106.36
+              },
+              "to_activation_all": {
+                "n": 108,
+                "mean": 52.04,
+                "median": 45.7,
+                "p90": 102.44
+              },
+              "to_flag_fraudulent": {
+                "n": 20,
+                "mean": 12.94,
+                "median": 5.94,
+                "p90": 36.48
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 519,
+              "attempts_per_campaign": 3.7071,
+              "verifier_minutes_total": 3549.0,
+              "verifier_minutes_per_campaign": 25.35,
+              "reviews_triggered_by_confirmation": 21,
+              "attempts_per_campaign_distribution": {
+                "n": 140,
+                "mean": 3.71,
+                "median": 4.0,
+                "p90": 5
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 20,
+              "prevented_from_activation": 20,
+              "prevention_rate": 1.0,
+              "activated": 0,
+              "flagged_by_contradiction": 20,
+              "still_pending": 0
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 100,
+              "activated": 97,
+              "activation_rate": 0.97,
+              "wrongly_flagged": 1,
+              "still_pending": 2
+            }
+          }
+        },
+        "careful_verifiers": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.995,
+              "p2.5": 0.95,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 0.104,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.932,
+              "p2.5": 0.88,
+              "p97.5": 0.98
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 2.032,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 15.324,
+              "p2.5": 9,
+              "p97.5": 21
+            },
+            "successful independent confirmations (count)": {
+              "mean": 353.602,
+              "p2.5": 343,
+              "p97.5": 363
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 138.69,
+              "p2.5": 114,
+              "p97.5": 164
+            },
+            "campaigns with false institution contact": {
+              "mean": 10.638,
+              "p2.5": 5,
+              "p97.5": 17
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 0.0,
+              "p2.5": 0,
+              "p97.5": 0
+            },
+            "... caught by upload contact matching": {
+              "mean": 0.0,
+              "p2.5": 0,
+              "p97.5": 0
+            },
+            "... accepted towards activation": {
+              "mean": 0.0,
+              "p2.5": 0,
+              "p97.5": 0
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 41.268,
+              "p2.5": 33.69,
+              "p97.5": 51.7
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 54.089,
+              "p2.5": 45.36,
+              "p97.5": 62.28
+            },
+            "verification attempts per campaign": {
+              "mean": 3.674,
+              "p2.5": 3.5071,
+              "p97.5": 3.85
+            },
+            "verifier minutes per campaign": {
+              "mean": 25.124,
+              "p2.5": 23.7857,
+              "p97.5": 26.6786
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 140,
+            "final_states": {
+              "VERIFIED_ACTIVE": 106,
+              "FLAG_FOR_REVIEW": 22,
+              "ELIGIBLE_PENDING_CONFIRMATION": 12
+            },
+            "successful_independent_confirmations": {
+              "count": 356,
+              "per_independent_attempt": 0.6953,
+              "by_check": {
+                "PAYMENT_DESTINATION": 121,
+                "INSTITUTION": 106,
+                "BENEFICIARY": 129
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 7,
+              "by_label": {
+                "fraudulent": 3,
+                "legitimate": 4
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 0,
+              "of_which_accepted_towards_activation": 0,
+              "of_which_caught_by_upload_contact_matching": 0,
+              "of_which_mislabelled_and_undetectable": 0
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 134,
+              "per_attempt": 0.2617,
+              "by_outcome": {
+                "UNREACHABLE": 124,
+                "INCONCLUSIVE": 10
+              },
+              "campaigns_still_pending_at_horizon": 12
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 96,
+                "mean": 54.68,
+                "median": 49.74,
+                "p90": 114.34
+              },
+              "to_activation_all": {
+                "n": 106,
+                "mean": 53.63,
+                "median": 49.74,
+                "p90": 113.91
+              },
+              "to_flag_fraudulent": {
+                "n": 20,
+                "mean": 9.48,
+                "median": 3.73,
+                "p90": 29.07
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 512,
+              "attempts_per_campaign": 3.6571,
+              "verifier_minutes_total": 3528.0,
+              "verifier_minutes_per_campaign": 25.2,
+              "reviews_triggered_by_confirmation": 22,
+              "attempts_per_campaign_distribution": {
+                "n": 140,
+                "mean": 3.66,
+                "median": 3.5,
+                "p90": 5
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 20,
+              "prevented_from_activation": 20,
+              "prevention_rate": 1.0,
+              "activated": 0,
+              "flagged_by_contradiction": 20,
+              "still_pending": 0
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 100,
+              "activated": 96,
+              "activation_rate": 0.96,
+              "wrongly_flagged": 2,
+              "still_pending": 2
+            }
+          }
+        },
+        "low_responsiveness": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.993,
+              "p2.5": 0.95,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 0.132,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.654,
+              "p2.5": 0.57,
+              "p97.5": 0.74
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 1.638,
+              "p2.5": 0,
+              "p97.5": 4
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 46.834,
+              "p2.5": 38,
+              "p97.5": 56
+            },
+            "successful independent confirmations (count)": {
+              "mean": 314.368,
+              "p2.5": 300,
+              "p97.5": 329
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 354.634,
+              "p2.5": 311,
+              "p97.5": 393
+            },
+            "campaigns with false institution contact": {
+              "mean": 13.416,
+              "p2.5": 8,
+              "p97.5": 20
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 1.324,
+              "p2.5": 0,
+              "p97.5": 4
+            },
+            "... caught by upload contact matching": {
+              "mean": 0.932,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "... accepted towards activation": {
+              "mean": 0.198,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 60.295,
+              "p2.5": 51.08,
+              "p97.5": 71.27
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 72.353,
+              "p2.5": 60.56,
+              "p97.5": 84.69
+            },
+            "verification attempts per campaign": {
+              "mean": 4.933,
+              "p2.5": 4.6786,
+              "p97.5": 5.1786
+            },
+            "verifier minutes per campaign": {
+              "mean": 33.923,
+              "p2.5": 31.7786,
+              "p97.5": 36.0857
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 140,
+            "final_states": {
+              "VERIFIED_ACTIVE": 69,
+              "ELIGIBLE_PENDING_CONFIRMATION": 51,
+              "FLAG_FOR_REVIEW": 20
+            },
+            "successful_independent_confirmations": {
+              "count": 309,
+              "per_independent_attempt": 0.444,
+              "by_check": {
+                "PAYMENT_DESTINATION": 108,
+                "BENEFICIARY": 109,
+                "INSTITUTION": 92
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 12,
+              "by_label": {
+                "legitimate": 2,
+                "fraudulent": 9,
+                "borderline": 1
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 0,
+              "of_which_accepted_towards_activation": 0,
+              "of_which_caught_by_upload_contact_matching": 0,
+              "of_which_mislabelled_and_undetectable": 0
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 367,
+              "per_attempt": 0.5273,
+              "by_outcome": {
+                "UNREACHABLE": 360,
+                "INCONCLUSIVE": 7
+              },
+              "campaigns_still_pending_at_horizon": 51
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 62,
+                "mean": 64.33,
+                "median": 57.12,
+                "p90": 123.62
+              },
+              "to_activation_all": {
+                "n": 69,
+                "mean": 68.84,
+                "median": 58.03,
+                "p90": 152.86
+              },
+              "to_flag_fraudulent": {
+                "n": 18,
+                "mean": 18.14,
+                "median": 12.21,
+                "p90": 55.92
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 696,
+              "attempts_per_campaign": 4.9714,
+              "verifier_minutes_total": 4860.0,
+              "verifier_minutes_per_campaign": 34.7143,
+              "reviews_triggered_by_confirmation": 20,
+              "attempts_per_campaign_distribution": {
+                "n": 140,
+                "mean": 4.97,
+                "median": 5.0,
+                "p90": 7
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 20,
+              "prevented_from_activation": 20,
+              "prevention_rate": 1.0,
+              "activated": 0,
+              "flagged_by_contradiction": 18,
+              "still_pending": 2
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 100,
+              "activated": 62,
+              "activation_rate": 0.62,
+              "wrongly_flagged": 2,
+              "still_pending": 36
+            }
+          }
+        },
+        "adversarial": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.898,
+              "p2.5": 0.75,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 2.042,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.931,
+              "p2.5": 0.88,
+              "p97.5": 0.97
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 2.02,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 15.614,
+              "p2.5": 10,
+              "p97.5": 21
+            },
+            "successful independent confirmations (count)": {
+              "mean": 364.55,
+              "p2.5": 353,
+              "p97.5": 375
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 142.978,
+              "p2.5": 118,
+              "p97.5": 169
+            },
+            "campaigns with false institution contact": {
+              "mean": 15.124,
+              "p2.5": 9,
+              "p97.5": 21
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 3.142,
+              "p2.5": 0,
+              "p97.5": 7
+            },
+            "... caught by upload contact matching": {
+              "mean": 1.218,
+              "p2.5": 0,
+              "p97.5": 4
+            },
+            "... accepted towards activation": {
+              "mean": 1.14,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 41.875,
+              "p2.5": 33.44,
+              "p97.5": 51.62
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 54.355,
+              "p2.5": 46.02,
+              "p97.5": 62.59
+            },
+            "verification attempts per campaign": {
+              "mean": 3.781,
+              "p2.5": 3.6,
+              "p97.5": 3.9571
+            },
+            "verifier minutes per campaign": {
+              "mean": 26.204,
+              "p2.5": 24.6,
+              "p97.5": 27.8571
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 140,
+            "final_states": {
+              "VERIFIED_ACTIVE": 107,
+              "FLAG_FOR_REVIEW": 18,
+              "ELIGIBLE_PENDING_CONFIRMATION": 15
+            },
+            "successful_independent_confirmations": {
+              "count": 362,
+              "per_independent_attempt": 0.6792,
+              "by_check": {
+                "PAYMENT_DESTINATION": 124,
+                "INSTITUTION": 107,
+                "BENEFICIARY": 131
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 7,
+              "by_label": {
+                "fraudulent": 4,
+                "legitimate": 3
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 2,
+              "of_which_accepted_towards_activation": 1,
+              "of_which_caught_by_upload_contact_matching": 1,
+              "of_which_mislabelled_and_undetectable": 1
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 154,
+              "per_attempt": 0.2879,
+              "by_outcome": {
+                "UNREACHABLE": 143,
+                "INCONCLUSIVE": 11
+              },
+              "campaigns_still_pending_at_horizon": 15
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 97,
+                "mean": 55.03,
+                "median": 48.76,
+                "p90": 113.91
+              },
+              "to_activation_all": {
+                "n": 107,
+                "mean": 54.07,
+                "median": 48.76,
+                "p90": 108.97
+              },
+              "to_flag_fraudulent": {
+                "n": 18,
+                "mean": 13.54,
+                "median": 4.77,
+                "p90": 33.0
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 535,
+              "attempts_per_campaign": 3.8214,
+              "verifier_minutes_total": 3717.0,
+              "verifier_minutes_per_campaign": 26.55,
+              "reviews_triggered_by_confirmation": 18,
+              "attempts_per_campaign_distribution": {
+                "n": 140,
+                "mean": 3.82,
+                "median": 4.0,
+                "p90": 5
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 20,
+              "prevented_from_activation": 19,
+              "prevention_rate": 0.95,
+              "activated": 1,
+              "flagged_by_contradiction": 18,
+              "still_pending": 1
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 100,
+              "activated": 97,
+              "activation_rate": 0.97,
+              "wrongly_flagged": 0,
+              "still_pending": 3
+            }
+          }
+        }
+      }
+    },
+    "prior_150": {
+      "campaigns": 81,
+      "labels": {
+        "legitimate": 45,
+        "fraudulent": 36
+      },
+      "scenarios": {
+        "reference": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.992,
+              "p2.5": 0.9444,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 0.304,
+              "p2.5": 0,
+              "p97.5": 2
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.93,
+              "p2.5": 0.8444,
+              "p97.5": 0.9778
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 0.946,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 2.34,
+              "p2.5": 0,
+              "p97.5": 6
+            },
+            "successful independent confirmations (count)": {
+              "mean": 153.886,
+              "p2.5": 145,
+              "p97.5": 164
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 64.34,
+              "p2.5": 49,
+              "p97.5": 84
+            },
+            "campaigns with false institution contact": {
+              "mean": 10.472,
+              "p2.5": 5,
+              "p97.5": 16
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 1.12,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "... caught by upload contact matching": {
+              "mean": 0.81,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "... accepted towards activation": {
+              "mean": 0.25,
+              "p2.5": 0,
+              "p97.5": 2
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 41.751,
+              "p2.5": 31.47,
+              "p97.5": 55.92
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 54.31,
+              "p2.5": 42.25,
+              "p97.5": 67.34
+            },
+            "verification attempts per campaign": {
+              "mean": 3.156,
+              "p2.5": 2.9506,
+              "p97.5": 3.3827
+            },
+            "verifier minutes per campaign": {
+              "mean": 20.113,
+              "p2.5": 18.4815,
+              "p97.5": 22.1852
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 81,
+            "final_states": {
+              "VERIFIED_ACTIVE": 44,
+              "FLAG_FOR_REVIEW": 37
+            },
+            "successful_independent_confirmations": {
+              "count": 153,
+              "per_independent_attempt": 0.6024,
+              "by_check": {
+                "PAYMENT_DESTINATION": 51,
+                "INSTITUTION": 44,
+                "BENEFICIARY": 58
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 9,
+              "by_label": {
+                "fraudulent": 6,
+                "legitimate": 3
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 2,
+              "of_which_accepted_towards_activation": 0,
+              "of_which_caught_by_upload_contact_matching": 2,
+              "of_which_mislabelled_and_undetectable": 0
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 65,
+              "per_attempt": 0.2539,
+              "by_outcome": {
+                "UNREACHABLE": 65
+              },
+              "campaigns_still_pending_at_horizon": 0
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 44,
+                "mean": 59.58,
+                "median": 47.45,
+                "p90": 118.01
+              },
+              "to_activation_all": {
+                "n": 44,
+                "mean": 59.58,
+                "median": 47.45,
+                "p90": 118.01
+              },
+              "to_flag_fraudulent": {
+                "n": 36,
+                "mean": 19.57,
+                "median": 5.38,
+                "p90": 79.43
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 256,
+              "attempts_per_campaign": 3.1605,
+              "verifier_minutes_total": 1644.0,
+              "verifier_minutes_per_campaign": 20.2963,
+              "reviews_triggered_by_confirmation": 37,
+              "attempts_per_campaign_distribution": {
+                "n": 81,
+                "mean": 3.16,
+                "median": 3,
+                "p90": 5
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 36,
+              "prevented_from_activation": 36,
+              "prevention_rate": 1.0,
+              "activated": 0,
+              "flagged_by_contradiction": 36,
+              "still_pending": 0
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 45,
+              "activated": 44,
+              "activation_rate": 0.9778,
+              "wrongly_flagged": 1,
+              "still_pending": 0
+            }
+          }
+        },
+        "careful_verifiers": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.994,
+              "p2.5": 0.9722,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 0.212,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.932,
+              "p2.5": 0.8667,
+              "p97.5": 0.9778
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 0.9,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 2.264,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "successful independent confirmations (count)": {
+              "mean": 153.91,
+              "p2.5": 144,
+              "p97.5": 164
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 64.232,
+              "p2.5": 48,
+              "p97.5": 82
+            },
+            "campaigns with false institution contact": {
+              "mean": 10.538,
+              "p2.5": 5,
+              "p97.5": 17
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 0.0,
+              "p2.5": 0,
+              "p97.5": 0
+            },
+            "... caught by upload contact matching": {
+              "mean": 0.0,
+              "p2.5": 0,
+              "p97.5": 0
+            },
+            "... accepted towards activation": {
+              "mean": 0.0,
+              "p2.5": 0,
+              "p97.5": 0
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 42.002,
+              "p2.5": 30.78,
+              "p97.5": 56.6
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 54.382,
+              "p2.5": 42.33,
+              "p97.5": 68.58
+            },
+            "verification attempts per campaign": {
+              "mean": 3.145,
+              "p2.5": 2.9259,
+              "p97.5": 3.3951
+            },
+            "verifier minutes per campaign": {
+              "mean": 20.017,
+              "p2.5": 17.8889,
+              "p97.5": 22.037
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 81,
+            "final_states": {
+              "VERIFIED_ACTIVE": 44,
+              "FLAG_FOR_REVIEW": 36,
+              "ELIGIBLE_PENDING_CONFIRMATION": 1
+            },
+            "successful_independent_confirmations": {
+              "count": 157,
+              "per_independent_attempt": 0.6133,
+              "by_check": {
+                "PAYMENT_DESTINATION": 53,
+                "INSTITUTION": 45,
+                "BENEFICIARY": 59
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 12,
+              "by_label": {
+                "fraudulent": 9,
+                "legitimate": 3
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 0,
+              "of_which_accepted_towards_activation": 0,
+              "of_which_caught_by_upload_contact_matching": 0,
+              "of_which_mislabelled_and_undetectable": 0
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 63,
+              "per_attempt": 0.2461,
+              "by_outcome": {
+                "UNREACHABLE": 63
+              },
+              "campaigns_still_pending_at_horizon": 1
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 44,
+                "mean": 55.04,
+                "median": 40.25,
+                "p90": 106.36
+              },
+              "to_activation_all": {
+                "n": 44,
+                "mean": 55.04,
+                "median": 40.25,
+                "p90": 106.36
+              },
+              "to_flag_fraudulent": {
+                "n": 36,
+                "mean": 16.14,
+                "median": 6.79,
+                "p90": 32.72
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 256,
+              "attempts_per_campaign": 3.1605,
+              "verifier_minutes_total": 1668.0,
+              "verifier_minutes_per_campaign": 20.5926,
+              "reviews_triggered_by_confirmation": 36,
+              "attempts_per_campaign_distribution": {
+                "n": 81,
+                "mean": 3.16,
+                "median": 3,
+                "p90": 5
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 36,
+              "prevented_from_activation": 36,
+              "prevention_rate": 1.0,
+              "activated": 0,
+              "flagged_by_contradiction": 36,
+              "still_pending": 0
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 45,
+              "activated": 44,
+              "activation_rate": 0.9778,
+              "wrongly_flagged": 0,
+              "still_pending": 1
+            }
+          }
+        },
+        "low_responsiveness": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.994,
+              "p2.5": 0.9722,
+              "p97.5": 1.0
+            },
+            "fraud activated (campaigns)": {
+              "mean": 0.218,
+              "p2.5": 0,
+              "p97.5": 1
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.651,
+              "p2.5": 0.5111,
+              "p97.5": 0.8
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 0.72,
+              "p2.5": 0,
+              "p97.5": 2
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 16.296,
+              "p2.5": 10,
+              "p97.5": 23
+            },
+            "successful independent confirmations (count)": {
+              "mean": 136.162,
+              "p2.5": 125,
+              "p97.5": 147
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 173.386,
+              "p2.5": 145,
+              "p97.5": 207
+            },
+            "campaigns with false institution contact": {
+              "mean": 15.256,
+              "p2.5": 10,
+              "p97.5": 21
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 1.516,
+              "p2.5": 0,
+              "p97.5": 4
+            },
+            "... caught by upload contact matching": {
+              "mean": 1.05,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "... accepted towards activation": {
+              "mean": 0.4,
+              "p2.5": 0,
+              "p97.5": 2
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 60.825,
+              "p2.5": 43.82,
+              "p97.5": 78.46
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 72.344,
+              "p2.5": 55.93,
+              "p97.5": 91.32
+            },
+            "verification attempts per campaign": {
+              "mean": 4.272,
+              "p2.5": 3.9259,
+              "p97.5": 4.6296
+            },
+            "verifier minutes per campaign": {
+              "mean": 27.935,
+              "p2.5": 25.0,
+              "p97.5": 30.9259
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 81,
+            "final_states": {
+              "VERIFIED_ACTIVE": 29,
+              "ELIGIBLE_PENDING_CONFIRMATION": 20,
+              "FLAG_FOR_REVIEW": 32
+            },
+            "successful_independent_confirmations": {
+              "count": 132,
+              "per_independent_attempt": 0.3882,
+              "by_check": {
+                "PAYMENT_DESTINATION": 43,
+                "BENEFICIARY": 54,
+                "INSTITUTION": 35
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 14,
+              "by_label": {
+                "fraudulent": 10,
+                "legitimate": 4
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 3,
+              "of_which_accepted_towards_activation": 1,
+              "of_which_caught_by_upload_contact_matching": 2,
+              "of_which_mislabelled_and_undetectable": 1
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 176,
+              "per_attempt": 0.5131,
+              "by_outcome": {
+                "UNREACHABLE": 176
+              },
+              "campaigns_still_pending_at_horizon": 20
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 28,
+                "mean": 63.86,
+                "median": 56.55,
+                "p90": 138.47
+              },
+              "to_activation_all": {
+                "n": 29,
+                "mean": 62.76,
+                "median": 56.19,
+                "p90": 138.47
+              },
+              "to_flag_fraudulent": {
+                "n": 32,
+                "mean": 17.38,
+                "median": 5.97,
+                "p90": 51.93
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 343,
+              "attempts_per_campaign": 4.2346,
+              "verifier_minutes_total": 2337.0,
+              "verifier_minutes_per_campaign": 28.8519,
+              "reviews_triggered_by_confirmation": 32,
+              "attempts_per_campaign_distribution": {
+                "n": 81,
+                "mean": 4.23,
+                "median": 5,
+                "p90": 7
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 36,
+              "prevented_from_activation": 35,
+              "prevention_rate": 0.9722,
+              "activated": 1,
+              "flagged_by_contradiction": 32,
+              "still_pending": 3
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 45,
+              "activated": 28,
+              "activation_rate": 0.6222,
+              "wrongly_flagged": 0,
+              "still_pending": 17
+            }
+          }
+        },
+        "adversarial": {
+          "summary": {
+            "fraud prevented from activation (rate)": {
+              "mean": 0.904,
+              "p2.5": 0.8056,
+              "p97.5": 0.9722
+            },
+            "fraud activated (campaigns)": {
+              "mean": 3.45,
+              "p2.5": 1,
+              "p97.5": 7
+            },
+            "legitimate activated within horizon (rate)": {
+              "mean": 0.933,
+              "p2.5": 0.8667,
+              "p97.5": 1.0
+            },
+            "legitimate wrongly flagged (campaigns)": {
+              "mean": 0.86,
+              "p2.5": 0,
+              "p97.5": 3
+            },
+            "still pending at horizon (campaigns)": {
+              "mean": 2.552,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "successful independent confirmations (count)": {
+              "mean": 173.52,
+              "p2.5": 163,
+              "p97.5": 184
+            },
+            "unsuccessful attempts (count)": {
+              "mean": 69.5,
+              "p2.5": 53,
+              "p97.5": 89
+            },
+            "campaigns with false institution contact": {
+              "mean": 18.776,
+              "p2.5": 13,
+              "p97.5": 25
+            },
+            "campaign-supplied contacts used by verifiers": {
+              "mean": 3.644,
+              "p2.5": 1,
+              "p97.5": 8
+            },
+            "... caught by upload contact matching": {
+              "mean": 1.47,
+              "p2.5": 0,
+              "p97.5": 4
+            },
+            "... accepted towards activation": {
+              "mean": 1.952,
+              "p2.5": 0,
+              "p97.5": 5
+            },
+            "median hours to activation (legitimate)": {
+              "mean": 42.054,
+              "p2.5": 31.11,
+              "p97.5": 57.59
+            },
+            "mean hours to activation (legitimate)": {
+              "mean": 54.204,
+              "p2.5": 41.79,
+              "p97.5": 69.18
+            },
+            "verification attempts per campaign": {
+              "mean": 3.448,
+              "p2.5": 3.1975,
+              "p97.5": 3.716
+            },
+            "verifier minutes per campaign": {
+              "mean": 23.045,
+              "p2.5": 20.7407,
+              "p97.5": 25.3704
+            }
+          },
+          "first_replication": {
+            "campaigns_entering_confirmation": 81,
+            "final_states": {
+              "VERIFIED_ACTIVE": 46,
+              "FLAG_FOR_REVIEW": 34,
+              "ELIGIBLE_PENDING_CONFIRMATION": 1
+            },
+            "successful_independent_confirmations": {
+              "count": 166,
+              "per_independent_attempt": 0.6264,
+              "by_check": {
+                "PAYMENT_DESTINATION": 57,
+                "INSTITUTION": 45,
+                "BENEFICIARY": 64
+              }
+            },
+            "false_institution_contact_details": {
+              "campaigns_with_false_contact_detail": 15,
+              "by_label": {
+                "fraudulent": 13,
+                "legitimate": 2
+              },
+              "campaign_supplied_contacts_used_by_verifiers": 5,
+              "of_which_accepted_towards_activation": 3,
+              "of_which_caught_by_upload_contact_matching": 2,
+              "of_which_mislabelled_and_undetectable": 3
+            },
+            "unsuccessful_verification_attempts": {
+              "count": 66,
+              "per_attempt": 0.2444,
+              "by_outcome": {
+                "UNREACHABLE": 66
+              },
+              "campaigns_still_pending_at_horizon": 1
+            },
+            "confirmation_time_hours": {
+              "to_activation_legitimate": {
+                "n": 44,
+                "mean": 63.02,
+                "median": 53.03,
+                "p90": 113.91
+              },
+              "to_activation_all": {
+                "n": 46,
+                "mean": 61.62,
+                "median": 51.58,
+                "p90": 113.91
+              },
+              "to_flag_fraudulent": {
+                "n": 34,
+                "mean": 21.62,
+                "median": 7.36,
+                "p90": 69.61
+              }
+            },
+            "administrative_workload": {
+              "attempts_total": 270,
+              "attempts_per_campaign": 3.3333,
+              "verifier_minutes_total": 1842.0,
+              "verifier_minutes_per_campaign": 22.7407,
+              "reviews_triggered_by_confirmation": 34,
+              "attempts_per_campaign_distribution": {
+                "n": 81,
+                "mean": 3.33,
+                "median": 3,
+                "p90": 5
+              }
+            },
+            "fraud_prevention": {
+              "fraudulent_campaigns_entering_confirmation": 36,
+              "prevented_from_activation": 34,
+              "prevention_rate": 0.9444,
+              "activated": 2,
+              "flagged_by_contradiction": 34,
+              "still_pending": 0
+            },
+            "legitimate_outcomes": {
+              "entering_confirmation": 45,
+              "activated": 44,
+              "activation_rate": 0.9778,
+              "wrongly_flagged": 0,
+              "still_pending": 1
+            }
+          }
+        }
+      }
+    }
+  },
+  "workflow_sha256": {
+    "__init__.py": "cd6be1aca209337d726fe235fd85497ccee7763f02d88035474f77bbcb080545",
+    "schemas.py": "8f704795a36f64e157ad52c4226481d12a2a3d4b9ad33cbf21cb69138f3b0db2",
+    "workflow.py": "4789829acb6c29de3265d0556088a7ae198ac9f6b801fd1378d2fbea537b1756"
+  }
+}
