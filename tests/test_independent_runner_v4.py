@@ -67,6 +67,7 @@ def test_execution_requires_explicit_api_approval(tmp_path, monkeypatch):
     submission, seal, labels, label_seal = setup(tmp_path)
     monkeypatch.setattr(runner, "preconditions", lambda *a: {"ok": True, "problems": [], "labels": {EXAMPLE["case_id"]: "fraudulent"},
                                                               "case_ids": [EXAMPLE["case_id"]]})
+    (tmp_path / "runs").mkdir()                         # mirrors evaluation/runs, which always exists in the repo
     monkeypatch.setattr(runner.fw, "Path", lambda *_: tmp_path / "x.py")
     monkeypatch.delenv(runner.fw.APPROVAL_ENV, raising=False)
     with pytest.raises(SystemExit, match="Explicit API approval"):
