@@ -1,0 +1,65 @@
+{
+  "frozen_at_utc": "2026-11-15T20:48:42.622172+00:00",
+  "engine_version": "sevafund-development-candidate-v2.0",
+  "v2_package": {
+    "files": {
+      "__init__.py": "d9fe21d044c591c32009a6085bc7fcdd4ba1062b6d0db0ec385157f26b57b86f",
+      "audit.py": "ecceea9d807b5324f5be4f508ca74c91a7c4e86b92b07a49949910ebc958180e",
+      "category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+      "config.py": "64183f6dd1d43389ec703c440f7d3e32712c3d316df0641f4fa33fb763926bdc",
+      "consistency.py": "b99a99feb5238ebc04fc4e7ce52923306c8176f20219fb2ffee1acd7b1caf663",
+      "decision.py": "31d0be642c6733388259e63c4b6faae25e177b023b571418b23bbf889c2f9252",
+      "engine.py": "b1cbd655d230c70289b9887baaa92fa0476785f534270688c714830ec561932b",
+      "extraction.py": "d7d41933f0e41f8ee055a29ae6184d5b6a2ed266cd8a7946f72fa1c4661242ee",
+      "money.py": "b23903cc81065d098a2c1ae38b99cc6a73664849ed9892d7509c62422daa5e03",
+      "normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+      "schemas.py": "928523f2b05017ab9566d546a9d6a6af31955c7119e7c69e3d5ce8699edd8e36",
+      "semantic.py": "69fc99590098d1a16d1a193a1ec98764dfae74cf38c28228ebc21842d340315b"
+    },
+    "combined": "a054be91b210c9e22cbc2965e8978a6fda9b07ff10f1893aecc872ba04be6fc6"
+  },
+  "config": {
+    "enable_cross_document": true,
+    "enable_category": true,
+    "enable_semantic": true,
+    "flag_confidence": 0.6,
+    "reject_confidence": 0.8,
+    "amount_tolerance": 0.1,
+    "amount_material_ratio": 1.5,
+    "future_grace_days": 1,
+    "lapsed_deadline_days": 120,
+    "stale_document_days": 540,
+    "min_traceability": 2
+  },
+  "config_digest": "2ac4e448f21d1983",
+  "dataset": "development_scenarios_v2.jsonl",
+  "dataset_sha256": "9c0d89ab1be941bdb92150e5eacf86cd50c45356a19f056d2f8886a9255af5c0",
+  "generator_sha256": "3433dde0268fa083f6b9606320a2d592445037e34ddcd5a7736f1b40c764c41a",
+  "runner_sha256": "e5c44b6631c8cba95dda0196f723871ecbeac30956310d52e3ea5f0b92775564",
+  "perturbations_sha256": "fb63f2a3283b2d0561430968db3f2942badc1be4ede23674346630e012b5bb18",
+  "development_exposure": {
+    "tune_split": "Used for all development: per-case debugging, extraction fixes and the layout_collapse perturbation (so tune-split layout robustness is not an independent measure).",
+    "validation_split": "Not used for any decision or code change before this freeze. Caveats: the same author wrote the validation-family templates and the verifier; four validation cases (DV2-028, DV2-037, DV2-069, DV2-105) were printed in full while checking generator output.",
+    "hand_written_unit_tests": "Ten failures on hand-written documents led to general extraction fixes before freeze.",
+    "independent_test_150": "Used only for crash regressions (E150-095..098 parse without error); decisions not asserted or tuned.",
+    "independent_benchmark_100": "IND-064 and IND-070 used only as not-approved regression checks."
+  },
+  "rule": "Any change to a hashed file after this point invalidates validation-split claims; a new untouched test set is then required.",
+  "post_freeze_changes": [
+    {
+      "file": "evaluation/perturbations.py",
+      "new_sha256": "76a2c29e2ae589c22b42cfe78a51d1b20f5a61600242c594a1e7bfd1fa97cf4b",
+      "reason": "currency_style changed amounts ('₹1.27 lakh' -> 'Rs. 1/-.27 lakh'; '₹3,65,000.' -> 'Rs. 3,65/-,000.'). Measurement tool only; the verifier was not modified. Runs ...204852Z and ...204958Z marked SUPERSEDED for robustness."
+    },
+    {
+      "file": "evaluation/diagnose_v2_on_prior_benchmarks.py",
+      "new_sha256": "64b715edce1b92c3c47d3e59fd989d1c4fe15f8b7377f85cb9b85a277c1d4dfb",
+      "reason": "New one-shot diagnostic of the frozen candidate on the older corpora. Run once after the freeze."
+    },
+    {
+      "file": "tests/test_development_dataset_v2.py",
+      "reason": "Added test_perturbations_preserve_every_rupee_amount (guards the measurement)."
+    }
+  ],
+  "v2_package_unchanged_since_freeze": true
+}

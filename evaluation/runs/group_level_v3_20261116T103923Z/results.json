@@ -1,0 +1,1588 @@
+{
+  "created_utc": "2026-11-16T10:39:19.197732+00:00",
+  "verifiers_executed": 0,
+  "sources": {
+    "final_test_300": {
+      "predictions": "final_test_v3_31f16ae955c4/case_level_predictions.csv",
+      "predictions_sha256": "8ff792ca538a3cb86f5e39400210cc5661ed88521a6b83209f368c72d3bde0d2",
+      "dataset": "final_test_scenarios_v3.jsonl",
+      "dataset_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "cases": 300,
+      "label_clusters": 30,
+      "engines": {
+        "V2": {
+          "case": {
+            "cases": 300,
+            "confusion_matrix": {
+              "true_positive": 50,
+              "false_positive": 0,
+              "false_negative": 50,
+              "true_negative": 200
+            },
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667,
+            "false_positive_rate": 0.0,
+            "legitimate_false_positive_rate": 0.0,
+            "fraudulent_auto_approval_rate": 0.0,
+            "legitimate_auto_approval_rate": 0.0,
+            "manual_review_rate": 0.1667,
+            "information_request_rate": 0.8333,
+            "rejection_rate": 0.0,
+            "runtime_error_rate": 0.0,
+            "decision_counts": {
+              "NEEDS_MORE_INFORMATION": 250,
+              "FLAG_FOR_REVIEW": 50
+            },
+            "decision_matrix": {
+              "legitimate": {
+                "NEEDS_MORE_INFORMATION": 100
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 50,
+                "NEEDS_MORE_INFORMATION": 50
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 100
+              }
+            }
+          },
+          "group": {
+            "cases": 300,
+            "label_clusters": 30,
+            "mean_cluster_size": 10.0,
+            "homogeneous_clusters": 30,
+            "detection_icc": 1.0,
+            "effective_sample_size_for_detection": 30.0,
+            "cluster_level": {
+              "fraud_clusters_flagged": {
+                "clusters": 10,
+                "hits": 5,
+                "rate": 0.5,
+                "ci95": [
+                  0.2366,
+                  0.7634
+                ]
+              },
+              "fraud_clusters_auto_approved": {
+                "clusters": 10,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.2775
+                ]
+              },
+              "legitimate_clusters_flagged": {
+                "clusters": 10,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.2775
+                ]
+              },
+              "legitimate_clusters_approved": {
+                "clusters": 10,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.2775
+                ]
+              },
+              "borderline_clusters_approved": {
+                "clusters": 10,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.2775
+                ]
+              }
+            },
+            "cluster_bootstrap_ci95": {
+              "recall": [
+                0.2,
+                0.8
+              ],
+              "legitimate_false_positive_rate": [
+                0.0,
+                0.0
+              ],
+              "fraudulent_auto_approval_rate": [
+                0.0,
+                0.0
+              ],
+              "legitimate_auto_approval_rate": [
+                0.0,
+                0.0
+              ]
+            },
+            "naive_case_level_wilson_ci95": {
+              "recall": [
+                0.4038,
+                0.5962
+              ]
+            },
+            "units": [
+              {
+                "cluster": "accessible_exam_studio",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "account_image_without_issue_date",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "archival_language_keyboard",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "coastal_access_permit_unissued",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "committee_minutes_unratified",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "compost_route_cold_store",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "consistent_bursary_papers_forged",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "credential_calendar_shortfall",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "dispatch_quantity_diverges",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "earthquake_masonry_repair",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "enzyme_cold_chain",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "equipment_dispatch_shortfall",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "false_provenance_project_alignment",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "family_cost_share_unclear",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "field_research_recordings",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "grant_installment_unposted",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "home_ventilation_backup",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "internally_consistent_but_forged_clinic_file",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "island_burn_recovery",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "market_food_cooling_room",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "orthotic_refitting",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "paid_term_balance_reused",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "partner_share_not_confirmed",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "patient_and_record_crossing",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "patient_link_not_in_extract",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "seat_held_until_practical",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "supplier_ledger_closed",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "supplier_quote_expires_soon",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "trial_slot_authorization_pending",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "unrelated_account_recipient",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              }
+            ]
+          },
+          "workflow": {
+            "state_counts": {
+              "ELIGIBLE_PENDING_CONFIRMATION": 0,
+              "NEEDS_MORE_INFORMATION": 250,
+              "FLAG_FOR_REVIEW": 50,
+              "VERIFIED_ACTIVE": 0,
+              "REJECTED": 0,
+              "VERIFICATION_ERROR": 0
+            },
+            "state_by_label": {
+              "legitimate": {
+                "NEEDS_MORE_INFORMATION": 100
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 50,
+                "NEEDS_MORE_INFORMATION": 50
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 100
+              }
+            },
+            "approval_safety": {
+              "automatic_activations": 0,
+              "disbursements_allowed_without_confirmation": 0,
+              "fraud_detected_flag_or_reject": 50,
+              "fraud_detection_rate": 0.5,
+              "fraud_pending_external_confirmation": 0,
+              "fraud_pending_rate": 0.0,
+              "borderline_pending_external_confirmation": 0,
+              "sensitivity_expected_fraud_activations_if_confirmation_misses": {
+                "5%": 0.0,
+                "20%": 0.0,
+                "50%": 0.0
+              },
+              "note": "Pending fraud is held behind external confirmation, not detected. Its eventual outcome depends on confirmation quality, which this offline evaluation does not measure."
+            },
+            "administrative_workload": {
+              "cases": 300,
+              "manual_reviews": 50,
+              "information_requests": 250,
+              "verification_errors_to_retry": 0,
+              "campaigns_pending_confirmation": 0,
+              "external_confirmations_required": 0,
+              "per_100_campaigns": {
+                "manual_reviews": 16.7,
+                "information_requests": 83.3,
+                "external_confirmations": 0.0
+              },
+              "legitimate_friction": {
+                "pending_confirmation_unavoidable": 0,
+                "information_request_or_review_avoidable": 100
+              }
+            }
+          }
+        },
+        "V3": {
+          "case": {
+            "cases": 300,
+            "confusion_matrix": {
+              "true_positive": 60,
+              "false_positive": 0,
+              "false_negative": 40,
+              "true_negative": 200
+            },
+            "precision": 1.0,
+            "recall": 0.6,
+            "f1": 0.75,
+            "false_positive_rate": 0.0,
+            "legitimate_false_positive_rate": 0.0,
+            "fraudulent_auto_approval_rate": 0.2,
+            "legitimate_auto_approval_rate": 1.0,
+            "manual_review_rate": 0.2,
+            "information_request_rate": 0.3333,
+            "rejection_rate": 0.0,
+            "runtime_error_rate": 0.0,
+            "decision_counts": {
+              "APPROVED": 140,
+              "FLAG_FOR_REVIEW": 60,
+              "NEEDS_MORE_INFORMATION": 100
+            },
+            "decision_matrix": {
+              "legitimate": {
+                "APPROVED": 100
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 60,
+                "APPROVED": 20,
+                "NEEDS_MORE_INFORMATION": 20
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 80,
+                "APPROVED": 20
+              }
+            }
+          },
+          "group": {
+            "cases": 300,
+            "label_clusters": 30,
+            "mean_cluster_size": 10.0,
+            "homogeneous_clusters": 30,
+            "detection_icc": 1.0,
+            "effective_sample_size_for_detection": 30.0,
+            "cluster_level": {
+              "fraud_clusters_flagged": {
+                "clusters": 10,
+                "hits": 6,
+                "rate": 0.6,
+                "ci95": [
+                  0.3127,
+                  0.8318
+                ]
+              },
+              "fraud_clusters_auto_approved": {
+                "clusters": 10,
+                "hits": 2,
+                "rate": 0.2,
+                "ci95": [
+                  0.0567,
+                  0.5098
+                ]
+              },
+              "legitimate_clusters_flagged": {
+                "clusters": 10,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.2775
+                ]
+              },
+              "legitimate_clusters_approved": {
+                "clusters": 10,
+                "hits": 10,
+                "rate": 1.0,
+                "ci95": [
+                  0.7225,
+                  1.0
+                ]
+              },
+              "borderline_clusters_approved": {
+                "clusters": 10,
+                "hits": 2,
+                "rate": 0.2,
+                "ci95": [
+                  0.0567,
+                  0.5098
+                ]
+              }
+            },
+            "cluster_bootstrap_ci95": {
+              "recall": [
+                0.3,
+                0.9
+              ],
+              "legitimate_false_positive_rate": [
+                0.0,
+                0.0
+              ],
+              "fraudulent_auto_approval_rate": [
+                0.0,
+                0.5
+              ],
+              "legitimate_auto_approval_rate": [
+                1.0,
+                1.0
+              ]
+            },
+            "naive_case_level_wilson_ci95": {
+              "recall": [
+                0.502,
+                0.6906
+              ]
+            },
+            "units": [
+              {
+                "cluster": "accessible_exam_studio",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "account_image_without_issue_date",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "archival_language_keyboard",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "coastal_access_permit_unissued",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "committee_minutes_unratified",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "compost_route_cold_store",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "consistent_bursary_papers_forged",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "credential_calendar_shortfall",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "dispatch_quantity_diverges",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "earthquake_masonry_repair",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "enzyme_cold_chain",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "equipment_dispatch_shortfall",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "false_provenance_project_alignment",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "family_cost_share_unclear",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "field_research_recordings",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "grant_installment_unposted",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "home_ventilation_backup",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "internally_consistent_but_forged_clinic_file",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "island_burn_recovery",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "market_food_cooling_room",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "orthotic_refitting",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "paid_term_balance_reused",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "partner_share_not_confirmed",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "patient_and_record_crossing",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "patient_link_not_in_extract",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "seat_held_until_practical",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "supplier_ledger_closed",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "supplier_quote_expires_soon",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "trial_slot_authorization_pending",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "unrelated_account_recipient",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              }
+            ]
+          },
+          "workflow": {
+            "state_counts": {
+              "ELIGIBLE_PENDING_CONFIRMATION": 140,
+              "NEEDS_MORE_INFORMATION": 100,
+              "FLAG_FOR_REVIEW": 60,
+              "VERIFIED_ACTIVE": 0,
+              "REJECTED": 0,
+              "VERIFICATION_ERROR": 0
+            },
+            "state_by_label": {
+              "legitimate": {
+                "ELIGIBLE_PENDING_CONFIRMATION": 100
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 60,
+                "ELIGIBLE_PENDING_CONFIRMATION": 20,
+                "NEEDS_MORE_INFORMATION": 20
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 80,
+                "ELIGIBLE_PENDING_CONFIRMATION": 20
+              }
+            },
+            "approval_safety": {
+              "automatic_activations": 0,
+              "disbursements_allowed_without_confirmation": 0,
+              "fraud_detected_flag_or_reject": 60,
+              "fraud_detection_rate": 0.6,
+              "fraud_pending_external_confirmation": 20,
+              "fraud_pending_rate": 0.2,
+              "borderline_pending_external_confirmation": 20,
+              "sensitivity_expected_fraud_activations_if_confirmation_misses": {
+                "5%": 1.0,
+                "20%": 4.0,
+                "50%": 10.0
+              },
+              "note": "Pending fraud is held behind external confirmation, not detected. Its eventual outcome depends on confirmation quality, which this offline evaluation does not measure."
+            },
+            "administrative_workload": {
+              "cases": 300,
+              "manual_reviews": 60,
+              "information_requests": 100,
+              "verification_errors_to_retry": 0,
+              "campaigns_pending_confirmation": 140,
+              "external_confirmations_required": 420,
+              "per_100_campaigns": {
+                "manual_reviews": 20.0,
+                "information_requests": 33.3,
+                "external_confirmations": 140.0
+              },
+              "legitimate_friction": {
+                "pending_confirmation_unavoidable": 100,
+                "information_request_or_review_avoidable": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "v3_development_180": {
+      "predictions": "development_v3_frozen_20261116T100612Z/case_level_predictions.csv",
+      "predictions_sha256": "19ef76faa696db81e8c87a859d8187d7d5e6451d3c64ab4dc30dcf76f4f607e4",
+      "dataset": "development_scenarios_v3.jsonl",
+      "dataset_sha256": "683bbcd84eab11b4f468df87ae69317f28ee0877b94184dea5bbb047c6843d8f",
+      "cases": 180,
+      "label_clusters": 18,
+      "engines": {
+        "V2": {
+          "case": {
+            "cases": 180,
+            "confusion_matrix": {
+              "true_positive": 10,
+              "false_positive": 0,
+              "false_negative": 50,
+              "true_negative": 120
+            },
+            "precision": 1.0,
+            "recall": 0.1667,
+            "f1": 0.2857,
+            "false_positive_rate": 0.0,
+            "legitimate_false_positive_rate": 0.0,
+            "fraudulent_auto_approval_rate": 0.0,
+            "legitimate_auto_approval_rate": 0.0,
+            "manual_review_rate": 0.0556,
+            "information_request_rate": 0.9444,
+            "rejection_rate": 0.0,
+            "runtime_error_rate": 0.0,
+            "decision_counts": {
+              "NEEDS_MORE_INFORMATION": 170,
+              "FLAG_FOR_REVIEW": 10
+            },
+            "decision_matrix": {
+              "legitimate": {
+                "NEEDS_MORE_INFORMATION": 60
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 10,
+                "NEEDS_MORE_INFORMATION": 50
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 60
+              }
+            }
+          },
+          "group": {
+            "cases": 180,
+            "label_clusters": 18,
+            "mean_cluster_size": 10.0,
+            "homogeneous_clusters": 18,
+            "detection_icc": 1.0,
+            "effective_sample_size_for_detection": 18.0,
+            "cluster_level": {
+              "fraud_clusters_flagged": {
+                "clusters": 6,
+                "hits": 1,
+                "rate": 0.1667,
+                "ci95": [
+                  0.0301,
+                  0.5635
+                ]
+              },
+              "fraud_clusters_auto_approved": {
+                "clusters": 6,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.3903
+                ]
+              },
+              "legitimate_clusters_flagged": {
+                "clusters": 6,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.3903
+                ]
+              },
+              "legitimate_clusters_approved": {
+                "clusters": 6,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.3903
+                ]
+              },
+              "borderline_clusters_approved": {
+                "clusters": 6,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.3903
+                ]
+              }
+            },
+            "cluster_bootstrap_ci95": {
+              "recall": [
+                0.0,
+                0.5
+              ],
+              "legitimate_false_positive_rate": [
+                0.0,
+                0.0
+              ],
+              "fraudulent_auto_approval_rate": [
+                0.0,
+                0.0
+              ],
+              "legitimate_auto_approval_rate": [
+                0.0,
+                0.0
+              ]
+            },
+            "naive_case_level_wilson_ci95": {
+              "recall": [
+                0.0931,
+                0.2803
+              ]
+            },
+            "units": [
+              {
+                "cluster": "access_design_practicum",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "beneficiary_record_divergence",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "care_supply_request_unlinked",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "coherent_but_fabricated_dossier",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "conditional_lab_seat",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "home_cardiac_monitoring",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "informal_heat_shelter",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "internally_aligned_false_project",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "internally_consistent_enrollment_and_invoice",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "marine_apprentice_block",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "mobile_market_reading_cart",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "preauthorization_waiting",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "remote_neurology_rehab",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "shoreline_permit_pending",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "sponsor_credit_uncertain",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "teaching_period_mismatch",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "tidal_pump_retrofit",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "vendor_beneficiary_count",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              }
+            ]
+          },
+          "workflow": {
+            "state_counts": {
+              "ELIGIBLE_PENDING_CONFIRMATION": 0,
+              "NEEDS_MORE_INFORMATION": 170,
+              "FLAG_FOR_REVIEW": 10,
+              "VERIFIED_ACTIVE": 0,
+              "REJECTED": 0,
+              "VERIFICATION_ERROR": 0
+            },
+            "state_by_label": {
+              "legitimate": {
+                "NEEDS_MORE_INFORMATION": 60
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 10,
+                "NEEDS_MORE_INFORMATION": 50
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 60
+              }
+            },
+            "approval_safety": {
+              "automatic_activations": 0,
+              "disbursements_allowed_without_confirmation": 0,
+              "fraud_detected_flag_or_reject": 10,
+              "fraud_detection_rate": 0.1667,
+              "fraud_pending_external_confirmation": 0,
+              "fraud_pending_rate": 0.0,
+              "borderline_pending_external_confirmation": 0,
+              "sensitivity_expected_fraud_activations_if_confirmation_misses": {
+                "5%": 0.0,
+                "20%": 0.0,
+                "50%": 0.0
+              },
+              "note": "Pending fraud is held behind external confirmation, not detected. Its eventual outcome depends on confirmation quality, which this offline evaluation does not measure."
+            },
+            "administrative_workload": {
+              "cases": 180,
+              "manual_reviews": 10,
+              "information_requests": 170,
+              "verification_errors_to_retry": 0,
+              "campaigns_pending_confirmation": 0,
+              "external_confirmations_required": 0,
+              "per_100_campaigns": {
+                "manual_reviews": 5.6,
+                "information_requests": 94.4,
+                "external_confirmations": 0.0
+              },
+              "legitimate_friction": {
+                "pending_confirmation_unavoidable": 0,
+                "information_request_or_review_avoidable": 60
+              }
+            }
+          }
+        },
+        "V3": {
+          "case": {
+            "cases": 180,
+            "confusion_matrix": {
+              "true_positive": 30,
+              "false_positive": 0,
+              "false_negative": 30,
+              "true_negative": 120
+            },
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667,
+            "false_positive_rate": 0.0,
+            "legitimate_false_positive_rate": 0.0,
+            "fraudulent_auto_approval_rate": 0.5,
+            "legitimate_auto_approval_rate": 1.0,
+            "manual_review_rate": 0.1667,
+            "information_request_rate": 0.3333,
+            "rejection_rate": 0.0,
+            "runtime_error_rate": 0.0,
+            "decision_counts": {
+              "APPROVED": 90,
+              "FLAG_FOR_REVIEW": 30,
+              "NEEDS_MORE_INFORMATION": 60
+            },
+            "decision_matrix": {
+              "legitimate": {
+                "APPROVED": 60
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 30,
+                "APPROVED": 30
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 60
+              }
+            }
+          },
+          "group": {
+            "cases": 180,
+            "label_clusters": 18,
+            "mean_cluster_size": 10.0,
+            "homogeneous_clusters": 18,
+            "detection_icc": 1.0,
+            "effective_sample_size_for_detection": 18.0,
+            "cluster_level": {
+              "fraud_clusters_flagged": {
+                "clusters": 6,
+                "hits": 3,
+                "rate": 0.5,
+                "ci95": [
+                  0.1876,
+                  0.8124
+                ]
+              },
+              "fraud_clusters_auto_approved": {
+                "clusters": 6,
+                "hits": 3,
+                "rate": 0.5,
+                "ci95": [
+                  0.1876,
+                  0.8124
+                ]
+              },
+              "legitimate_clusters_flagged": {
+                "clusters": 6,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.3903
+                ]
+              },
+              "legitimate_clusters_approved": {
+                "clusters": 6,
+                "hits": 6,
+                "rate": 1.0,
+                "ci95": [
+                  0.6097,
+                  1.0
+                ]
+              },
+              "borderline_clusters_approved": {
+                "clusters": 6,
+                "hits": 0,
+                "rate": 0.0,
+                "ci95": [
+                  0.0,
+                  0.3903
+                ]
+              }
+            },
+            "cluster_bootstrap_ci95": {
+              "recall": [
+                0.1667,
+                0.8333
+              ],
+              "legitimate_false_positive_rate": [
+                0.0,
+                0.0
+              ],
+              "fraudulent_auto_approval_rate": [
+                0.1667,
+                0.8333
+              ],
+              "legitimate_auto_approval_rate": [
+                1.0,
+                1.0
+              ]
+            },
+            "naive_case_level_wilson_ci95": {
+              "recall": [
+                0.3773,
+                0.6227
+              ]
+            },
+            "units": [
+              {
+                "cluster": "access_design_practicum",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "beneficiary_record_divergence",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "care_supply_request_unlinked",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "coherent_but_fabricated_dossier",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "conditional_lab_seat",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "home_cardiac_monitoring",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "informal_heat_shelter",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "internally_aligned_false_project",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "internally_consistent_enrollment_and_invoice",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "marine_apprentice_block",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "mobile_market_reading_cart",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "preauthorization_waiting",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "remote_neurology_rehab",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "shoreline_permit_pending",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "sponsor_credit_uncertain",
+                "label": "borderline",
+                "size": 10,
+                "majority_decision": "NEEDS_MORE_INFORMATION",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "teaching_period_mismatch",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              },
+              {
+                "cluster": "tidal_pump_retrofit",
+                "label": "legitimate",
+                "size": 10,
+                "majority_decision": "APPROVED",
+                "homogeneous": true,
+                "flag_share": 0.0,
+                "approval_share": 1.0
+              },
+              {
+                "cluster": "vendor_beneficiary_count",
+                "label": "fraudulent",
+                "size": 10,
+                "majority_decision": "FLAG_FOR_REVIEW",
+                "homogeneous": true,
+                "flag_share": 1.0,
+                "approval_share": 0.0
+              }
+            ]
+          },
+          "workflow": {
+            "state_counts": {
+              "ELIGIBLE_PENDING_CONFIRMATION": 90,
+              "NEEDS_MORE_INFORMATION": 60,
+              "FLAG_FOR_REVIEW": 30,
+              "VERIFIED_ACTIVE": 0,
+              "REJECTED": 0,
+              "VERIFICATION_ERROR": 0
+            },
+            "state_by_label": {
+              "legitimate": {
+                "ELIGIBLE_PENDING_CONFIRMATION": 60
+              },
+              "fraudulent": {
+                "FLAG_FOR_REVIEW": 30,
+                "ELIGIBLE_PENDING_CONFIRMATION": 30
+              },
+              "borderline": {
+                "NEEDS_MORE_INFORMATION": 60
+              }
+            },
+            "approval_safety": {
+              "automatic_activations": 0,
+              "disbursements_allowed_without_confirmation": 0,
+              "fraud_detected_flag_or_reject": 30,
+              "fraud_detection_rate": 0.5,
+              "fraud_pending_external_confirmation": 30,
+              "fraud_pending_rate": 0.5,
+              "borderline_pending_external_confirmation": 0,
+              "sensitivity_expected_fraud_activations_if_confirmation_misses": {
+                "5%": 1.5,
+                "20%": 6.0,
+                "50%": 15.0
+              },
+              "note": "Pending fraud is held behind external confirmation, not detected. Its eventual outcome depends on confirmation quality, which this offline evaluation does not measure."
+            },
+            "administrative_workload": {
+              "cases": 180,
+              "manual_reviews": 30,
+              "information_requests": 60,
+              "verification_errors_to_retry": 0,
+              "campaigns_pending_confirmation": 90,
+              "external_confirmations_required": 270,
+              "per_100_campaigns": {
+                "manual_reviews": 16.7,
+                "information_requests": 33.3,
+                "external_confirmations": 150.0
+              },
+              "legitimate_friction": {
+                "pending_confirmation_unavoidable": 60,
+                "information_request_or_review_avoidable": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

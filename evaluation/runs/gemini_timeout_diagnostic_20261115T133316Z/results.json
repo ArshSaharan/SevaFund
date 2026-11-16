@@ -1,0 +1,44 @@
+{
+  "run_at_utc": "2026-11-15T13:33:16.725444+00:00",
+  "case_count": 0,
+  "evaluation_started": false,
+  "models": {
+    "generation": "gemini-3.8-flash",
+    "embedding": "gemini-embedding-001"
+  },
+  "httpx_timeouts_seconds": {
+    "connect": 10,
+    "read": 90,
+    "write": 20,
+    "pool": 10,
+    "overall_deadline": null
+  },
+  "probes": [
+    {
+      "stage": "generation_default_thinking",
+      "success": true,
+      "latency_seconds": 47.796,
+      "http_status": 200,
+      "finish_reason": "STOP",
+      "response_has_text": true
+    },
+    {
+      "stage": "generation_low_thinking",
+      "success": true,
+      "latency_seconds": 60.547,
+      "http_status": 200,
+      "finish_reason": "STOP",
+      "response_has_text": true
+    },
+    {
+      "stage": "embedding",
+      "success": true,
+      "latency_seconds": 0.485,
+      "http_status": 200,
+      "finish_reason": null,
+      "response_has_text": false
+    }
+  ],
+  "both_endpoints_passed": true,
+  "logging_policy": "No API key, request headers, prompt/response text, or raw provider body recorded."
+}

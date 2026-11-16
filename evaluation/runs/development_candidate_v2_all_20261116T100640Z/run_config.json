@@ -1,0 +1,43 @@
+{
+  "python": "3.9.6",
+  "engine_version": "sevafund-development-candidate-v2.0",
+  "config": {
+    "enable_cross_document": true,
+    "enable_category": true,
+    "enable_semantic": true,
+    "flag_confidence": 0.6,
+    "reject_confidence": 0.8,
+    "amount_tolerance": 0.1,
+    "amount_material_ratio": 1.5,
+    "future_grace_days": 1,
+    "lapsed_deadline_days": 120,
+    "stale_document_days": 540,
+    "min_traceability": 2
+  },
+  "config_digest": "2ac4e448f21d1983",
+  "v2_package": {
+    "files": {
+      "__init__.py": "d9fe21d044c591c32009a6085bc7fcdd4ba1062b6d0db0ec385157f26b57b86f",
+      "audit.py": "ecceea9d807b5324f5be4f508ca74c91a7c4e86b92b07a49949910ebc958180e",
+      "category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+      "config.py": "64183f6dd1d43389ec703c440f7d3e32712c3d316df0641f4fa33fb763926bdc",
+      "consistency.py": "b99a99feb5238ebc04fc4e7ce52923306c8176f20219fb2ffee1acd7b1caf663",
+      "decision.py": "31d0be642c6733388259e63c4b6faae25e177b023b571418b23bbf889c2f9252",
+      "engine.py": "b1cbd655d230c70289b9887baaa92fa0476785f534270688c714830ec561932b",
+      "extraction.py": "d7d41933f0e41f8ee055a29ae6184d5b6a2ed266cd8a7946f72fa1c4661242ee",
+      "money.py": "b23903cc81065d098a2c1ae38b99cc6a73664849ed9892d7509c62422daa5e03",
+      "normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+      "schemas.py": "928523f2b05017ab9566d546a9d6a6af31955c7119e7c69e3d5ce8699edd8e36",
+      "semantic.py": "69fc99590098d1a16d1a193a1ec98764dfae74cf38c28228ebc21842d340315b"
+    },
+    "combined": "a054be91b210c9e22cbc2965e8978a6fda9b07ff10f1893aecc872ba04be6fc6"
+  },
+  "matches_freeze_manifest": true,
+  "candidate_v1_sha256": "f6bba947d5ec1202502ece19e02fdf24b93cdb623a12a59d6eced670118e4eec",
+  "baseline_verifier_sha256": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+  "fraud_rules_sha256": "f47e641743d1d66272cf36d6bfa2053245bbf2b68bf15b19075fab41cf97279f",
+  "rag_sha256": "95b14980be44fd6b658cd4025a0c24a90447a53fb212f42cede257b2f4f71309",
+  "generator_sha256": "3433dde0268fa083f6b9606320a2d592445037e34ddcd5a7736f1b40c764c41a",
+  "runner_sha256": "e5c44b6631c8cba95dda0196f723871ecbeac30956310d52e3ea5f0b92775564",
+  "perturbations_sha256": "76a2c29e2ae589c22b42cfe78a51d1b20f5a61600242c594a1e7bfd1fa97cf4b"
+}

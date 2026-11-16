@@ -1,0 +1,10 @@
+{
+  "python": "3.9.6 (default, Oct 19 2026, 19:18:13) \n[Clang 21.0.0 (clang-2100.4.1.1)]",
+  "dataset_sha256": "099016d5da873766fccbd199337a153de62da1ee2b6c1bb8f35b9c5b43b510e0",
+  "protocol_sha256": "d93cfa883909ce8022df2dfe9bc170da319d7b239a3b073103f861601678ba75",
+  "generator_sha256": "957c803a530772a8260236dc3967907117a7ff5c6dc40c6430880f3c2803c687",
+  "evaluator_sha256": "f3e348608810a3414842d700d891a971a08663ce3868eade9488f2cdba6e2d5e",
+  "generation_enabled": false,
+  "embeddings_enabled": false,
+  "candidate_or_baseline_modified_after_results": false
+}

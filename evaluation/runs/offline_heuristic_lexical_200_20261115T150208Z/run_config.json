@@ -1,0 +1,36 @@
+{
+  "run_id": "offline_heuristic_lexical_200_20261115T150208Z",
+  "created_at_utc": "2026-11-15T15:05:37.247104+00:00",
+  "command": ".venv/bin/python -B evaluation/evaluate_fundraising.py --output-dir evaluation/runs/offline_heuristic_lexical_200_20261115T150208Z",
+  "python_version": "3.9.6",
+  "dataset": "evaluation/fundraising_scenarios.jsonl",
+  "dataset_sha256": "cb6d08c426d8ecbfce9c661d9ef32d756ab68a052671c3fadad31d43b1cd3099",
+  "dataset_cases": 200,
+  "dataset_synthetic": true,
+  "dataset_label_counts": {
+    "legitimate": 80,
+    "fraudulent": 80,
+    "borderline": 40
+  },
+  "configuration": "Python heuristics + lexical retrieval",
+  "generation_model": null,
+  "embedding_model": null,
+  "gemini_generation_enabled": false,
+  "gemini_embeddings_enabled": false,
+  "retrieval": "document text extraction, chunking, lexical overlap retrieval; no semantic embeddings",
+  "fraud_scoring_logic_modified_for_this_run": false,
+  "thresholds_modified_for_this_run": false,
+  "source_sha256": {
+    "evaluation/evaluate_fundraising.py": "28ae30768ef9177e31e86c96f1481ed633bde55e0c969130bb3f05698aefa74c",
+    "app/services/ai_verifier.py": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+    "app/services/fraud_detector.py": "f47e641743d1d66272cf36d6bfa2053245bbf2b68bf15b19075fab41cf97279f",
+    "app/services/rag.py": "95b14980be44fd6b658cd4025a0c24a90447a53fb212f42cede257b2f4f71309"
+  },
+  "case_level_predictions": "predictions.csv",
+  "metrics_recomputed_from_saved_csv": {
+    "tp": 80,
+    "fp": 25,
+    "fn": 0,
+    "tn": 95
+  }
+}

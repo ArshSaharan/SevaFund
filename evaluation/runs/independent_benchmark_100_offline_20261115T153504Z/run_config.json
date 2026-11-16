@@ -1,0 +1,19 @@
+{
+  "command": ".venv/bin/python -B evaluation/evaluate_independent_benchmark_100.py --output-dir /Users/arshsaharan/Code/crowdfunding/evaluation/runs/independent_benchmark_100_offline_20261115T153504Z",
+  "python_version": "3.9.6 (default, Oct 19 2026, 19:18:13) \n[Clang 21.0.0 (clang-2100.4.1.1)]",
+  "dataset_sha256": "fc1188c2851342683a096f4235534d9d98deb3f390bd9840feb8b13b9a07aa46",
+  "prior_200_case_dataset_sha256": "cb6d08c426d8ecbfce9c661d9ef32d756ab68a052671c3fadad31d43b1cd3099",
+  "evaluator_sha256": "902bd61a1dbe0d270eed7adb72eb5d9c716a15f185fd882de43ea42841d0e31d",
+  "shared_offline_evaluator_sha256": "28ae30768ef9177e31e86c96f1481ed633bde55e0c969130bb3f05698aefa74c",
+  "ai_verifier_sha256": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+  "fraud_detector_sha256": "f47e641743d1d66272cf36d6bfa2053245bbf2b68bf15b19075fab41cf97279f",
+  "rag_sha256": "95b14980be44fd6b658cd4025a0c24a90447a53fb212f42cede257b2f4f71309",
+  "dataset_counts": {
+    "legitimate": 40,
+    "fraudulent": 40,
+    "borderline": 20
+  },
+  "generation_enabled": false,
+  "embeddings_enabled": false,
+  "scoring_logic_or_thresholds_changed": false
+}

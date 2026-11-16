@@ -1,0 +1,121 @@
+case_id,ground_truth,scenario_family,document_source,group_fold,category,baseline_recommendation,baseline_flagged,candidate_recommendation,candidate_flagged,candidate_evidence_relation,candidate_evidence_conflicts,baseline_latency_ms,candidate_latency_ms
+DEV-001,legitimate,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,4.948082999999992,0.5346250000000108
+DEV-002,legitimate,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.3660829999999615,0.07308299999997381
+DEV-003,legitimate,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.3357920000000014,0.0699580000000366
+DEV-004,legitimate,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.32933399999995894,0.06787499999999502
+DEV-005,fraudulent,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.37495900000000804,0.797958000000043
+DEV-006,fraudulent,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.4100409999999721,0.09195900000003032
+DEV-007,fraudulent,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.35245799999999994,0.07937500000004816
+DEV-008,fraudulent,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.3493749999999851,0.07637499999996189
+DEV-009,borderline,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,AUTO_APPROVE,False,NEEDS_MORE_INFO,False,incomplete,,0.3686250000000113,0.09950000000003012
+DEV-010,borderline,dialysis_power,district_clinic_billing_desk,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.24562499999997156,0.005915999999994703
+DEV-011,legitimate,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.3086659999999575,0.0827079999999869
+DEV-012,legitimate,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.29999999999996696,0.07575000000004106
+DEV-013,legitimate,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.30758300000000016,0.07912500000001321
+DEV-014,legitimate,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2986249999999968,0.06795799999997909
+DEV-015,fraudulent,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.3535840000000179,0.07158400000001341
+DEV-016,fraudulent,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.35608399999997875,0.07395900000001232
+DEV-017,fraudulent,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.3574579999999772,0.07704199999997163
+DEV-018,fraudulent,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.35641600000002605,0.07937499999999265
+DEV-019,borderline,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.3738329999999901,0.07741699999996854
+DEV-020,borderline,rare_dietary_formula,pediatric_nutritionist_letter,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.2575000000000216,0.00579200000000446
+DEV-021,legitimate,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.30733300000002073,0.07612500000003797
+DEV-022,legitimate,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.3187499999999788,0.07141700000001805
+DEV-023,legitimate,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.4214580000000412,0.07262500000004835
+DEV-024,legitimate,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.31483299999995884,0.06891700000000167
+DEV-025,fraudulent,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.37050000000005134,0.0708340000000196
+DEV-026,fraudulent,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.36683300000001084,0.07199999999996098
+DEV-027,fraudulent,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.3729579999999788,0.07283299999999437
+DEV-028,fraudulent,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.3670000000000062,0.06950000000000012
+DEV-029,borderline,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.3890420000000061,0.07249999999997536
+DEV-030,borderline,mobility_repair,prosthetics_workshop_quote,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.2742910000000376,0.005249999999956678
+DEV-031,legitimate,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.31804200000001837,0.06616599999997863
+DEV-032,legitimate,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.39962500000001455,0.06537499999997864
+DEV-033,legitimate,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.41079199999999316,0.06545799999996271
+DEV-034,legitimate,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.40116600000000835,0.07216700000001186
+DEV-035,fraudulent,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.3886670000000092,0.07750000000000812
+DEV-036,fraudulent,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.4093749999999896,0.07929199999995307
+DEV-037,fraudulent,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.38925000000000765,0.07941699999997054
+DEV-038,fraudulent,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.36654200000002524,0.07629200000003333
+DEV-039,borderline,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.3782910000000306,0.08020899999999775
+DEV-040,borderline,rural_transport,ambulance_cooperative_log,fold-1,MEDICAL,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.2503329999999915,0.005791000000032742
+DEV-041,legitimate,laboratory_access,campus_procurement_office,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.6482500000000169,0.07283299999999437
+DEV-042,legitimate,laboratory_access,campus_procurement_office,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.264665999999969,0.06812499999997446
+DEV-043,legitimate,laboratory_access,campus_procurement_office,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.26124999999999066,0.06779099999998373
+DEV-044,legitimate,laboratory_access,campus_procurement_office,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.26729200000003006,0.06816600000003614
+DEV-045,fraudulent,laboratory_access,campus_procurement_office,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.2990830000000333,0.0755839999999619
+DEV-046,fraudulent,laboratory_access,campus_procurement_office,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.2933330000000067,0.07699999999999374
+DEV-047,fraudulent,laboratory_access,campus_procurement_office,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.29600000000001847,0.07750000000000812
+DEV-048,fraudulent,laboratory_access,campus_procurement_office,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.29758300000004567,0.0743750000000154
+DEV-049,borderline,laboratory_access,campus_procurement_office,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.3062079999999745,0.07733299999995724
+DEV-050,borderline,laboratory_access,campus_procurement_office,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.18899999999999473,0.005790999999977231
+DEV-051,legitimate,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.25416700000002734,0.0702910000000001
+DEV-052,legitimate,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.255874999999961,0.0695830000000397
+DEV-053,legitimate,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.24879099999997045,0.06987499999999702
+DEV-054,legitimate,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2851249999999972,0.06962500000001759
+DEV-055,fraudulent,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.28737500000003413,0.1542499999999669
+DEV-056,fraudulent,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.30354199999999,0.07862499999999883
+DEV-057,fraudulent,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.30049999999998134,0.09666600000002301
+DEV-058,fraudulent,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.28404100000001264,0.08249999999998536
+DEV-059,borderline,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.30054199999995923,0.08337499999999665
+DEV-060,borderline,apprenticeship_tools,trade_guild_tool_ledger,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.18624999999999892,0.006459000000014203
+DEV-061,legitimate,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.2519160000000187,0.0751669999999871
+DEV-062,legitimate,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.2542909999999621,0.07395799999998509
+DEV-063,legitimate,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.25004200000000587,0.07287500000002778
+DEV-064,legitimate,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,AUTO_APPROVE,False,supports,,0.2534579999999842,0.06941699999996054
+DEV-065,fraudulent,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.29000000000001247,0.07720900000002251
+DEV-066,fraudulent,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.292665999999997,0.07404199999999639
+DEV-067,fraudulent,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.2966249999999948,0.07504099999999791
+DEV-068,fraudulent,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.2999590000000163,0.07283299999999437
+DEV-069,borderline,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,AUTO_APPROVE,False,NEEDS_MORE_INFO,False,incomplete,,0.32370800000003364,0.07904100000000192
+DEV-070,borderline,rural_hostel,hostel_warden_fee_register,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.1842910000000031,0.005874999999988528
+DEV-071,legitimate,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.26450000000000085,0.07270900000000413
+DEV-072,legitimate,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2581660000000041,0.06816599999998063
+DEV-073,legitimate,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2515000000000156,0.07929099999998135
+DEV-074,legitimate,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.274207999999998,0.06816599999998063
+DEV-075,fraudulent,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.29087499999996824,0.07329200000000258
+DEV-076,fraudulent,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.28812500000002794,0.07295800000001185
+DEV-077,fraudulent,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.29362500000001956,0.0767500000000143
+DEV-078,fraudulent,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.28683299999998635,0.0711669999999831
+DEV-079,borderline,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.30924999999998315,0.09016599999994712
+DEV-080,borderline,exam_access,testing_center_accommodation_notice,fold-2,EDUCATION,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.1899169999999839,0.005291000000018364
+DEV-081,legitimate,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.7281249999999684,0.06587499999999302
+DEV-082,legitimate,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.28566699999998946,0.06391699999996892
+DEV-083,legitimate,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.26691699999997764,0.06383300000001313
+DEV-084,legitimate,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2603330000000015,0.06370799999999566
+DEV-085,fraudulent,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.3122919999999918,0.07170800000000366
+DEV-086,fraudulent,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.3038330000000311,0.07341700000002005
+DEV-087,fraudulent,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.2957499999999835,0.07308300000002932
+DEV-088,fraudulent,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,AUTO_APPROVE,False,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.2859590000000023,0.07045799999999547
+DEV-089,borderline,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.3137500000000015,0.07312500000000721
+DEV-090,borderline,water_testing,municipal_water_lab_report,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.19370899999998636,0.0053749999999741505
+DEV-091,legitimate,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2742920000000093,0.06375000000002906
+DEV-092,legitimate,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2726670000000042,0.06429200000002133
+DEV-093,legitimate,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.25920800000001076,0.06358400000000541
+DEV-094,legitimate,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.27366700000003297,0.062332999999969996
+DEV-095,fraudulent,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.3087920000000022,0.07129100000002886
+DEV-096,fraudulent,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.3089159999999924,0.07445799999999947
+DEV-097,fraudulent,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.30962500000003557,0.07345899999999794
+DEV-098,fraudulent,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.32295900000001154,0.07179199999995944
+DEV-099,borderline,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.3233750000000146,0.07341700000002005
+DEV-100,borderline,storm_shelter,ward_engineer_site_memo,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.2095839999999849,0.005332999999996257
+DEV-101,legitimate,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2844170000000368,0.06975000000003506
+DEV-102,legitimate,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2747499999999903,0.0704590000000227
+DEV-103,legitimate,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2730000000000232,0.07054099999997954
+DEV-104,legitimate,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.272665999999977,0.07037499999995589
+DEV-105,fraudulent,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.3139169999999969,0.07516600000001539
+DEV-106,fraudulent,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.31404200000001437,0.07733300000001275
+DEV-107,fraudulent,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.3085830000000289,0.07670800000003641
+DEV-108,fraudulent,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.33729200000004456,0.07412499999998046
+DEV-109,borderline,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.37079200000000867,0.07591699999998092
+DEV-110,borderline,food_cold_chain,cooperative_dairy_temperature_log,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.2107080000000039,0.005499999999991623
+DEV-111,legitimate,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2694590000000274,0.0683750000000094
+DEV-112,legitimate,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.25999999999998247,0.06854200000000477
+DEV-113,legitimate,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.2747499999999903,0.06762500000001559
+DEV-114,legitimate,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,AUTO_APPROVE,False,supports,,0.25895899999994754,0.06787499999999502
+DEV-115,fraudulent,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,reimbursement or prior-delivery mismatch,0.3209579999999823,0.07550000000000612
+DEV-116,fraudulent,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,purpose mismatch between claim and authorization,0.3097909999999482,0.07666600000000301
+DEV-117,fraudulent,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,amount mismatch between claim and retrieved document,0.31124999999998515,0.07612499999998246
+DEV-118,fraudulent,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,FLAG_FOR_REVIEW,True,contradicts,identity mismatch between campaign beneficiary and document payee,0.30208300000000854,0.07483299999999637
+DEV-119,borderline,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,incomplete,,0.31412499999999843,0.07554200000003952
+DEV-120,borderline,accessible_route,village_council_measurement_book,fold-3,COMMUNITY,FLAG_FOR_REVIEW,True,NEEDS_MORE_INFO,False,unavailable,,0.19691699999996315,0.00566600000001527

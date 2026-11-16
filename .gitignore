@@ -70,3 +70,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# SQLite journal / shared-memory files (the databases themselves are ignored above)
+*.sqlite3-shm
+*.sqlite3-wal
+*.db-shm
+*.db-wal
+*.db-journal

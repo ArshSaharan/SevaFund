@@ -1,0 +1,35 @@
+{
+  "api_requests": 0,
+  "config_digest": "b6607c134cebf4ea",
+  "config_sha256": "3835a9c2e20bd30e079664ca775b22f1becf25176ad2b85e4c9bd14598bfc9e9",
+  "created_utc": "2026-11-16T09:47:32.537112+00:00",
+  "dataset": "evaluation/development_scenarios_v3.jsonl",
+  "dataset_rows": 180,
+  "dataset_sha256": "33cd72b7c829034110700f3226b944c8a3cc26085ff0b30489cb6c4d68c3801c",
+  "dependencies": {
+    "pydantic": "2.13.5",
+    "pytest": "8.4.2"
+  },
+  "python": "3.9.6",
+  "rag_mode": "offline full-document extraction; no semantic embedding or Gemini",
+  "synthetic": true,
+  "v2_config_digest": "2ac4e448f21d1983",
+  "v2_package_sha256": "a054be91b210c9e22cbc2965e8978a6fda9b07ff10f1893aecc872ba04be6fc6",
+  "v3_package_file_sha256": {
+    "__init__.py": "ced58ad69c89af95bf396584cc896f013ce7542471d27d9a627fc95248059cbb",
+    "audit.py": "aa5c44709b4dc08bb7c73f7dd285084b5efa8d65dff2262824a3fab25f9a835b",
+    "category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+    "config.py": "a4db3161f6b72bb03a1c7bc7dd9fed6d6e75b4d09fab010531fddd8dfa8b7428",
+    "consistency.py": "d7d5917f81a212b5e98d579660d586a187562cecdc988cdd25b9cb26067737d1",
+    "decision.py": "bc4b6135ec97fb53e4ccdc39e597eefc4029c7fb326afe3a6af53f14acc27b65",
+    "engine.py": "5b4cb360a5be359f86b2e92099e105dd11502bcbcc69a1e14cdc521ec53eb569",
+    "evidence_policy.py": "1fac2afe23909cde49c012c1768b9e32f47444047f00438e71468f529bcc2fa8",
+    "extraction.py": "c053fe0b7a9d68583d5680eec1a771c90ffad3584ab0c3369bb23c9895ee9815",
+    "money.py": "9cf75f77335e7117beabe50dd75722a84b66d1ecf9d2cc431fafb83e5dd0b1dd",
+    "normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+    "quantitative_consistency.py": "ce6b8014688add3aebdc3a495d7a7e3becaf95ca458fca422dbff600f7af43f9",
+    "schemas.py": "42f93de385a090295a63358606df8c73889e698ad8ad6bd36370bf866d4d4708",
+    "semantic.py": "dfdd824ceafa06da8ddf6a8f1fe0eb36e5c7071df8cf0545b0c2d25443345dfc"
+  },
+  "v3_package_sha256": "600cd283a7729ade9e88f9f656232d498ec744d855c7d27ac03d95261dc43a0f"
+}

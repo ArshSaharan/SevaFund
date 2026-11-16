@@ -1,0 +1,27 @@
+{
+  "complete": false,
+  "metrics": {
+    "attempted_cases": 0,
+    "successful_predictions": 0,
+    "prediction_coverage": null,
+    "api_success_rate": null,
+    "system_decision_coverage": null,
+    "confusion_matrix": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0
+    },
+    "precision": null,
+    "recall": null,
+    "f1": null,
+    "false_positive_rate": null,
+    "end_to_end_latency_ms": {
+      "mean": null,
+      "median": null,
+      "p95": null
+    },
+    "label_definition": "Fraudulent is positive; legitimate and borderline are negative. Gemini-only and Gemini+RAG classification metrics use successful model predictions only; failures are abstentions."
+  },
+  "cases": []
+}

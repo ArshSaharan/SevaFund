@@ -1,0 +1,12 @@
+{
+  "dataset": "fundraising_scenarios.jsonl",
+  "diagnostic_case_count": 12,
+  "cases_sent": 0,
+  "status": "blocked_at_preflight",
+  "preflight_error": "Gemini generation preflight stopped (HTTP 429; provider status RESOURCE_EXHAUSTED; provider code 429; reason not provided; retry-after not provided); no cases were sent.",
+  "models": {
+    "generation": "gemini-2.5-flash",
+    "embedding": "gemini-embedding-001"
+  },
+  "logging_policy": "No credentials, request bodies, response bodies, or provider messages are recorded."
+}

@@ -1,0 +1,12 @@
+{
+  "status": "blocked_at_preflight",
+  "dataset": "fundraising_scenarios.jsonl",
+  "synthetic": true,
+  "case_count": 200,
+  "cases_sent": 0,
+  "reason": "generation:RESOURCE_EXHAUSTED:HTTP_429",
+  "models": {
+    "generation": "gemini-2.5-flash",
+    "embedding": "gemini-embedding-001"
+  }
+}

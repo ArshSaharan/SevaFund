@@ -1,0 +1,508 @@
+"""Prepared (NOT executed) paired evaluation of offline and Gemini verification.
+
+Configurations, run on identical case IDs:
+  heuristics_only     - production local heuristics, no documents/retrieval            (offline)
+  heuristics_lexical  - production local heuristics + lexical RAG retrieval            (offline)
+  gemini_no_rag       - production Gemini prompt with campaign text only               (1 generation call)
+  gemini_rag          - Gemini embeddings retrieval (top-5) + production Gemini prompt (1 embedding + 1 generation)
+  hybrid              - frozen V3 + gemini_rag result (Gemini may only escalate) + approval workflow (no extra call)
+
+Design rules
+* Default command is `plan`: builds the job list and call budget; makes no network call.
+* `execute` refuses to run unless SEVAFUND_GEMINI_EVAL_APPROVED=1, GEMINI_API_KEY is set and --max-calls is
+  given.  It never changes billing; quota exhaustion stops the run cleanly and the next run resumes.
+* Successful results are cached (cache.jsonl); API failures are recorded separately (failures.jsonl) with a
+  sanitized category - never request content, response text or the key.  The production verifier's silent
+  local fallback is bypassed: a Gemini failure stays a failure.
+* Retrieval and verification are measured separately.  Metrics are computed on the subset of cases that
+  every configuration completed (paired), with coverage reported per configuration.
+* Only datasets whose every row is `synthetic: true` may be sent, unless an explicit data-authorization
+  reference is given; non-synthetic text is redacted before it leaves the machine.
+"""
+import argparse
+import asyncio
+import hashlib
+import json
+import math
+import os
+import random
+import re
+import statistics
+import sys
+import time
+from collections import Counter, defaultdict
+from contextlib import contextmanager
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Awaitable, Callable, Dict, List, Optional
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import importlib
+
+from app.config import settings
+from app.services import rag
+from app.services.ai_verifier import AIVerifierService
+
+# `app.services` re-exports the ai_verifier *instance* under the module's name,
+# so the module object (whose post_json the production prompt uses) is fetched explicitly.
+ai_verifier_module = importlib.import_module("app.services.ai_verifier")
+from app.services.gemini_api import GeminiAPIError
+
+CONFIGS = ["heuristics_only", "heuristics_lexical", "gemini_no_rag", "gemini_rag", "hybrid"]
+API_CONFIGS = {"gemini_no_rag", "gemini_rag", "hybrid"}
+CALLS_PER_CASE = {"gemini_no_rag": {"generation": 1}, "gemini_rag": {"embedding": 1, "generation": 1}, "hybrid": {}}
+STOP_CATEGORIES = {"QUOTA_EXHAUSTED", "AUTHENTICATION", "PERMISSION_DENIED", "MODEL_NOT_FOUND", "BUDGET_EXHAUSTED"}
+APPROVAL_ENV = "SEVAFUND_GEMINI_EVAL_APPROVED"
+DEFAULT_DATASET = Path(__file__).with_name("final_test_scenarios_v3.jsonl")
+Transport = Callable[..., Awaitable[Dict[str, Any]]]
+
+
+class BudgetExhausted(GeminiAPIError):
+    def __init__(self):
+        super().__init__("framework", "BUDGET_EXHAUSTED")
+
+
+class DataAuthorizationError(RuntimeError):
+    pass
+
+
+# ---------------------------------------------------------------- data access
+def load_cases(path: Path, data_authorization: Optional[str] = None) -> List[dict]:
+    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if not all(row.get("synthetic") is True for row in rows) and not data_authorization:
+        raise DataAuthorizationError(
+            "Dataset contains rows not marked synthetic. Sending real beneficiary documents to an external "
+            "service requires an explicit --data-authorization reference (consent / data-processing approval).")
+    return rows
+
+
+_REDACT = [(re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+"), "[EMAIL]"), (re.compile(r"\+?\d[\d \-]{8,}\d"), "[NUMBER]"),
+           (re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b"), "[IFSC]"), (re.compile(r"\b[\w.-]{2,}@[a-z]{2,}\b"), "[UPI]")]
+
+
+def redact(case: dict) -> dict:
+    """Mask beneficiary name, contact details and account identifiers (used for non-synthetic data)."""
+    data = json.loads(json.dumps(case["input"]))
+    name = data.get("beneficiary_name") or ""
+    parts = sorted({part for part in re.findall(r"[A-Za-z]{3,}", name)}, key=len, reverse=True)
+
+    def clean(text: str) -> str:
+        if name:
+            text = text.replace(name, "[BENEFICIARY]")
+            for part in parts:                      # given name or surname used on its own
+                text = re.sub(rf"\b{re.escape(part)}\b", "[BENEFICIARY]", text, flags=re.I)
+        for pattern, token in _REDACT:
+            text = pattern.sub(token, text)
+        return text
+    for key in ("title", "story"):
+        data[key] = clean(data.get(key, ""))
+    if name:
+        data["beneficiary_name"] = "[BENEFICIARY]"
+    data["documents"] = [dict(d, content=clean(d.get("content", ""))) for d in data.get("documents", [])]
+    return dict(case, input=data)
+
+
+def sample_cases(cases: List[dict], per_cluster: Optional[int], seed: int, cluster_key: str) -> List[dict]:
+    """Deterministic stratified sample: k cases per (cluster, label).  Same IDs for every configuration."""
+    if not per_cluster:
+        return cases
+    groups = defaultdict(list)
+    for case in cases:
+        groups[(case.get(cluster_key) or case["case_id"], case["ground_truth"])].append(case)
+    rng = random.Random(seed)
+    chosen = []
+    for key in sorted(groups, key=str):
+        members = sorted(groups[key], key=lambda c: c["case_id"])
+        chosen.extend(rng.sample(members, min(per_cluster, len(members))))
+    return sorted(chosen, key=lambda c: c["case_id"])
+
+
+# ----------------------------------------------------------------------- plan
+def build_plan(cases: List[dict], configs: List[str], dataset: Path, per_cluster: Optional[int], seed: int,
+               daily_generation_quota: int, daily_embedding_quota: int) -> dict:
+    calls = Counter()
+    for config in configs:
+        for stage, count in CALLS_PER_CASE.get(config, {}).items():
+            calls[stage] += count * len(cases)
+    days = max(math.ceil(calls["generation"] / daily_generation_quota) if daily_generation_quota else 0,
+               math.ceil(calls["embedding"] / daily_embedding_quota) if daily_embedding_quota else 0)
+    return {
+        "dataset": str(dataset), "dataset_sha256": hashlib.sha256(dataset.read_bytes()).hexdigest(),
+        "configs": configs, "case_ids": [c["case_id"] for c in cases], "cases": len(cases),
+        "sample_per_cluster": per_cluster, "seed": seed,
+        "labels": dict(Counter(c["ground_truth"] for c in cases)),
+        "api_calls_required": dict(calls), "api_calls_total": sum(calls.values()),
+        "assumed_daily_quota": {"generation": daily_generation_quota, "embedding": daily_embedding_quota},
+        "estimated_days_at_quota": days,
+        "model": settings.GEMINI_MODEL, "embedding_model": settings.GEMINI_EMBEDDING_MODEL,
+        "billing": "No billing change is made by this framework. Quotas are an operator-supplied assumption.",
+    }
+
+
+# ---------------------------------------------------------------------- store
+class Store:
+    """Append-only cache of successes, failures and run state - resumable across quota resets."""
+
+    def __init__(self, directory: Path):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        self.cache_path, self.fail_path, self.state_path = (directory / "cache.jsonl", directory / "failures.jsonl",
+                                                            directory / "state.json")
+        self.cache: Dict[str, dict] = {}
+        if self.cache_path.exists():
+            for line in self.cache_path.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    record = json.loads(line)
+                    self.cache[record["key"]] = record
+
+    @staticmethod
+    def key(config: str, case_id: str, stage: str, fingerprint: str) -> str:
+        return hashlib.sha256(f"{config}|{case_id}|{stage}|{fingerprint}".encode()).hexdigest()[:24]
+
+    def get(self, key: str) -> Optional[dict]:
+        return self.cache.get(key)
+
+    def put(self, key: str, record: dict) -> None:
+        record = {**record, "key": key, "cached_at": datetime.now(timezone.utc).isoformat()}
+        self.cache[key] = record
+        with self.cache_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, default=str) + "\n")
+
+    def fail(self, record: dict) -> None:
+        with self.fail_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps({**record, "at": datetime.now(timezone.utc).isoformat()}) + "\n")
+
+    def failures(self) -> List[dict]:
+        if not self.fail_path.exists():
+            return []
+        return [json.loads(line) for line in self.fail_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    def save_state(self, state: dict) -> None:
+        self.state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
+class BudgetedTransport:
+    """Wraps the real (or a fake) POST function: enforces --max-calls and counts calls per stage."""
+
+    def __init__(self, post: Transport, api_key: str, max_calls: int):
+        self.post, self.api_key, self.max_calls = post, api_key, max_calls
+        self.calls = Counter()
+
+    async def __call__(self, url, api_key, payload, stage, timeout_seconds, max_attempts=2):
+        if sum(self.calls.values()) >= self.max_calls:
+            raise BudgetExhausted()
+        self.calls[stage] += 1
+        return await self.post(url, self.api_key, payload, stage, timeout_seconds, max_attempts=max_attempts)
+
+
+@contextmanager
+def production_prompt_with(transport: BudgetedTransport):
+    """Route the production Gemini prompt through the budgeted transport (restored afterwards)."""
+    original = ai_verifier_module.post_json
+    ai_verifier_module.post_json = transport
+    try:
+        yield
+    finally:
+        ai_verifier_module.post_json = original
+
+
+# ------------------------------------------------------------ configurations
+def _documents_as_chunks(case: dict) -> List[dict]:
+    chunks = []
+    for index, document in enumerate(case["input"].get("documents", [])):
+        chunks.extend(rag.chunk_document(document.get("content", ""), {
+            "title": document.get("title"), "doc_type": document.get("doc_type"), "file_url": f"doc-{index}"}))
+    return chunks
+
+
+def _query(case: dict) -> str:
+    data = case["input"]
+    return " ".join([data["title"], data["category"], data.get("beneficiary_name") or "", data["story"]])
+
+
+def lexical_retrieve(case: dict, top_k: int = 5) -> List[dict]:
+    chunks = _documents_as_chunks(case)
+    for chunk in chunks:
+        chunk["relevance"] = round(rag._lexical_score(_query(case), chunk["text"]), 4)
+    return [c for c in sorted(chunks, key=lambda c: c["relevance"], reverse=True) if c["relevance"] > 0][:top_k]
+
+
+async def embedding_retrieve(case: dict, transport: BudgetedTransport, top_k: int = 5) -> List[dict]:
+    """One batchEmbedContents call (query + chunks), same request format as app.services.rag."""
+    chunks = _documents_as_chunks(case)
+    if not chunks:
+        return []
+    model = settings.GEMINI_EMBEDDING_MODEL
+    requests = [{"model": f"models/{model}", "content": {"parts": [{"text": _query(case)[:8000]}]},
+                 "taskType": "RETRIEVAL_QUERY"}]
+    requests += [{"model": f"models/{model}", "content": {"parts": [{"text": c["text"][:8000]}]},
+                  "taskType": "RETRIEVAL_DOCUMENT"} for c in chunks]
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:batchEmbedContents"
+    data = await transport(url, transport.api_key, {"requests": requests}, "embedding", 20)
+    vectors = data.get("embeddings")
+    if not isinstance(vectors, list) or len(vectors) != len(requests):
+        raise GeminiAPIError("embedding", "INVALID_EMBEDDING_RESPONSE", 200)
+    query = vectors[0]["values"]
+    for chunk, vector in zip(chunks, vectors[1:]):
+        chunk["relevance"] = round(rag._cosine(query, vector["values"]), 4)
+    return sorted(chunks, key=lambda c: c["relevance"], reverse=True)[:top_k]
+
+
+def retrieval_metrics(case: dict, chunks: List[dict]) -> dict:
+    """Document coverage always; recall@k / MRR when the dataset provides gold evidence titles."""
+    titles = [d.get("title") for d in case["input"].get("documents", [])]
+    retrieved_titles = [c["title"] for c in chunks]
+    metrics = {"documents": len(titles), "chunks_retrieved": len(chunks),
+               "document_coverage": round(len(set(retrieved_titles) & set(titles)) / len(set(titles)), 4) if titles else None,
+               "empty_retrieval": bool(titles) and not chunks}
+    gold = case.get("gold_evidence_titles")
+    if gold:
+        hits = [i for i, title in enumerate(retrieved_titles) if title in gold]
+        metrics["gold_recall_at_k"] = round(len(set(retrieved_titles) & set(gold)) / len(set(gold)), 4)
+        metrics["gold_mrr"] = round(1 / (hits[0] + 1), 4) if hits else 0.0
+    return metrics
+
+
+def _evidence(chunks: List[dict]) -> List[dict]:
+    return [{"document_title": c["title"], "doc_type": c["doc_type"], "file_url": None, "page": c.get("page"),
+             "excerpt": c["text"], "relevance": c["relevance"]} for c in chunks]
+
+
+def _legacy_decision(result) -> str:
+    return {"AUTO_APPROVE": "APPROVED", "NEEDS_MORE_INFO": "NEEDS_MORE_INFORMATION", "REJECT": "REJECTED"}.get(
+        result.recommendation, result.recommendation)
+
+
+async def run_offline(config: str, case: dict) -> dict:
+    """heuristics_only / heuristics_lexical through the production local engine (no key -> no network)."""
+    data = case["input"]
+    service = AIVerifierService()
+    service.api_key = ""
+    chunks = [] if config == "heuristics_only" else lexical_retrieve(case)
+    started = time.perf_counter()
+    result = service._verify_with_local_heuristics(
+        title=data["title"], category=data["category"], story=data["story"], goal_amount=data["goal_amount"],
+        beneficiary_name=data.get("beneficiary_name"), beneficiary_type=data.get("beneficiary_type", "SELF"),
+        location=f"{data.get('city', '')}, {data.get('state', '')}".strip(", "), proof_documents=[],
+        supporting_document_count=len({c["title"] for c in chunks}))
+    decision = _legacy_decision(result)
+    return {"decision": decision, "flagged": decision in ("FLAG_FOR_REVIEW", "REJECTED") or bool(result.red_flags),
+            "latency_ms": (time.perf_counter() - started) * 1000,
+            "retrieval": retrieval_metrics(case, chunks) if config == "heuristics_lexical" else None}
+
+
+async def run_gemini(case: dict, chunks: Optional[List[dict]], transport: BudgetedTransport) -> dict:
+    data = case["input"]
+    service = AIVerifierService()
+    service.api_key = transport.api_key
+    started = time.perf_counter()
+    with production_prompt_with(transport):
+        result = await service._verify_with_gemini(
+            title=data["title"], category=data["category"], story=data["story"], goal_amount=data["goal_amount"],
+            beneficiary_name=data.get("beneficiary_name"), beneficiary_type=data.get("beneficiary_type", "SELF"),
+            location=f"{data.get('city', '')}, {data.get('state', '')}".strip(", "),
+            proof_documents=[], supporting_evidence=_evidence(chunks or []))
+    if result is None:
+        raise GeminiAPIError("generation", "NO_VERIFICATION_RESULT", 200)
+    decision = _legacy_decision(result)
+    return {"decision": decision, "flagged": decision in ("FLAG_FOR_REVIEW", "REJECTED") or bool(result.red_flags),
+            "red_flags": len(result.red_flags), "authenticity_score": result.authenticity_score,
+            "generation_latency_ms": (time.perf_counter() - started) * 1000, "model": result.model_used}
+
+
+def hybrid_decision(case: dict, gemini_rag: Optional[dict]) -> dict:
+    """Frozen V3 decides; Gemini can only escalate; a missing Gemini result blocks approval; workflow applied."""
+    from app.services.development_approval_workflow import AutomatedOutcome, start
+    from app.services.development_verifier_v3 import verify_case
+    from evaluate_development_verifier_v3 import v3_input
+    v3 = verify_case(v3_input(case["input"])).decision.value
+    if v3 in ("FLAG_FOR_REVIEW", "REJECTED", "VERIFICATION_ERROR"):
+        decision = v3
+    elif gemini_rag is None:
+        decision = "VERIFICATION_ERROR"
+    elif gemini_rag["flagged"]:
+        decision = "FLAG_FOR_REVIEW"
+    else:
+        decision = v3                         # APPROVED or NEEDS_MORE_INFORMATION; Gemini cannot approve
+    state = start(AutomatedOutcome(decision=decision, category=case["input"]["category"],
+                                   beneficiary_type=case["input"].get("beneficiary_type"))).state.value
+    return {"decision": decision, "flagged": decision in ("FLAG_FOR_REVIEW", "REJECTED"), "v3_decision": v3,
+            "workflow_state": state}
+
+
+# ------------------------------------------------------------------- execute
+async def execute(cases: List[dict], configs: List[str], store: Store, transport: Optional[BudgetedTransport],
+                  dataset_sha: str, data_authorization: Optional[str] = None) -> dict:
+    """Run every (config, case) job not already cached.  Stops cleanly on quota/auth/budget errors."""
+    stopped, completed = None, Counter()
+    model = settings.GEMINI_MODEL
+    for case in cases:
+        outgoing = redact(case) if data_authorization and not case.get("synthetic") else case
+        fingerprint = hashlib.sha256(json.dumps(outgoing["input"], sort_keys=True).encode()).hexdigest()[:16]
+        for config in configs:
+            stage_fp = f"{fingerprint}|{dataset_sha[:12]}|{model if config in API_CONFIGS else 'offline'}"
+            key = store.key(config, case["case_id"], "result", stage_fp)
+            if store.get(key):
+                continue
+            if config in API_CONFIGS and transport is None:
+                continue                                    # plan / offline-only mode
+            if stopped and config in API_CONFIGS:
+                continue
+            try:
+                if config in ("heuristics_only", "heuristics_lexical"):
+                    record = await run_offline(config, outgoing)
+                elif config == "gemini_no_rag":
+                    record = await run_gemini(outgoing, None, transport)
+                elif config == "gemini_rag":
+                    retrieval_key = store.key("gemini_rag", case["case_id"], "retrieval", stage_fp)
+                    cached = store.get(retrieval_key)
+                    if cached:
+                        chunks = cached["chunks"]
+                    else:
+                        started = time.perf_counter()
+                        chunks = await embedding_retrieve(outgoing, transport)
+                        store.put(retrieval_key, {"config": "gemini_rag", "case_id": case["case_id"],
+                                                  "stage": "retrieval", "chunks": chunks,
+                                                  "retrieval": retrieval_metrics(outgoing, chunks),
+                                                  "latency_ms": (time.perf_counter() - started) * 1000})
+                    record = await run_gemini(outgoing, chunks, transport)
+                    record["retrieval"] = retrieval_metrics(outgoing, chunks)
+                else:                                       # hybrid reuses the cached gemini_rag result
+                    rag_key = store.key("gemini_rag", case["case_id"], "result", stage_fp)
+                    rag_record = store.get(rag_key)
+                    if rag_record is None:
+                        continue                            # wait until gemini_rag has completed for this case
+                    record = hybrid_decision(outgoing, rag_record)
+                store.put(key, {"config": config, "case_id": case["case_id"], "ground_truth": case["ground_truth"],
+                                "category": case["input"]["category"], "stage": "result", **record})
+                completed[config] += 1
+            except GeminiAPIError as exc:
+                store.fail({"config": config, "case_id": case["case_id"], "stage": exc.stage,
+                            "category": exc.category, "status_code": exc.status_code,
+                            "exception_type": exc.exception_type, "duration_seconds": exc.duration_seconds})
+                if exc.category in STOP_CATEGORIES:
+                    stopped = exc.category
+    state = {"updated_at": datetime.now(timezone.utc).isoformat(), "completed_this_run": dict(completed),
+             "stopped_reason": stopped, "calls_this_run": dict(transport.calls) if transport else {},
+             "resume": "Re-run the same command; cached results are skipped." if stopped else None}
+    store.save_state(state)
+    return state
+
+
+# -------------------------------------------------------------------- report
+def _pct(values):
+    return round(statistics.mean(values), 4) if values else None
+
+
+def report(cases: List[dict], configs: List[str], store: Store) -> dict:
+    results = defaultdict(dict)
+    retrieval = defaultdict(list)
+    for record in store.cache.values():
+        if record.get("stage") == "result":
+            results[record["config"]][record["case_id"]] = record
+        if record.get("retrieval"):
+            retrieval[record["config"]].append(record["retrieval"])
+    ids = [c["case_id"] for c in cases]
+    paired = [i for i in ids if all(i in results[c] for c in configs)]
+    label = {c["case_id"]: c["ground_truth"] for c in cases}
+    failures = store.failures()
+    out = {"cases_planned": len(ids), "paired_complete_cases": len(paired),
+           "coverage": {c: round(len(results[c]) / len(ids), 4) if ids else None for c in configs},
+           "verification_on_paired_subset": {}, "retrieval": {}, "reliability": {}}
+    for config in configs:
+        rows = [results[config][i] for i in paired]
+        fraud = [r for r in rows if label[r["case_id"]] == "fraudulent"]
+        negatives = [r for r in rows if label[r["case_id"]] != "fraudulent"]
+        legit = [r for r in rows if label[r["case_id"]] == "legitimate"]
+        tp, fp = sum(r["flagged"] for r in fraud), sum(r["flagged"] for r in negatives)
+        out["verification_on_paired_subset"][config] = {
+            "cases": len(rows), "recall": round(tp / len(fraud), 4) if fraud else None,
+            "precision": round(tp / (tp + fp), 4) if tp + fp else None,
+            "false_positive_rate": round(fp / len(negatives), 4) if negatives else None,
+            "fraudulent_auto_approval_rate": round(sum(r["decision"] == "APPROVED" for r in fraud) / len(fraud), 4) if fraud else None,
+            "legitimate_auto_approval_rate": round(sum(r["decision"] == "APPROVED" for r in legit) / len(legit), 4) if legit else None,
+            "decisions": dict(Counter(r["decision"] for r in rows)),
+        }
+        cfg_fail = [f for f in failures if f["config"] == config]
+        latencies = [r.get("generation_latency_ms") or r.get("latency_ms") for r in results[config].values()
+                     if (r.get("generation_latency_ms") or r.get("latency_ms")) is not None]
+        attempted = len(results[config]) + len(cfg_fail)
+        out["reliability"][config] = {
+            "successes": len(results[config]), "failures": len(cfg_fail),
+            "success_rate": round(len(results[config]) / attempted, 4) if attempted else None,
+            "failure_categories": dict(Counter(f["category"] for f in cfg_fail)),
+            "latency_ms": ({"mean": round(statistics.mean(latencies), 1), "p50": round(statistics.median(latencies), 1),
+                            "p95": round(sorted(latencies)[max(0, math.ceil(.95 * len(latencies)) - 1)], 1)}
+                           if latencies else None),
+        }
+    for config, items in retrieval.items():
+        out["retrieval"][config] = {
+            "cases": len(items), "mean_document_coverage": _pct([i["document_coverage"] for i in items
+                                                                 if i["document_coverage"] is not None]),
+            "empty_retrieval_rate": _pct([float(i["empty_retrieval"]) for i in items]),
+            "mean_gold_recall_at_k": _pct([i["gold_recall_at_k"] for i in items if "gold_recall_at_k" in i]),
+            "mean_gold_mrr": _pct([i["gold_mrr"] for i in items if "gold_mrr" in i]),
+        }
+    return out
+
+
+# ------------------------------------------------------------------------ CLI
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("command", choices=["plan", "offline", "execute", "report"], nargs="?", default="plan")
+    parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
+    parser.add_argument("--experiment", default="gemini_eval_v3_final_sample")
+    parser.add_argument("--configs", default=",".join(CONFIGS))
+    parser.add_argument("--sample-per-cluster", type=int, default=2,
+                        help="cases per (scenario family, label); 0 = all cases")
+    parser.add_argument("--cluster-key", default="scenario_family")
+    parser.add_argument("--seed", type=int, default=20261116)
+    parser.add_argument("--daily-generation-quota", type=int, default=20)
+    parser.add_argument("--daily-embedding-quota", type=int, default=1000)
+    parser.add_argument("--max-calls", type=int)
+    parser.add_argument("--data-authorization")
+    parser.add_argument("--output-root", type=Path, default=Path(__file__).with_name("runs"))
+    args = parser.parse_args(argv)
+
+    configs = [c for c in args.configs.split(",") if c]
+    unknown = set(configs) - set(CONFIGS)
+    if unknown:
+        raise SystemExit(f"Unknown configurations: {sorted(unknown)}")
+    cases = sample_cases(load_cases(args.dataset, args.data_authorization), args.sample_per_cluster or None,
+                         args.seed, args.cluster_key)
+    directory = args.output_root / args.experiment
+    plan = build_plan(cases, configs, args.dataset, args.sample_per_cluster or None, args.seed,
+                      args.daily_generation_quota, args.daily_embedding_quota)
+    if args.command == "plan":
+        print(json.dumps(plan, indent=2))
+        return plan
+    transport = None
+    if args.command == "execute":                    # every guard runs before anything is written
+        if os.environ.get(APPROVAL_ENV) != "1":
+            raise SystemExit(f"Refusing to call Gemini: set {APPROVAL_ENV}=1 to record explicit approval")
+        if not settings.GEMINI_API_KEY:
+            raise SystemExit("Refusing to call Gemini: GEMINI_API_KEY is not configured")
+        if not args.max_calls:
+            raise SystemExit("Refusing to call Gemini without an explicit --max-calls budget")
+        from app.services.gemini_api import post_json
+        transport = BudgetedTransport(post_json, settings.GEMINI_API_KEY, args.max_calls)
+    store = Store(directory)
+    plan_path = directory / "plan.json"
+    if plan_path.exists() and json.loads(plan_path.read_text())["case_ids"] != plan["case_ids"]:
+        raise SystemExit("This experiment's saved plan uses different case IDs; use a new --experiment name")
+    plan_path.write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
+    if args.command == "report":
+        result = report(cases, configs, store)
+        (directory / "report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(result, indent=2))
+        return result
+    state = asyncio.run(execute(cases, configs, store, transport, plan["dataset_sha256"], args.data_authorization))
+    print(json.dumps(state, indent=2))
+    return state
+
+
+if __name__ == "__main__":
+    main()

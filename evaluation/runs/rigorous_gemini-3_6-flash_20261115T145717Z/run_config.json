@@ -1,0 +1,30 @@
+{
+  "model": "gemini-3.6-flash",
+  "embedding_model": "gemini-embedding-001",
+  "thinking_level": "LOW",
+  "max_output_tokens": 1024,
+  "temperature": 0.1,
+  "timeout_seconds": {
+    "connect": 10.0,
+    "read": 90.0,
+    "write": 20.0,
+    "pool": 10.0
+  },
+  "retry_policy": {
+    "max_attempts": 4,
+    "base_delay_seconds": 2.0,
+    "max_delay_seconds": 120.0,
+    "daily_quota_retries": 0
+  },
+  "execution": "sequential, one campaign at a time",
+  "dataset": "fundraising_scenarios.jsonl",
+  "dataset_sha256": "cb6d08c426d8ecbfce9c661d9ef32d756ab68a052671c3fadad31d43b1cd3099",
+  "prompt_version": "ai-verifier-structured-rag-v2",
+  "verifier_source_sha256": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+  "runner_source_sha256": "fdeca94836d6cff81b6a82ab26193dd6479f13378e428f12743e921f53d55129",
+  "seed": 20261115,
+  "label_definition": "fraudulent is positive; legitimate and borderline are negative",
+  "decision_definition": "flagged when recommendation is FLAG_FOR_REVIEW or REJECT or red_flags is nonempty",
+  "production_configuration_modified": false,
+  "scoring_thresholds_modified": false
+}

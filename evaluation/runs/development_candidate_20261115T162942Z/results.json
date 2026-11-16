@@ -1,0 +1,915 @@
+{
+  "run_id": "development_candidate_20261115T162942Z",
+  "created_at_utc": "2026-11-15T16:29:42.345796+00:00",
+  "dataset": "development_scenarios_v1.jsonl",
+  "dataset_sha256": "6eb46685656dd7ceaeea6971451738a6fd2a841ca2f0d2a5e02301eb7db7eb88",
+  "synthetic": true,
+  "cases": 120,
+  "labels": {
+    "legitimate": 48,
+    "fraudulent": 48,
+    "borderline": 24
+  },
+  "evaluation_mode": "Offline Python verifier + lexical document retrieval; Gemini generation and embeddings disabled",
+  "gemini_calls_made": 0,
+  "paired_case_ids_and_labels_identical": true,
+  "fraud_positive_definition": "Only fraudulent is positive; legitimate and borderline are negative for binary metrics.",
+  "flag_definition": "FLAG_FOR_REVIEW or REJECT, or any explicit red flag. Review burden includes FLAG_FOR_REVIEW, NEEDS_MORE_INFO, and REJECT.",
+  "baseline": {
+    "cases": 120,
+    "confusion_matrix": {
+      "true_positive": 32,
+      "false_positive": 62,
+      "false_negative": 16,
+      "true_negative": 10
+    },
+    "precision": 0.3404,
+    "recall": 0.6667,
+    "f1": 0.4507,
+    "false_positive_rate": 0.8611,
+    "review_burden_cases": 94,
+    "review_burden_rate": 0.7833,
+    "manual_review_recommendations": 94,
+    "needs_more_information": 0,
+    "rejections": 0,
+    "latency_ms": {
+      "mean": 0.34,
+      "median": 0.3,
+      "p95": 0.39
+    }
+  },
+  "candidate": {
+    "cases": 120,
+    "confusion_matrix": {
+      "true_positive": 48,
+      "false_positive": 0,
+      "false_negative": 0,
+      "true_negative": 72
+    },
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0,
+    "review_burden_cases": 72,
+    "review_burden_rate": 0.6,
+    "manual_review_recommendations": 48,
+    "needs_more_information": 24,
+    "rejections": 0,
+    "latency_ms": {
+      "mean": 0.17,
+      "median": 0.17,
+      "p95": 0.23
+    }
+  },
+  "baseline_by_category": {
+    "COMMUNITY": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 12,
+        "false_positive": 24,
+        "false_negative": 4,
+        "true_negative": 0
+      },
+      "precision": 0.3333,
+      "recall": 0.75,
+      "f1": 0.4615,
+      "false_positive_rate": 1.0,
+      "review_burden_cases": 36,
+      "review_burden_rate": 0.9,
+      "manual_review_recommendations": 36,
+      "needs_more_information": 0,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.29,
+        "median": 0.29,
+        "p95": 0.33
+      }
+    },
+    "EDUCATION": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 8,
+        "false_positive": 19,
+        "false_negative": 8,
+        "true_negative": 5
+      },
+      "precision": 0.2963,
+      "recall": 0.5,
+      "f1": 0.3721,
+      "false_positive_rate": 0.7917,
+      "review_burden_cases": 27,
+      "review_burden_rate": 0.675,
+      "manual_review_recommendations": 27,
+      "needs_more_information": 0,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.29,
+        "median": 0.29,
+        "p95": 0.34
+      }
+    },
+    "MEDICAL": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 12,
+        "false_positive": 19,
+        "false_negative": 4,
+        "true_negative": 5
+      },
+      "precision": 0.3871,
+      "recall": 0.75,
+      "f1": 0.5106,
+      "false_positive_rate": 0.7917,
+      "review_burden_cases": 31,
+      "review_burden_rate": 0.775,
+      "manual_review_recommendations": 31,
+      "needs_more_information": 0,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.44,
+        "median": 0.35,
+        "p95": 0.39
+      }
+    }
+  },
+  "candidate_by_category": {
+    "COMMUNITY": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 16,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 16,
+      "needs_more_information": 8,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.17,
+        "median": 0.18,
+        "p95": 0.26
+      }
+    },
+    "EDUCATION": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 16,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 16,
+      "needs_more_information": 8,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.19
+      }
+    },
+    "MEDICAL": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 16,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 16,
+      "needs_more_information": 8,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.19,
+        "median": 0.17,
+        "p95": 0.21
+      }
+    }
+  },
+  "candidate_by_class": {
+    "borderline": {
+      "cases": 24,
+      "confusion_matrix": {
+        "true_positive": 0,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 1.0,
+      "manual_review_recommendations": 0,
+      "needs_more_information": 24,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.1,
+        "median": 0.09,
+        "p95": 0.23
+      }
+    },
+    "fraudulent": {
+      "cases": 48,
+      "confusion_matrix": {
+        "true_positive": 48,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 0
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": null,
+      "review_burden_cases": 48,
+      "review_burden_rate": 1.0,
+      "manual_review_recommendations": 48,
+      "needs_more_information": 0,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.19,
+        "median": 0.18,
+        "p95": 0.2
+      }
+    },
+    "legitimate": {
+      "cases": 48,
+      "confusion_matrix": {
+        "true_positive": 0,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 48
+      },
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 0,
+      "review_burden_rate": 0.0,
+      "manual_review_recommendations": 0,
+      "needs_more_information": 0,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.19,
+        "median": 0.17,
+        "p95": 0.26
+      }
+    }
+  },
+  "candidate_by_family": {
+    "accessible_route": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.18,
+        "median": 0.18,
+        "p95": 0.27
+      }
+    },
+    "apprenticeship_tools": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.18
+      }
+    },
+    "dialysis_power": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.29,
+        "median": 0.18,
+        "p95": 0.86
+      }
+    },
+    "exam_access": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.23
+      }
+    },
+    "food_cold_chain": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.17,
+        "median": 0.18,
+        "p95": 0.26
+      }
+    },
+    "laboratory_access": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.19
+      }
+    },
+    "mobility_repair": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.15,
+        "median": 0.16,
+        "p95": 0.21
+      }
+    },
+    "rare_dietary_formula": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.18
+      }
+    },
+    "rural_hostel": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.15,
+        "median": 0.17,
+        "p95": 0.18
+      }
+    },
+    "rural_transport": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.15,
+        "median": 0.17,
+        "p95": 0.17
+      }
+    },
+    "storm_shelter": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.18,
+        "p95": 0.19
+      }
+    },
+    "water_testing": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.18,
+        "median": 0.19,
+        "p95": 0.26
+      }
+    }
+  },
+  "candidate_by_document_source": {
+    "ambulance_cooperative_log": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.15,
+        "median": 0.17,
+        "p95": 0.17
+      }
+    },
+    "campus_procurement_office": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.19
+      }
+    },
+    "cooperative_dairy_temperature_log": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.17,
+        "median": 0.18,
+        "p95": 0.26
+      }
+    },
+    "district_clinic_billing_desk": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.29,
+        "median": 0.18,
+        "p95": 0.86
+      }
+    },
+    "hostel_warden_fee_register": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.15,
+        "median": 0.17,
+        "p95": 0.18
+      }
+    },
+    "municipal_water_lab_report": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.18,
+        "median": 0.19,
+        "p95": 0.26
+      }
+    },
+    "pediatric_nutritionist_letter": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.18
+      }
+    },
+    "prosthetics_workshop_quote": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.15,
+        "median": 0.16,
+        "p95": 0.21
+      }
+    },
+    "testing_center_accommodation_notice": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.23
+      }
+    },
+    "trade_guild_tool_ledger": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.18
+      }
+    },
+    "village_council_measurement_book": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.18,
+        "median": 0.18,
+        "p95": 0.27
+      }
+    },
+    "ward_engineer_site_memo": {
+      "cases": 10,
+      "confusion_matrix": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 6
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 6,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 4,
+      "needs_more_information": 2,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.18,
+        "p95": 0.19
+      }
+    }
+  },
+  "candidate_by_group_fold": {
+    "fold-1": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 16,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 16,
+      "needs_more_information": 8,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.19,
+        "median": 0.17,
+        "p95": 0.21
+      }
+    },
+    "fold-2": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 16,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 16,
+      "needs_more_information": 8,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.16,
+        "median": 0.17,
+        "p95": 0.19
+      }
+    },
+    "fold-3": {
+      "cases": 40,
+      "confusion_matrix": {
+        "true_positive": 16,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 24
+      },
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "review_burden_cases": 24,
+      "review_burden_rate": 0.6,
+      "manual_review_recommendations": 16,
+      "needs_more_information": 8,
+      "rejections": 0,
+      "latency_ms": {
+        "mean": 0.17,
+        "median": 0.18,
+        "p95": 0.26
+      }
+    }
+  },
+  "reproducibility": {
+    "python": "3.9.6 (default, Oct 19 2026, 19:18:13) \n[Clang 21.0.0 (clang-2100.4.1.1)]",
+    "dataset_sha256": "6eb46685656dd7ceaeea6971451738a6fd2a841ca2f0d2a5e02301eb7db7eb88",
+    "baseline_evaluator_sha256": "28ae30768ef9177e31e86c96f1481ed633bde55e0c969130bb3f05698aefa74c",
+    "candidate_sha256": "f6bba947d5ec1202502ece19e02fdf24b93cdb623a12a59d6eced670118e4eec",
+    "generator_sha256": "2d09c14bdad62e492ce7bd15e8e54e65c50724cb38ab118e2e5c4a4dc2bd70cb",
+    "generation_enabled": false,
+    "embeddings_enabled": false,
+    "production_scoring_modified": false,
+    "candidate_decision_policy": "supports=>AUTO_APPROVE; contradictions=>FLAG_FOR_REVIEW; incomplete or unavailable=>NEEDS_MORE_INFO; REJECT requires multiple conflicts plus explicit document-fabrication signal."
+  }
+}
