@@ -63,10 +63,22 @@ def load_experiment(directory: Path):
     return results, retrieval, failures, state
 
 
-def decision_of(system, case_id, results):
+_V3_CACHE = {}
+
+
+def v3_decision(case_id, case_input):
+    """Frozen V3 is offline and deterministic, so it is run directly (no API) rather than read from the
+    combined-system record, which does not exist when Gemini failed."""
+    if case_id not in _V3_CACHE:
+        from app.services.development_verifier_v3 import verify_case
+        from evaluate_development_verifier_v3 import v3_input
+        _V3_CACHE[case_id] = verify_case(v3_input(case_input)).decision.value
+    return _V3_CACHE[case_id]
+
+
+def decision_of(system, case_id, results, data=None):
     if system == "v3":
-        hybrid = results.get(("hybrid", case_id))
-        return hybrid["v3_decision"] if hybrid else "NOT_RUN"
+        return v3_decision(case_id, data[case_id]["input"])
     record = results.get((system, case_id))
     return record["decision"] if record else "NOT_RUN"
 
@@ -112,8 +124,10 @@ def build(experiment: Path, selection: Path, pilot_comparison: Path, freeze: Pat
     cases = {c["case_id"]: c for c in sel["cases"]}
     data = {json.loads(l)["case_id"]: json.loads(l) for l in (selection.parent / "cases.jsonl").read_text().splitlines() if l.strip()}
     results, retrieval, failures, state = load_experiment(experiment)
-    rows = {s: [{"case_id": cid, "label": c["label"], "category": c["category"], "decision": decision_of(s, cid, results)}
+    rows = {s: [{"case_id": cid, "label": c["label"], "category": c["category"], "decision": decision_of(s, cid, results, data)}
                 for cid, c in cases.items()] for s in SYSTEMS}
+    v3_consistency = {cid: results[("hybrid", cid)]["v3_decision"] == v3_decision(cid, data[cid]["input"])
+                      for cid in cases if ("hybrid", cid) in results}
     for s in SYSTEMS:
         for row in rows[s]:
             if row["decision"] == "APPROVED":
@@ -138,7 +152,8 @@ def build(experiment: Path, selection: Path, pilot_comparison: Path, freeze: Pat
             "selection_reason": c["selection_reason"], "keyword_free": not c["matches_known_red_flag_lexicon"],
             "retrieved": [{"title": x["title"], "score": x["relevance"]} for x in chunks],
             "lexical_titles": lexical,
-            **{f"{s}_decision": decision_of(s, cid, results) for s in SYSTEMS},
+            **{f"{s}_decision": decision_of(s, cid, results, data) for s in SYSTEMS},
+            "gemini_rag_red_flag_count": g_rag and g_rag.get("red_flags"),
             "gemini_rag_risk": g_rag and g_rag.get("risk_level"), "gemini_rag_summary": g_rag and g_rag.get("summary"),
             "gemini_rag_red_flags": g_rag and g_rag.get("red_flag_texts"),
             "gemini_rag_missing": g_rag and g_rag.get("missing_requirements"),
@@ -156,6 +171,9 @@ def build(experiment: Path, selection: Path, pilot_comparison: Path, freeze: Pat
         "integrity": {"git_commit_before": pre["git_head"], "working_tree_clean_before": pre["working_tree_clean"],
                       "files_hashed": len(pre["files"]), "files_unchanged_after_run": post_hashes == pre["files"],
                       "changed_files": [f for f in pre["files"] if post_hashes[f] != pre["files"][f]],
+                      # This report generator only reads saved results; it does not take part in the evaluation run.
+                      "execution_files_unchanged": all(post_hashes[f] == pre["files"][f] for f in pre["files"]
+                                                       if f != "evaluation/report_gemini_eval_v1.py"),
                       "production_default_model": default_model, "evaluation_model": next(iter({r.get("model") for r in generation_ok}), None)},
         "api": {"cumulative_calls": state.get("cumulative_calls", {}), "budget": {"generation": 20, "embedding": 10},
                 "stopped_reason": state.get("stopped_reason"), "failures": failures},
@@ -170,6 +188,7 @@ def build(experiment: Path, selection: Path, pilot_comparison: Path, freeze: Pat
                                       "p95_nearest_rank": nearest_rank(latencies, .95), "max": max(latencies) if latencies else None},
                         "embedding_latency_s": [round(r["latency_ms"] / 1000, 2) for r in retrieval.values()]},
         "metrics": {s: metrics(rows[s]) for s in SYSTEMS},
+        "v3_recomputed_matches_combined_record": v3_consistency,
         "per_case": per_case,
         "pilots": json.loads(pilot_comparison.read_text()) if pilot_comparison.exists() else None,
     }
@@ -187,6 +206,12 @@ def build(experiment: Path, selection: Path, pilot_comparison: Path, freeze: Pat
         "consistent_fabrication_case": {c: by[c]["gemini_rag_decision"] for c in fraud_ids if "consistent" in cases[c]["group"] or "forged" in cases[c]["group"]},
         "unsafe_approvals_fraud_or_borderline": {s: [c for c in cases if cases[c]["label"] != "legitimate" and by[c][f"{s}_decision"] == "APPROVED"] for s in ("v3", "hybrid", "gemini_rag", "heuristics_lexical")},
         "manual_reviews": {s: sum(by[c][f"{s}_decision"] == "FLAG_FOR_REVIEW" for c in cases) for s in SYSTEMS},
+        # Why the combined system escalated: Gemini's own decision, or only red flags attached to an information request
+        "combined_escalations": [{"case_id": c, "label": cases[c]["label"], "v3": by[c]["v3_decision"],
+                                  "gemini_rag_decision": by[c]["gemini_rag_decision"],
+                                  "gemini_rag_red_flags": by[c]["gemini_rag_red_flag_count"],
+                                  "trigger": ("gemini_decision" if by[c]["gemini_rag_decision"] in DETECT else "red_flags_only")}
+                                 for c in cases if by[c]["escalated_by_gemini"]],
     }
     report["disagreements"] = [
         {"case_id": c, "label": cases[c]["label"], "pair": f"{a} vs {b}", "a": by[c][f"{a}_decision"], "b": by[c][f"{b}_decision"]}
@@ -225,6 +250,11 @@ def render(report, interpretation: str) -> str:
           f"* {integ['files_hashed']} files (evaluation framework, production prompt path, RAG, Gemini client, config, schemas, "
           f"fraud rules, frozen V3, approval workflow, datasets, selection) unchanged after the run: **{integ['files_unchanged_after_run']}**"
           + (f" — changed: {integ['changed_files']}" if integ["changed_files"] else "") + ".",
+          f"* Files that executed during the run (all except this read-only report generator) unchanged: "
+          f"**{integ['execution_files_unchanged']}**. The report generator was corrected after the run so that frozen V3 is "
+          "re-run offline for every case (it had read V3's decision from the combined-system record, which is missing when "
+          "Gemini failed); the recomputed V3 decisions match every recorded one (section 8)." if integ["changed_files"] ==
+          ["evaluation/report_gemini_eval_v1.py"] else "",
           f"* Production default model (no override): `{integ['production_default_model']}`; evaluation model (process-only override): "
           f"`{integ['evaluation_model']}`.", "",
           "## 4. API usage and quota", "",
@@ -299,7 +329,16 @@ def render(report, interpretation: str) -> str:
     for d in report["disagreements"]:
         L.append(f"| {d['case_id']} | {d['label']} | {d['pair']} | {d['a']} | {d['b']} |")
     con = report["contribution"]
-    L += ["", "Computed answers to the contribution questions:", "",
+    esc = con["combined_escalations"]
+    L += ["", "Why the combined system escalated beyond V3 (the frozen hybrid rule escalates on Gemini's decision *or* on any red "
+          "flag Gemini attaches, even to an information request):", "",
+          "| Case | Label | V3 | Gemini + RAG decision | Gemini red flags | Trigger |", "|---|---|---|---|---:|---|"]
+    for e in esc:
+        L.append(f"| {e['case_id']} | {e['label']} | {e['v3']} | {e['gemini_rag_decision']} | {e['gemini_rag_red_flags']} | {e['trigger']} |")
+    L += ["", f"Frozen V3 re-run offline for this report matches the V3 decision recorded inside every combined-system result: "
+          f"**{all(report['v3_recomputed_matches_combined_record'].values())}** "
+          f"({len(report['v3_recomputed_matches_combined_record'])} cases).", "",
+          "Computed answers to the contribution questions:", "",
           f"1. Fraud flagged by Gemini + RAG but not by V3: {con['fraud_flagged_by_gemini_rag_but_not_v3'] or 'none'}; not by the deterministic fallback: {con['fraud_flagged_by_gemini_rag_but_not_fallback'] or 'none'}.",
           f"2. Correct direction with RAG only: {con['rag_vs_no_rag_correct_direction']['rag_only'] or 'none'}; without documents only: {con['rag_vs_no_rag_correct_direction']['no_rag_only'] or 'none'}; both: {len(con['rag_vs_no_rag_correct_direction']['both'])} cases.",
           f"3. Legitimate cases flagged by Gemini + RAG: {con['legit_flagged_by_gemini_rag'] or 'none'}.",

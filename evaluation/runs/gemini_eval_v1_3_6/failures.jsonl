@@ -1,0 +1,1 @@
+{"config": "gemini_rag", "case_id": "V3T-104", "stage": "generation", "category": "SERVER_ERROR", "status_code": 503, "exception_type": null, "duration_seconds": 1.064, "at": "2026-11-16T14:26:40.179430+00:00"}
