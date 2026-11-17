@@ -63,7 +63,8 @@ reached.
 
 **Is it ready?** The prototype is complete and ready for a **local demonstration** (`docs/FINAL_PROTOTYPE_README.md`).
 It is **not production-ready**:
-- it is not wired into the live application;
+- it is integrated into the application only behind a development flag that is off by default (§11), so production
+  still publishes on score;
 - confirmations are simulated;
 - the evaluation is not independent.
 
@@ -301,7 +302,7 @@ mechanism below is the stronger evidence.
 |---|---|---|
 | 1 | **Collusive or insider fraud.** When the institution, cost issuer or bank-account holder is complicit, every independent party confirms (FE-FS-COM-03) | Activation. No document- or contact-based design detects it. Payment straight to verified institutional accounts in tranches, plus post-disbursement audits, reduces the damage |
 | 2 | **Confirmations are simulated.** No real KYC, bank-account verification or institution-contact process is connected | The workflow logic is tested; real-world feasibility, speed and accuracy are unknown |
-| 3 | **Not wired into the application.** Production still uses `app/services/ai_verifier.py`, whose README-documented behaviour publishes a campaign as ACTIVE at a score of at least 80 | The live app does not yet have these safeguards |
+| 3 | **Production still publishes on score.** Hybrid v4 is integrated only behind the development flag `SEVAFUND_DEV_HYBRID_V4`, which is off by default (§11). With the flag off, `POST /api/campaigns/{id}/verify` still sets a campaign ACTIVE on AUTO_APPROVE (score of at least 80), an admin can still activate directly, and PENDING_VERIFICATION or FLAGGED campaigns can still receive donations | **Safety-critical.** Production does not have these safeguards until the flag is enabled and validated |
 | 4 | **The evaluation is developer-designed, small and uses scripted Gemini answers** | Optimistic in an unknown direction; wide intervals; Gemini's real behaviour and reliability are untested here (the last live free-tier run returned 1 valid answer in 4 requests) |
 | 5 | **Two frozen-parser errors** caused false positives. FE-LI-MED-04: "Estimate AMH/26/3390" read as ₹3,390. FE-LI-EDU-02: in a one-line letter, the date in "Report by 25/09/2026" was taken as the issue date | Genuine applicants sent to review (never rejected). Not fixed, to avoid tuning on the evaluation set and editing frozen code |
 | 6 | **Unquoted Gemini suspicions still create a manual review**, labelled UNVERIFIED_MODEL_SUSPICION (1 false positive; 1 sophisticated fraud caught this way) | A policy choice: downgrading them to information requests would cut false alarms but lose some referrals |
@@ -316,9 +317,9 @@ mechanism below is the stronger evidence.
 
 ## 9. Recommendations before production deployment
 
-1. **Integrate hybrid v4 behind a feature flag:**
-   - replace automatic activation with the four-check workflow;
-   - persist workflow records and audit entries in write-once storage;
+1. **Complete the integration** (the development flag exists, §11):
+   - make the four-check workflow the only route to ACTIVE in production;
+   - persist audit entries in write-once storage (they are currently a JSON column);
    - anchor the chain head externally;
    - build a reviewer and caseworker interface.
 2. **Connect real confirmation channels:**
@@ -357,8 +358,52 @@ On 60 developer-designed scenarios, hybrid v4:
 - cost one genuine campaign a delay, because its billing desk could not be reached.
 
 These results come from a developer-designed synthetic evaluation, not from independent validation. The remaining
-critical issues are collusive fraud, simulated rather than real confirmations, and the lack of integration with the
-live application. The prototype is ready for a local demonstration, not for production.
+critical issues are collusive fraud, simulated rather than real confirmations, and production behaviour that still
+publishes on score while the development flag is off. The prototype is ready for a local demonstration, not for
+production.
+
+---
+
+## 11. Development integration into the application (feature flag, off by default)
+
+**What it is.** Hybrid v4 is integrated into the SevaFund FastAPI application behind `SEVAFUND_DEV_HYBRID_V4`
+(instructions: `docs/FINAL_PROTOTYPE_README.md` §5).
+- **New files:** `app/services/dev_hybrid_v4_flag.py`, `app/services/dev_hybrid_v4_integration.py`,
+  `app/models/dev_hybrid_v4.py` and `app/routers/dev_hybrid_v4.py`.
+- **Hooks:** small flag-guarded additions in `app/routers/campaigns.py`, `admin.py`, `donations.py`, `payouts.py`, and
+  one router registration in `app/main.py`.
+- **Unchanged:** `app/config.py`, the production verifier, frozen V3, hybrid v2, hybrid v3 and hybrid v4. The freeze
+  check returns `valid: true`.
+
+**With the flag off** (the default) the behaviour is unchanged:
+- the integration module and its table are never loaded;
+- the development routes return 404 and are hidden from the API schema.
+
+This is tested: the score still publishes, and pending campaigns still accept donations.
+
+**With the flag on:**
+
+| Requirement | How it is enforced | Tested by |
+|---|---|---|
+| No publication on a fraud score | Creation and re-verification set the status from hybrid v4's workflow; the production score is stored but never decides | `test_high_score_never_publishes_a_campaign` (score 95 stays PENDING_VERIFICATION) |
+| Activation needs all four independent confirmations | ACTIVE only from a record whose BENEFICIARY, INSTITUTION, PAYMENT_DESTINATION and AMOUNT are each CONFIRMED by an independent source. Admin APPROVE returns 409 (or, for a flagged campaign, clears it to pending with all checks reset). Donations and payouts need an ACTIVE record that passes re-checking; payouts are capped at the confirmed amount | `test_activation_needs_all_four_independent_confirmations`, `test_inflated_goal_is_stopped_at_the_amount_check_and_review_cannot_activate` |
+| Incomplete legitimate cases cannot activate early | An information request has nothing to confirm (409). The assisted route is offered only when cost evidence is the sole gap, and still requires four confirmations. A missing identity or need gets no assisted route | `test_missing_quotation_cannot_activate_until_assisted_review_and_four_confirmations`, `test_missing_identity_or_need_gets_no_assisted_route_and_cannot_activate` |
+| Missing or failed confirmations leave the campaign pending | Unreachable, inconclusive, campaign-supplied (including a "directory" contact actually printed in the uploads), and an amount check without a stated figure all leave the check open; a contradiction flags the campaign | `test_missing_or_failed_confirmations_leave_the_campaign_pending` (4 variants), `test_a_contradicted_confirmation_flags_the_campaign` |
+| Gemini mocked, never called | Offline scripted stand-in passed through the frozen client parser. The default `off` means no approval | `test_without_gemini_hybrid_v4_never_approves`, `test_unquoted_gemini_suspicion_is_a_review_referral_never_a_rejection` |
+| Other guards | The creator cannot confirm their own campaign; the goal is locked once pending; a tampered audit chain freezes funds | `test_permissions_self_confirmation_and_goal_changes`, `test_a_tampered_activation_record_freezes_funds` |
+
+**Tests.** 530 passed, 1 failed (the documented login test). This includes:
+- 17 integration tests;
+- 34 hybrid v4 tests, one of them updated so that the integration module is the single permitted importer of hybrid v4.
+
+**Limitations of the integration:**
+- confirmations are typed in by staff, not obtained from KYC, bank or directory services;
+- Gemini is a scripted stand-in, and live Gemini is deliberately not connected;
+- grounding is checked against the full text of the uploaded documents rather than production retrieval;
+- PENDING_VERIFICATION campaigns are still listed publicly (production behaviour), although they cannot receive money
+  under the flag;
+- uploads go to the existing `uploads/` folder, which is not in `.gitignore`;
+- the frontend has no screens for the development endpoints.
 
 ---
 
@@ -368,4 +413,4 @@ live application. The prototype is ready for a local demonstration, not for prod
 - **Freezes:** `python evaluation/freeze_hybrid_v3.py verify` (which also verifies hybrid v2 and frozen V3) returns
   `valid: true`.
 - **Benchmarks:** `python evaluation/check_frozen_benchmark_reproducibility.py` returns `all_reproduced: true`.
-- **Tests:** 513 passed, 1 failed (the documented login test).
+- **Tests:** 530 passed, 1 failed (the documented login test), after the development integration (§11).
