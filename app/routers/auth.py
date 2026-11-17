@@ -29,8 +29,11 @@ from app.services.security import (
     generate_secure_otp,
     hash_otp,
     verify_otp_hash,
-    verify_google_id_token
+    verify_google_id_token,
+    GoogleSignInUnavailable,
+    InvalidGoogleToken
 )
+import secrets
 from app.services.auth_dependencies import (
     get_current_user,
     get_current_user_optional,
@@ -119,11 +122,10 @@ def google_auth(auth_in: GoogleAuthRequest, db: Session = Depends(get_db)):
     """
     try:
         payload = verify_google_id_token(auth_in.id_token)
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid Google ID token: {str(e)}"
-        )
+    except GoogleSignInUnavailable as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
+    except InvalidGoogleToken:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Google ID token.")
 
     google_id = payload.get("sub")
     email = payload.get("email", "").lower().strip()
@@ -216,25 +218,25 @@ async def send_otp(req: OTPSendRequest, db: Session = Depends(get_db)):
     sms_status = await send_real_sms_otp(phone, otp_code)
     logger.info(f"📱 [SMS OTP] Status for {phone}: {sms_status}")
 
-    sms_success = sms_status.get("success", False)
+    sms_success = sms_status.get("success", False) is True
     sms_provider = sms_status.get("provider", "UNKNOWN")
 
-    # In DEBUG mode, always return dev_otp so developers can test even if
-    # the SMS gateway is unreachable, has no balance, or returns errors.
-    is_debug = os.getenv("DEBUG", "False").lower() in ("true", "1")
-    show_dev_otp = is_debug or sms_provider == "SIMULATION"
-
-    if sms_success:
-        msg = f"OTP sent to {phone} via {sms_provider}. Valid for 5 minutes."
-    else:
-        msg = f"OTP generated for {phone}. SMS delivery via {sms_provider} may have failed — check dev_otp below if in debug mode."
-        logger.warning(f"⚠️ SMS delivery failed for {phone}: {sms_status}")
+    # The code reaches the user only by SMS; it is never returned in the API response (not even in DEBUG).
+    # Without a working SMS provider (including the "SIMULATION" fallback) phone sign-in fails closed.
+    if not sms_success or sms_provider == "SIMULATION":
+        otp_record.expires_at = datetime.datetime.utcnow()      # unusable, still counts towards the rate limit
+        db.commit()
+        logger.warning("SMS OTP delivery unavailable for %s via %s", phone, sms_provider)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Phone sign-in is unavailable: the verification SMS could not be sent."
+        )
 
     return OTPSendResponse(
         phone_number=phone,
-        message=msg,
+        message=f"OTP sent to {phone} via {sms_provider}. Valid for 5 minutes.",
         expires_in_seconds=300,
-        dev_otp=otp_code if show_dev_otp else None
+        dev_otp=None
     )
 
 @router.post("/otp/verify", response_model=TokenResponse)
@@ -335,7 +337,7 @@ def promote_user_to_admin(
     """
     Secure endpoint to promote a user to ADMIN role using platform master SECRET_KEY.
     """
-    if req.secret_key != settings.SECRET_KEY:
+    if not secrets.compare_digest(str(req.secret_key or "").encode("utf-8"), settings.SECRET_KEY.encode("utf-8")):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid secret key. Admin promotion unauthorized."
