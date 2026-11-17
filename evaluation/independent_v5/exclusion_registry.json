@@ -1,5 +1,5 @@
 {
-  "built_at_utc": "2026-11-17T13:58:04.281567+00:00",
+  "built_at_utc": "2026-11-17T17:45:04.391927+00:00",
   "sources": {
     "evaluation/date_aware_dev_eval/scenarios.json": {
       "kind": "template_json",
@@ -30,6 +30,11 @@
       "kind": "case_jsonl",
       "sha256": "74f4e53ed2697eab06b36a8bc303b22a6e9c3ff111392c40b09ba04b331de780",
       "items": 420
+    },
+    "evaluation/final_evaluation/scenarios.jsonl": {
+      "kind": "case_jsonl",
+      "sha256": "f09a77af9f019efde10ccd8f13bf07500bc4dd672c7c4528677602b98a78eb6c",
+      "items": 179
     },
     "evaluation/final_test_scenarios_v3.jsonl": {
       "kind": "case_jsonl",
@@ -347,6 +352,24 @@
         "3a6a92a9e2b612b600b7daac8157b0548ebe3f275cf65ae0b4eb55a4700fa4e6"
       ]
     },
+    "tests/test_hybrid_v4.py": {
+      "kind": "python_literals",
+      "sha256": "64e97ee90fe59861300943126c5198a977dbbded49a75e4bbc2788ca97df3fc5",
+      "items": 11,
+      "item_hashes": [
+        "0b7dc9942f7d1759449183cb8a7d2e6f2611c927b8901768b15f8f91e1441503",
+        "1050e71a7266f6262129b05d42d6c6f1385aee01c6eca0a97fee7be64fcef89f",
+        "1b48cd1db1a1cd25d423fba1b2f355af31ff8f0e061b649abe39aa77f440c67b",
+        "51a5c600bc5716e5b52c1fa57b901adcd05bad7a9b1d2107f2dff061516ccf5c",
+        "55d48734cc571097558d8477a94ab15ef96914f9de2dd099439e0ca68a875b46",
+        "871333acab3dfc01396ddcfddfd0807abb9cfbf8c8a9055c0661d261ed5d280c",
+        "88887345d1d72bc49184e364d4de34a257806ca584d60748a3472addf3187562",
+        "b205d122473201bc3ee28a21741f86b272c9446f835a973e90ff5b9d9c8d0e30",
+        "cddc0a96564b759093739db3b34c7bc422cfdb9148e1b028113b0e6e72a57a72",
+        "e7d7fd27fbd4407c674bdda20aef906f40e39552d911d4e3a5f9a7ee84593a9c",
+        "edbbb7039b7d8f570e370edc4ddbe553cc7124b8fdd2c507b4683c0d95c6a76d"
+      ]
+    },
     "tests/test_independent_runner_v4.py": {
       "kind": "python_literals",
       "sha256": "88ef950103b114909cf3f48d501c7d01744a09c9a333db97b392f20553c30d7c",
@@ -374,7 +397,7 @@
     },
     "tests/test_independent_v5.py": {
       "kind": "python_literals",
-      "sha256": "526fdbd08561c302ff4f63737b1209cdc70ac791e0d62e63bf3fb3f3de946b3c",
+      "sha256": "54dc79d406a48c9a50cb22fdf396e45d726e5eb732f541af531c83659a68fc89",
       "items": 3,
       "item_hashes": [
         "48789922e6a1d8f4a928ded02cb6228bf6964acb402d509c25003c212b384f95",
@@ -383,6 +406,6 @@
       ]
     }
   },
-  "total_items": 3833,
+  "total_items": 4023,
   "note": "Every listed text is excluded from the independent test. Dataset corpora must keep their hashes; test files may change (their registered texts stay excluded by hash)."
 }

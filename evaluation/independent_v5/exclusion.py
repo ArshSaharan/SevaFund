@@ -27,6 +27,7 @@ CASE_CORPORA = [
     "evaluation/runs/date_aware_dev_eval_live/rendered_cases.jsonl",
     "evaluation/independent_v5/engineering_fixtures/submission.jsonl",
     "evaluation/independent_v5/engineering_fixtures/pilot.jsonl",
+    "evaluation/final_evaluation/scenarios.jsonl",            # the final developer-designed evaluation (2026-11-17)
 ]
 SINGLE_CASES = ["evaluation/independent_test_v4/example_case.json", "evaluation/independent_test_v5/example_case.json"]
 TEMPLATE_SETS = ["evaluation/date_aware_dev_eval/scenarios.json"]
