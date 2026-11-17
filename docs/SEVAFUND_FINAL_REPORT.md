@@ -405,6 +405,44 @@ This is tested: the score still publishes, and pending campaigns still accept do
 - uploads go to the existing `uploads/` folder, which is not in `.gitignore`;
 - the frontend has no screens for the development endpoints.
 
+## 12. Consolidated development candidate: `integration/hybrid-v4-auth` (2026-11-18)
+
+**What the branch contains.**
+- **Base:** `dev/verifier-v2-v3-evaluation`, which includes hybrid v4 and its flag-gated integration.
+- **Security commits:** the authentication commits from `security/secret-key-placeholder`, applied cleanly.
+- **Access-control fix:** one further commit.
+- **Original branches:** all three are preserved unchanged: `main`, `dev/verifier-v2-v3-evaluation` and
+  `security/secret-key-placeholder`.
+
+**Authentication and access control on this branch:**
+
+| Issue | Status | Tested by |
+|---|---|---|
+| `mock_google_` tokens authenticated anyone | Fixed: google-auth verifies the signature, expiry, audience and issuer, and requires a verified email; without a client ID, sign-in fails closed (503) | `test_auth_hardening.py` |
+| OTP codes returned by the API | Fixed: the code is sent only by SMS; if no SMS can be sent, the code is invalidated and the endpoint returns 503 | `test_auth_hardening.py` |
+| Public or fallback signing key | Fixed: the app refuses to start without a strong, private `SECRET_KEY` | `test_auth_hardening.py`, `test_env_template.py` |
+| Anonymous demo user could create campaigns and upload documents | Fixed: both routes require a login, and the demo fallback is removed from application code | `test_access_control.py` |
+| `SECRET_KEY` granted administrator rights | Fixed: only an authenticated ADMIN can promote, and every promotion is audited | `test_access_control.py`, `test_auth_security.py` |
+
+**Frozen versions.**
+- None of the changed files is recorded by a freeze manifest.
+- `python evaluation/freeze_hybrid_v3.py verify` returns `valid: true` (it also checks hybrid v2 and frozen V3), and the
+  benchmarks reproduce.
+- Hybrid v4 and `app/config.py` are unchanged, so no new freeze is needed.
+
+**Tests:** 576 passed and 0 failed.
+- The previously documented failure (`test_campaign_verification_endpoint`) passes, because the test now
+  authenticates (`docs/known_issue_campaign_verification_test.md`).
+- The hybrid v4 application demonstration runs offline as before.
+
+**Remaining production blockers:** everything in §8 and §9, plus:
+- production still publishes on score while the hybrid v4 flag is off;
+- there is no rate limiting on password login;
+- tokens last 7 days and cannot be revoked;
+- the legacy SHA-256 password-hash fallback is still accepted;
+- CORS allows any origin with credentials;
+- real Google and SMS delivery are untested.
+
 ---
 
 **Reproducibility**:
@@ -413,4 +451,4 @@ This is tested: the score still publishes, and pending campaigns still accept do
 - **Freezes:** `python evaluation/freeze_hybrid_v3.py verify` (which also verifies hybrid v2 and frozen V3) returns
   `valid: true`.
 - **Benchmarks:** `python evaluation/check_frozen_benchmark_reproducibility.py` returns `all_reproduced: true`.
-- **Tests:** 530 passed, 1 failed (the documented login test), after the development integration (§11).
+- **Tests:** 576 passed, 0 failed on `integration/hybrid-v4-auth` (§12).

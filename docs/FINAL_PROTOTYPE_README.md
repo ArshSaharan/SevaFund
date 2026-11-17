@@ -56,7 +56,8 @@ The output is identical on every run.
 ```bash
 python -m pytest -q tests/test_hybrid_v4.py          # 34 hybrid v4 tests
 python -m pytest -q tests/test_dev_hybrid_v4_integration.py   # 17 end-to-end tests of hybrid v4 inside the app
-python -m pytest -q                                   # full suite: 530 pass; 1 known, unrelated login-test failure
+python -m pytest -q tests/test_auth_hardening.py tests/test_access_control.py   # 43 authentication and access-control tests
+python -m pytest -q                                   # full suite on integration/hybrid-v4-auth: 576 pass, 0 fail
 python evaluation/freeze_hybrid_v3.py verify          # frozen V3, hybrid v2 and hybrid v3 unchanged
 python evaluation/check_frozen_benchmark_reproducibility.py
 ```
@@ -78,6 +79,12 @@ print(activation_status(record))
 ```
 
 ## 5. Hybrid v4 inside the application (development feature flag)
+
+**Authentication (integration branch `integration/hybrid-v4-auth`).**
+- **Signing key:** the app refuses to start without a strong `SECRET_KEY` in `.env`.
+- **Logging in:** creating campaigns and uploading documents require a login; there is no anonymous demo user. Use the seeded accounts (`python seed_data.py`), or register and log in.
+- **Administrators:** only an authenticated administrator can promote another user (`POST /api/auth/promote-admin`).
+- **Google and OTP sign-in:** Google sign-in accepts only verified Google ID tokens; OTP codes go only by SMS.
 
 **The flag is OFF by default.** With it off, the application behaves exactly as before. That includes the production
 behaviour of publishing a campaign as ACTIVE when `POST /api/campaigns/{id}/verify` returns AUTO_APPROVE (a score of

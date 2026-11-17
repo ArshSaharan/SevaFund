@@ -29,3 +29,11 @@ Two options; the first is preferred:
 
 1. **Update the test to match the endpoint's intended access rule.** Register and log in a user, create the campaign as that user, and call `/verify` with the bearer token. Also add a test that an anonymous call returns 401 and another user's call returns 403.
 2. **Make the endpoint optional-auth.** This is not recommended: it would expose private campaign evidence to anonymous callers, which the creator/admin check was added to prevent.
+
+## Resolution on `integration/hybrid-v4-auth` (2026-11-18)
+
+- **Fix:** option 1 above. The test now creates the campaign and calls `/verify` as an authenticated user, using the offline `make_user` fixture, and it passes.
+- **Endpoint:** unchanged.
+- **Why the test changed:** campaign creation itself now requires authentication, because the anonymous demo-user fallback was removed.
+- **Access-rule tests:** anonymous access is covered by `tests/test_access_control.py`.
+- **Other branches:** `main` and `dev/verifier-v2-v3-evaluation` still have the original failing test.
