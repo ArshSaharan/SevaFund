@@ -1,0 +1,2063 @@
+{
+  "classification": "DEVELOPMENT evidence only: 8 developer-authored synthetic scenarios, author-intended labels.",
+  "mode": "live",
+  "reference_date_asia_kolkata": "2026-11-17",
+  "model": "gemini-3.6-flash",
+  "api_usage": {
+    "http_requests": 4,
+    "approved_limit": 10,
+    "within_limit": true,
+    "by_stage": {
+      "generation": 4
+    },
+    "by_model": {
+      "gemini-3.6-flash": 4
+    },
+    "stopped_reason": "EARLY_STOP_TRANSIENT_FAILURES"
+  },
+  "metrics_measured_on_new_cases": {
+    "A_frozen_v3": {
+      "cases_scored": 8,
+      "fraud_cases": 4,
+      "legit_cases": 4,
+      "fraud_detected": 2,
+      "recall": 0.5,
+      "recall_wilson95": [
+        0.15,
+        0.85
+      ],
+      "false_positive_escalations": 1,
+      "false_positive_rate": 0.25,
+      "fpr_wilson95": [
+        0.046,
+        0.699
+      ],
+      "precision": 0.6666666666666666,
+      "f1": 0.5714285714285715,
+      "unsafe_approvals": [
+        "DA-05",
+        "DA-06"
+      ],
+      "unresolved_information_approvals": [
+        "DA-02",
+        "DA-07"
+      ],
+      "manual_reviews": 3,
+      "information_requests": 0,
+      "verification_errors": 0,
+      "approved_pending_confirmation": 5,
+      "decisions": {
+        "DA-01": "APPROVED",
+        "DA-02": "APPROVED",
+        "DA-03": "FLAG_FOR_REVIEW",
+        "DA-04": "FLAG_FOR_REVIEW",
+        "DA-05": "APPROVED",
+        "DA-06": "APPROVED",
+        "DA-07": "APPROVED",
+        "DA-08": "FLAG_FOR_REVIEW"
+      }
+    },
+    "B_existing_v3_gemini": {
+      "cases_scored": 0,
+      "fraud_cases": 0,
+      "legit_cases": 0,
+      "fraud_detected": 0,
+      "recall": null,
+      "recall_wilson95": null,
+      "false_positive_escalations": 0,
+      "false_positive_rate": null,
+      "fpr_wilson95": null,
+      "precision": null,
+      "f1": null,
+      "unsafe_approvals": [],
+      "unresolved_information_approvals": [],
+      "manual_reviews": 0,
+      "information_requests": 0,
+      "verification_errors": 0,
+      "approved_pending_confirmation": 0,
+      "decisions": {}
+    },
+    "C_improved_v3_gemini": {
+      "cases_scored": 3,
+      "fraud_cases": 1,
+      "legit_cases": 2,
+      "fraud_detected": 1,
+      "recall": 1.0,
+      "recall_wilson95": [
+        0.207,
+        1.0
+      ],
+      "false_positive_escalations": 0,
+      "false_positive_rate": 0.0,
+      "fpr_wilson95": [
+        0.0,
+        0.658
+      ],
+      "precision": 1.0,
+      "f1": 1.0,
+      "unsafe_approvals": [],
+      "unresolved_information_approvals": [],
+      "manual_reviews": 1,
+      "information_requests": 1,
+      "verification_errors": 1,
+      "approved_pending_confirmation": 0,
+      "decisions": {
+        "DA-01": "VERIFICATION_ERROR",
+        "DA-02": "NEEDS_MORE_INFORMATION",
+        "DA-03": "FLAG_FOR_REVIEW"
+      }
+    },
+    "B_prime_ablation_existing_rule_on_C_output": {
+      "cases_scored": 1,
+      "fraud_cases": 0,
+      "legit_cases": 1,
+      "fraud_detected": 0,
+      "recall": null,
+      "recall_wilson95": null,
+      "false_positive_escalations": 0,
+      "false_positive_rate": 0.0,
+      "fpr_wilson95": [
+        0.0,
+        0.793
+      ],
+      "precision": null,
+      "f1": 0.0,
+      "unsafe_approvals": [],
+      "unresolved_information_approvals": [
+        "DA-02"
+      ],
+      "manual_reviews": 0,
+      "information_requests": 0,
+      "verification_errors": 0,
+      "approved_pending_confirmation": 1,
+      "decisions": {
+        "DA-02": "APPROVED"
+      }
+    }
+  },
+  "api_reliability": {
+    "C_date_aware_prompt": {
+      "requests": 4,
+      "succeeded": 1,
+      "failed": 3,
+      "failure_categories": {
+        "SERVER_ERROR": 2,
+        "QUOTA_EXHAUSTED": 1
+      },
+      "success_rate": 0.25,
+      "latency_s": {
+        "n": 1,
+        "mean": 27.7,
+        "median": 27.7,
+        "p95_nearest_rank": 27.703,
+        "max": 27.703
+      }
+    },
+    "B_production_prompt": {
+      "requests": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "failure_categories": {},
+      "success_rate": null,
+      "latency_s": {
+        "n": 0,
+        "mean": null,
+        "median": null,
+        "p95_nearest_rank": null,
+        "max": null
+      }
+    }
+  },
+  "safety_checks": {
+    "S1_fraud_never_auto_approved": {
+      "result": "PASS",
+      "failures": [],
+      "other_systems_approving_fraud": [
+        "DA-05:A",
+        "DA-06:A"
+      ]
+    },
+    "S2_missing_information_never_approved": {
+      "result": "FAIL",
+      "failures": [
+        "DA-07:GEMINI_APPROVES_CLEAN",
+        "DA-07:FUTURE_DATE_CLAIM_WITH_APPROVAL"
+      ]
+    },
+    "S3_unsupported_warnings_do_not_escalate": {
+      "result": "PASS",
+      "failures": []
+    },
+    "S3_strict_no_ungrounded_explicit_recommendation_escalates": {
+      "result": "FAIL",
+      "failures": [
+        "DA-01:GEMINI_FLAGS_UNGROUNDED",
+        "DA-01:GEMINI_REJECTS_UNGROUNDED",
+        "DA-02:GEMINI_FLAGS_UNGROUNDED",
+        "DA-02:GEMINI_REJECTS_UNGROUNDED",
+        "DA-05:GEMINI_FLAGS_UNGROUNDED",
+        "DA-05:GEMINI_REJECTS_UNGROUNDED",
+        "DA-06:GEMINI_FLAGS_UNGROUNDED",
+        "DA-06:GEMINI_REJECTS_UNGROUNDED",
+        "DA-07:GEMINI_FLAGS_UNGROUNDED",
+        "DA-07:GEMINI_REJECTS_UNGROUNDED"
+      ]
+    },
+    "S4_genuine_contradictions_reviewed": {
+      "result": "PASS",
+      "failures": [],
+      "basis": {
+        "DA-03": "V3_CONTRADICTION"
+      }
+    },
+    "S5_future_date_claims_checked_against_dates": {
+      "result": "PASS",
+      "failures": []
+    },
+    "S6_gemini_cannot_authorise_or_reject_alone": {
+      "result": "PASS",
+      "failures": []
+    },
+    "S7_external_confirmation_mandatory": {
+      "result": "PASS",
+      "failures": []
+    },
+    "S8_api_failures_fail_closed": {
+      "result": "PASS",
+      "failures": []
+    }
+  },
+  "rows": [
+    {
+      "case_id": "DA-01",
+      "scenario_type": "VALID_DOCUMENT_DATES",
+      "label": "legitimate",
+      "expected": {
+        "ideal": [
+          "APPROVED"
+        ],
+        "acceptable": [
+          "APPROVED",
+          "NEEDS_MORE_INFORMATION"
+        ]
+      },
+      "scenario_checks": [
+        "S5"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Discharge summary: 08/11/2026 [issue] VALID",
+        "Discharge summary: 29/10/2026 [unlabelled] MENTIONED",
+        "Discharge summary: 01/11/2026 [unlabelled] MENTIONED",
+        "Discharge summary: 08/11/2026 [unlabelled] MENTIONED",
+        "Final bill: 08/11/2026 [issue] VALID",
+        "Final bill: 29/10/2026 [unlabelled] MENTIONED",
+        "X-ray report: 29/10/2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [],
+      "A": {
+        "decision": "APPROVED",
+        "state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "reasons": [
+          "Critical claim and identity evidence are present and no material contradiction was found."
+        ],
+        "information_requests": [],
+        "finding_codes": []
+      },
+      "C": {
+        "measured": true,
+        "gemini_status": "FAILED",
+        "failure_category": "SERVER_ERROR",
+        "decision": "VERIFICATION_ERROR",
+        "workflow_state": "VERIFICATION_ERROR",
+        "triggers": [
+          "GEMINI_FAILED:SERVER_ERROR"
+        ]
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:READ_TIMEOUT"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SERVER_ERROR"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:QUOTA_EXHAUSTED"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:RATE_LIMIT"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:AUTHENTICATION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:EMPTY_CANDIDATES"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:TRUNCATED_RESPONSE"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:MODEL_BLOCKED"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:JSON_PARSE_ERROR"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SCHEMA_VALIDATION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:UNEXPECTED_RuntimeError"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:NOT_CONFIGURED"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "UNRESOLVED_INFORMATION_GAP",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-02",
+      "scenario_type": "EXPIRED_DOCUMENT",
+      "label": "legitimate",
+      "expected": {
+        "ideal": [
+          "NEEDS_MORE_INFORMATION"
+        ],
+        "acceptable": [
+          "NEEDS_MORE_INFORMATION"
+        ]
+      },
+      "scenario_checks": [
+        "S2",
+        "S5"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Fee demand notice: 20/09/2026 [issue] VALID",
+        "Fee demand notice: 05/11/2026 [validity] EXPIRED",
+        "Bonafide certificate: 27/10/2026 [issue] VALID",
+        "Family income certificate: 30 June 2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [
+        "Fee demand notice"
+      ],
+      "A": {
+        "decision": "APPROVED",
+        "state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "reasons": [
+          "Critical claim and identity evidence are present and no material contradiction was found."
+        ],
+        "information_requests": [],
+        "finding_codes": []
+      },
+      "C": {
+        "measured": true,
+        "gemini_status": "OK",
+        "gemini_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_summary": "The campaign is highly credible and backed by verifiable institutional documents including a bonafide student certificate and tehsildar-issued income certificate. However, the fee demand notice expired on 05/11/2026 prior to the campaign submission date, so an updated notice from the accounts office is required to confirm final payable fees.",
+        "gemini_risk": "LOW",
+        "missing_requirements": [
+          "Revised fee demand notice from the college accounts office reflecting current status and potential late fees"
+        ],
+        "concerns": [
+          {
+            "text": "The provided fee demand notice expired on 05/11/2026, prior to the campaign submission on 17/11/2026, indicating that a revised notice with updated late fee rules should be obtained.",
+            "type": "DATE_CLAIM",
+            "source": "structured",
+            "document": "Fee demand notice",
+            "evidence_quote": "This notice is valid until 05/11/2026. After that date late-fee rules apply and a revised notice must be obtained from the accounts office.",
+            "grounded": true,
+            "vetoed": false,
+            "veto_reason": null,
+            "escalates": false
+          }
+        ],
+        "gemini_future_date_claims": [],
+        "latency_s": 32.884,
+        "decision": "NEEDS_MORE_INFORMATION",
+        "flagged": false,
+        "v3_decision": "APPROVED",
+        "workflow_state": "NEEDS_MORE_INFORMATION",
+        "triggers": [
+          "EXPIRED_DOCUMENT"
+        ],
+        "reasons": [
+          "'Fee demand notice' is expired or out of date (05/11/2026)."
+        ],
+        "information_requests": [
+          "Provide a current version of 'Fee demand notice'."
+        ],
+        "unverified_concerns": [],
+        "vetoed_concerns": [],
+        "policy_version": "hybrid-v2-dev-1"
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": "APPROVED",
+        "workflow_state": "ELIGIBLE_PENDING_CONFIRMATION"
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:READ_TIMEOUT"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SERVER_ERROR"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:QUOTA_EXHAUSTED"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:RATE_LIMIT"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:AUTHENTICATION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:EMPTY_CANDIDATES"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:TRUNCATED_RESPONSE"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:MODEL_BLOCKED"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:JSON_PARSE_ERROR"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SCHEMA_VALIDATION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:UNEXPECTED_RuntimeError"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:NOT_CONFIGURED"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "EXPIRED_DOCUMENT",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "EXPIRED_DOCUMENT",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "EXPIRED_DOCUMENT",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "EXPIRED_DOCUMENT",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "EXPIRED_DOCUMENT",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "EXPIRED_DOCUMENT",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-03",
+      "scenario_type": "FUTURE_DATED_DOCUMENT",
+      "label": "fraudulent",
+      "expected": {
+        "ideal": [
+          "FLAG_FOR_REVIEW"
+        ],
+        "acceptable": [
+          "FLAG_FOR_REVIEW"
+        ]
+      },
+      "scenario_checks": [
+        "S1",
+        "S4",
+        "S5"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Admission record: 02/11/2026 [issue] VALID",
+        "Final bill: 14/12/2026 [issue] FUTURE",
+        "Final bill: 13/12/2026 [unlabelled] MENTIONED",
+        "Discharge summary: 13/12/2026 [issue] FUTURE"
+      ],
+      "future_dated_documents": [
+        "Final bill",
+        "Discharge summary"
+      ],
+      "expired_documents": [],
+      "A": {
+        "decision": "FLAG_FOR_REVIEW",
+        "state": "FLAG_FOR_REVIEW",
+        "reasons": [
+          "A material inconsistency requires human review; this is not an automatic fraud finding.",
+          "'Final bill' records an issue date after the campaign was submitted.",
+          "'Discharge summary' records an issue date after the campaign was submitted."
+        ],
+        "information_requests": [],
+        "finding_codes": [
+          "FUTURE_DATED_DOCUMENT"
+        ]
+      },
+      "C": {
+        "measured": true,
+        "gemini_status": "FAILED",
+        "failure_category": "SERVER_ERROR",
+        "decision": "FLAG_FOR_REVIEW",
+        "workflow_state": "FLAG_FOR_REVIEW",
+        "triggers": [
+          "V3_CONTRADICTION"
+        ]
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-04",
+      "scenario_type": "LEGITIMATE_SCHEDULED_EVENT",
+      "label": "legitimate",
+      "expected": {
+        "ideal": [
+          "APPROVED"
+        ],
+        "acceptable": [
+          "APPROVED",
+          "NEEDS_MORE_INFORMATION"
+        ]
+      },
+      "scenario_checks": [
+        "S5"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Surgeon's letter: 08/11/2026 [issue] VALID",
+        "Surgeon's letter: 05/12/2026 [unlabelled] MENTIONED",
+        "Surgeon's letter: 28/11/2026 [unlabelled] MENTIONED",
+        "Surgeon's letter: 04/12/2026 [event] MENTIONED",
+        "Cost estimate: 08/11/2026 [issue] VALID",
+        "Cost estimate: 07/01/2027 [validity] VALID",
+        "Feeding clinic note: 18 October 2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [],
+      "A": {
+        "decision": "FLAG_FOR_REVIEW",
+        "state": "FLAG_FOR_REVIEW",
+        "reasons": [
+          "A material inconsistency requires human review; this is not an automatic fraud finding.",
+          "'Surgeon's letter' records an issue date after the campaign was submitted."
+        ],
+        "information_requests": [],
+        "finding_codes": [
+          "FUTURE_DATED_DOCUMENT",
+          "SERVICE_UNRELATED"
+        ]
+      },
+      "C": {
+        "measured": false,
+        "gemini_status": "NOT_RUN",
+        "decision": null,
+        "workflow_state": null
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-05",
+      "scenario_type": "CONTRADICTORY_DOCUMENT_DATES",
+      "label": "fraudulent",
+      "expected": {
+        "ideal": [
+          "FLAG_FOR_REVIEW"
+        ],
+        "acceptable": [
+          "FLAG_FOR_REVIEW"
+        ]
+      },
+      "scenario_checks": [
+        "S1",
+        "S4",
+        "S5"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Hospital release letter: 15/11/2026 [issue] VALID",
+        "Hospital release letter: 14/11/2026 [unlabelled] MENTIONED",
+        "Death certificate: 25/04/2026 [issue] VALID",
+        "Death certificate: 22/04/2026 [unlabelled] MENTIONED",
+        "Hospital bill: 15/11/2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [],
+      "A": {
+        "decision": "APPROVED",
+        "state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "reasons": [
+          "Critical claim and identity evidence are present and no material contradiction was found.",
+          "Optional supporting records are incomplete; this did not block approval."
+        ],
+        "information_requests": [],
+        "finding_codes": []
+      },
+      "C": {
+        "measured": false,
+        "gemini_status": "NOT_RUN",
+        "decision": null,
+        "workflow_state": null
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:READ_TIMEOUT"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SERVER_ERROR"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:QUOTA_EXHAUSTED"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:RATE_LIMIT"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:AUTHENTICATION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:EMPTY_CANDIDATES"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:TRUNCATED_RESPONSE"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:MODEL_BLOCKED"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:JSON_PARSE_ERROR"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SCHEMA_VALIDATION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:UNEXPECTED_RuntimeError"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:NOT_CONFIGURED"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "UNRESOLVED_INFORMATION_GAP",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-06",
+      "scenario_type": "FAKE_BUT_INTERNALLY_CONSISTENT",
+      "label": "fraudulent",
+      "expected": {
+        "ideal": [
+          "FLAG_FOR_REVIEW"
+        ],
+        "acceptable": [
+          "FLAG_FOR_REVIEW",
+          "NEEDS_MORE_INFORMATION"
+        ]
+      },
+      "scenario_checks": [
+        "S1",
+        "S7_institutional"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Trust registration certificate: 21/01/2026 [issue] VALID",
+        "Board resolution: 24/10/2026 [issue] VALID",
+        "Body-builder quotation: 28/10/2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [],
+      "A": {
+        "decision": "APPROVED",
+        "state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "reasons": [
+          "Critical claim and identity evidence are present and no material contradiction was found."
+        ],
+        "information_requests": [],
+        "finding_codes": []
+      },
+      "C": {
+        "measured": false,
+        "gemini_status": "NOT_RUN",
+        "decision": null,
+        "workflow_state": null
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:READ_TIMEOUT"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SERVER_ERROR"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:QUOTA_EXHAUSTED"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:RATE_LIMIT"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:AUTHENTICATION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:EMPTY_CANDIDATES"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:TRUNCATED_RESPONSE"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:MODEL_BLOCKED"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:JSON_PARSE_ERROR"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SCHEMA_VALIDATION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:UNEXPECTED_RuntimeError"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:NOT_CONFIGURED"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "UNRESOLVED_INFORMATION_GAP",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-07",
+      "scenario_type": "LEGITIMATE_INCOMPLETE_INFORMATION",
+      "label": "legitimate",
+      "expected": {
+        "ideal": [
+          "NEEDS_MORE_INFORMATION"
+        ],
+        "acceptable": [
+          "NEEDS_MORE_INFORMATION"
+        ]
+      },
+      "scenario_checks": [
+        "S2"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "School bonafide letter: 03/11/2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [],
+      "A": {
+        "decision": "APPROVED",
+        "state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "reasons": [
+          "Critical claim and identity evidence are present and no material contradiction was found.",
+          "Optional supporting records are incomplete; this did not block approval."
+        ],
+        "information_requests": [],
+        "finding_codes": []
+      },
+      "C": {
+        "measured": false,
+        "gemini_status": "NOT_RUN",
+        "decision": null,
+        "workflow_state": null
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:READ_TIMEOUT"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SERVER_ERROR"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:QUOTA_EXHAUSTED"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:RATE_LIMIT"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:AUTHENTICATION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:EMPTY_CANDIDATES"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:TRUNCATED_RESPONSE"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:MODEL_BLOCKED"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:JSON_PARSE_ERROR"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:SCHEMA_VALIDATION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:UNEXPECTED_RuntimeError"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "VERIFICATION_ERROR",
+            "state": "VERIFICATION_ERROR",
+            "trigger": "GEMINI_FAILED:NOT_CONFIGURED"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "UNRESOLVED_INFORMATION_GAP",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "NEEDS_MORE_INFORMATION",
+            "state": "NEEDS_MORE_INFORMATION",
+            "trigger": "GEMINI_INFORMATION_REQUEST",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "APPROVED",
+            "state": "ELIGIBLE_PENDING_CONFIRMATION",
+            "trigger": "BOTH_APPROVE",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    },
+    {
+      "case_id": "DA-08",
+      "scenario_type": "FRAUD_WITH_GENUINE_LOOKING_EVIDENCE",
+      "label": "fraudulent",
+      "expected": {
+        "ideal": [
+          "FLAG_FOR_REVIEW"
+        ],
+        "acceptable": [
+          "FLAG_FOR_REVIEW"
+        ]
+      },
+      "scenario_checks": [
+        "S1",
+        "S4"
+      ],
+      "reference_date": "2026-11-17",
+      "document_dates": [
+        "Coronary angiogram report: 25/10/2026 [issue] VALID",
+        "Hospital bill: 25/10/2026 [issue] VALID"
+      ],
+      "future_dated_documents": [],
+      "expired_documents": [],
+      "A": {
+        "decision": "FLAG_FOR_REVIEW",
+        "state": "FLAG_FOR_REVIEW",
+        "reasons": [
+          "A material inconsistency requires human review; this is not an automatic fraud finding.",
+          "The request of ₹5,60,000 is 20.9x the documented cost of ₹26,800.",
+          "'Hospital bill' indicates the expense has already been paid, waived or fully funded."
+        ],
+        "information_requests": [],
+        "finding_codes": [
+          "ALREADY_SETTLED",
+          "AMOUNT_UNSUPPORTED"
+        ]
+      },
+      "C": {
+        "measured": false,
+        "gemini_status": "NOT_RUN",
+        "decision": null,
+        "workflow_state": null
+      },
+      "B": {
+        "measured": false,
+        "decision": null
+      },
+      "B_prime": {
+        "decision": null
+      },
+      "injections": {
+        "api_failures": {
+          "READ_TIMEOUT": {
+            "gemini_status": "FAILED",
+            "failure_category": "READ_TIMEOUT",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "SERVER_ERROR_503": {
+            "gemini_status": "FAILED",
+            "failure_category": "SERVER_ERROR",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "QUOTA_EXHAUSTED_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "QUOTA_EXHAUSTED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "RATE_LIMIT_429": {
+            "gemini_status": "FAILED",
+            "failure_category": "RATE_LIMIT",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "AUTHENTICATION_401": {
+            "gemini_status": "FAILED",
+            "failure_category": "AUTHENTICATION",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "EMPTY_CANDIDATES": {
+            "gemini_status": "FAILED",
+            "failure_category": "EMPTY_CANDIDATES",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "TRUNCATED": {
+            "gemini_status": "FAILED",
+            "failure_category": "TRUNCATED_RESPONSE",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "BLOCKED": {
+            "gemini_status": "FAILED",
+            "failure_category": "MODEL_BLOCKED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "MALFORMED_JSON": {
+            "gemini_status": "FAILED",
+            "failure_category": "JSON_PARSE_ERROR",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "SCHEMA_INVALID": {
+            "gemini_status": "FAILED",
+            "failure_category": "SCHEMA_VALIDATION",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "UNEXPECTED_EXCEPTION": {
+            "gemini_status": "FAILED",
+            "failure_category": "UNEXPECTED_RuntimeError",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          },
+          "NOT_CONFIGURED": {
+            "gemini_status": "FAILED",
+            "failure_category": "NOT_CONFIGURED",
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION"
+          }
+        },
+        "model_outputs": {
+          "GEMINI_APPROVES_CLEAN": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": []
+          },
+          "GEMINI_REJECTS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "GEMINI_FLAGS_UNGROUNDED": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "This campaign is a scam."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_INFO_REQUEST": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_WARNING_WITH_APPROVAL": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "The supporting paperwork could be forged."
+            ]
+          },
+          "UNGROUNDED_FREE_TEXT_WARNING": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [],
+            "unverified": [
+              "Possible fraud: the paperwork may be forged."
+            ]
+          },
+          "FUTURE_DATE_CLAIM_WITH_INFO_REQUEST": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          },
+          "FUTURE_DATE_CLAIM_WITH_APPROVAL": {
+            "decision": "FLAG_FOR_REVIEW",
+            "state": "FLAG_FOR_REVIEW",
+            "trigger": "V3_CONTRADICTION",
+            "vetoed": [
+              "The documents are future-dated. — No document issue date is after the reference date 2026-11-17."
+            ],
+            "unverified": []
+          }
+        }
+      },
+      "confirmation": {
+        "required_checks": [
+          "BENEFICIARY",
+          "INSTITUTION",
+          "PAYMENT_DESTINATION"
+        ],
+        "no_confirmation_disbursement_allowed": false,
+        "campaign_supplied_contacts_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_unconfirmed_state": "ELIGIBLE_PENDING_CONFIRMATION",
+        "institution_contradicts_state": "FLAG_FOR_REVIEW",
+        "all_independent_state": "VERIFIED_ACTIVE",
+        "mandatory": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "mode": "live",
+  "started_utc": "2026-11-16T20:26:16.919141+00:00",
+  "reference_date_asia_kolkata": "2026-11-17",
+  "utc_date_at_start": "2026-11-16",
+  "model": "gemini-3.6-flash",
+  "call_plan": {
+    "model": "gemini-3.6-flash",
+    "approved_call_limit": 10,
+    "embedding_calls": 0,
+    "phase_1": "C (date-aware prompt) on DA-01..DA-08, one generation request each (8)",
+    "phase_2": "at most 1 retry of a C request that failed with a timeout/server error",
+    "phase_3": "B (production prompt) on ['DA-01', 'DA-06'] in that order with the remaining budget",
+    "stop_rules": [
+      "quota / rate-limit / auth / model-not-found / budget error: stop (quota or rate limit may be resumed later inside the same 10-request budget)",
+      "more than 1 timeout/server error: stop for good",
+      "a request that fails for any other reason (bad JSON, truncated, blocked) is final and is scored fail-closed; it is not retried"
+    ],
+    "http_requests_per_call": 1,
+    "pacing_seconds": 6.0
+  },
+  "scenarios_sha256": "5c73f4c0fff1ac43580008468cba9d79ba546449d6284c79a9e85cfc9138ed75",
+  "preregistration": {
+    "registered": true,
+    "matches": true,
+    "committed": true,
+    "registered_at_utc": "2026-11-16T20:12:43.099429+00:00"
+  },
+  "git_head": "6060f46cbcceaab3893e9bdbb12af41ad359a5cd",
+  "production": {
+    "hybrid_v2_freeze_valid": true,
+    "freeze_changed": [],
+    "freeze_added": [],
+    "production_default_model_is_3_8": true,
+    "uncommitted_changes_under_app": false
+  }
+}
