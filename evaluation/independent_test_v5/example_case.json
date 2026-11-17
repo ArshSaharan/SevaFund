@@ -1,0 +1,62 @@
+{
+  "case_id": "T5-EXAMPLE-0001-A",
+  "scenario_group": "T5-EXAMPLE-0001",
+  "author_id": "A00",
+  "provenance": "synthetic",
+  "synthetic": true,
+  "llm_assisted": false,
+  "category": "MEDICAL",
+  "author_intended_label": "fraudulent",
+  "author_intended_documentation": "complete",
+  "mechanism": "amount_inflation",
+  "form": null,
+  "keyword_free": true,
+  "incomplete_subtype": null,
+  "input": {
+    "title": "Help Anvi hear again",
+    "category": "MEDICAL",
+    "story": "Our daughter Anvi is four. The doctors at Shravana ENT and Hearing Institute have recommended bilateral cochlear implants and the surgery is planned for next month. The estimate for the implants, surgery and first year of therapy is Rs 4,20,000. Any help is welcome.",
+    "goal_amount": 420000,
+    "goal_currency": "INR",
+    "beneficiary_name": "Anvi Ramesh",
+    "beneficiary_type": "THIRD_PARTY",
+    "city": "Tumakuru",
+    "state": "Karnataka",
+    "submitted_on": "2027-02-03",
+    "documents": [
+      {
+        "title": "Estimate for bilateral cochlear implant",
+        "doc_type": "HOSPITAL_ESTIMATE",
+        "content": "SHRAVANA ENT AND HEARING INSTITUTE, B.H. Road, Tumakuru 572102 | Ph 0816-0000-1234\nEST/CI/2027/0142            Date: 28/01/2027\nPatient: Anvi Ramesh   Age/Sex: 4 Y / F   UHID: SH-448120\nProcedure: Bilateral cochlear implantation (proposed date of surgery 04/03/2027)\nImplant devices (2)            3,10,000\nSurgery, OT, anaesthesia         62,000\nAuditory-verbal therapy (12 mo)  48,000\nTOTAL ESTIMATE               Rs 4,20,000\nValid for 60 days.   Billing Officer (sd/-)"
+      },
+      {
+        "title": "Audiology and ENT assessment",
+        "doc_type": "CLINICAL_NOTE",
+        "content": "Shravana ENT and Hearing Institute - Dept. of Audiology\nName: Anvi Ramesh  4Y/F  UHID SH-448120  Date 21/01/2027\nBERA: no response bilaterally at 90 dBnHL. Hearing aid trial 6 months - inadequate benefit.\nImpression: bilateral profound sensorineural hearing loss. Advised bilateral cochlear implantation.\nDr. P. Kulkarni, MS (ENT)"
+      }
+    ]
+  },
+  "gold_evidence_titles": [
+    "Estimate for bilateral cochlear implant"
+  ],
+  "external_environment": {
+    "BENEFICIARY": {
+      "independent_response": "CONFIRMED",
+      "note": "Child and guardian identities match the platform KYC."
+    },
+    "PAYMENT_DESTINATION": {
+      "independent_response": "CONFIRMED",
+      "note": "Payout account is the guardian's verified account."
+    },
+    "INSTITUTION": {
+      "independent_response": "CONFIRMED",
+      "note": "The institute's listed switchboard confirms the patient and the planned surgery."
+    },
+    "COST_ISSUER": {
+      "independent_response": "CONTRADICTED",
+      "amount_stated_inr": 420000,
+      "other_payers_inr": 330000,
+      "note": "Billing states the total is Rs 4,20,000, but the state child-hearing scheme has already pre-authorised Rs 3,30,000 for devices and surgery; the family's share is Rs 90,000. The campaign does not mention the scheme."
+    }
+  }
+}

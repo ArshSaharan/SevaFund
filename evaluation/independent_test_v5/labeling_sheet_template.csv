@@ -1,0 +1,2 @@
+case_id,labeller_id,truth_label,documentation,missing_items,detectable_from_dossier,detectable_by_external_confirmation,decisive_evidence_titles,justified_amount_inr,acceptable_end_states,notes
+T5-EXAMPLE-0001-A,L1,fraudulent,complete,,no,yes,Estimate for bilateral cochlear implant,90000,FLAG_FOR_REVIEW;NEEDS_MORE_INFORMATION,Hospital states Rs 4.2 lakh total with Rs 3.3 lakh covered by the state scheme

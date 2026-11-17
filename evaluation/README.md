@@ -50,3 +50,12 @@ See `docs/approval_workflow_and_v3_diagnostics.md`. The diagnostic run
 `runs/diagnostic_v3_prior_benchmarks_ba1b045e8b9d/` was one-time: the 200-, 100- and 150-case sets
 are previously used diagnostic data, not independent tests. `gemini_evaluation_framework.py` is
 prepared but has not been executed. Future performance claims follow `independent_test_protocol_v4.md`.
+
+## Hybrid v3 evaluation candidate and the v5 protocol draft (November 2026)
+
+Hybrid v3 (`app/services/development_hybrid_v3`, policy `hybrid-v3-dev-1`) is frozen as an evaluation candidate
+in `hybrid_v3_freeze.json`; check it with `python evaluation/freeze_hybrid_v3.py verify` (offline). The manifest
+records commits, file hashes, the captured prompt and model configuration, a behavioural fingerprint, test results
+and known limitations. `independent_test_protocol_v5.md` is a **draft** independent-evaluation protocol for it
+(author and labeller kit in `independent_test_v5/`); it is not sealed and has not been executed. All results so far
+are development results.
