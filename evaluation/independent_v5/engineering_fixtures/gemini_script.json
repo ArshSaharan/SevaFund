@@ -1,0 +1,64 @@
+{
+  "ENG-MED-0001-A": [
+    "approve"
+  ],
+  "ENG-MED-0001-B": [
+    "approve"
+  ],
+  "ENG-MED-0002-A": [
+    "nmi"
+  ],
+  "ENG-MED-0003-A": [
+    "flag_grounded"
+  ],
+  "ENG-MED-0004-A": [
+    "approve"
+  ],
+  "ENG-MED-0005-A": [
+    "SERVER_ERROR",
+    "approve"
+  ],
+  "ENG-MED-0006-A": [
+    "invalid_json"
+  ],
+  "ENG-EDU-0001-A": [
+    "approve"
+  ],
+  "ENG-EDU-0002-A": [
+    "nmi"
+  ],
+  "ENG-EDU-0003-A": [
+    "approve"
+  ],
+  "ENG-EDU-0004-A": [
+    "flag_ungrounded"
+  ],
+  "ENG-EDU-0005-A": [
+    "READ_TIMEOUT",
+    "READ_TIMEOUT"
+  ],
+  "ENG-COM-0001-A": [
+    "approve"
+  ],
+  "ENG-COM-0002-A": [
+    "approve"
+  ],
+  "ENG-COM-0003-A": [
+    "approve"
+  ],
+  "ENG-COM-0003-B": [
+    "approve"
+  ],
+  "ENG-COM-0004-A": [
+    "reject_ungrounded"
+  ],
+  "ENG-COM-0005-A": [
+    "nmi"
+  ],
+  "ENG-PIL-0001-A": [
+    "approve"
+  ],
+  "ENG-PIL-0002-A": [
+    "nmi"
+  ]
+}
