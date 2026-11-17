@@ -96,7 +96,7 @@ def test_otp_rate_limiting(client, db_session, sms_outbox):
     assert blocked_res.status_code == 429
     assert "Too many OTP requests" in blocked_res.json()["detail"]
 
-def test_admin_promotion_and_security_headers(client, db_session):
+def test_admin_promotion_and_security_headers(client, db_session, make_user):
     # 1. Register a regular user
     reg_res = client.post("/api/auth/register", json={
         "email": "candidate@example.com",
@@ -111,12 +111,16 @@ def test_admin_promotion_and_security_headers(client, db_session):
     forbidden_res = client.get("/api/admin/flagged", headers={"Authorization": f"Bearer {user_token}"})
     assert forbidden_res.status_code == 403
 
-    # 3. Promote user to admin with platform secret key
+    # 3. The candidate cannot promote itself, even when presenting the platform signing key
     from app.config import settings
-    promote_res = client.post("/api/auth/promote-admin", json={
-        "user_id": user_id,
-        "secret_key": settings.SECRET_KEY
-    })
+    self_res = client.post("/api/auth/promote-admin", headers={"Authorization": f"Bearer {user_token}"},
+                           json={"user_id": user_id, "secret_key": settings.SECRET_KEY})
+    assert self_res.status_code == 403
+
+    # 4. An authenticated administrator (explicit test fixture) promotes the candidate
+    _, admin_headers = make_user("ADMIN")
+    promote_res = client.post("/api/auth/promote-admin", headers=admin_headers,
+                              json={"user_id": user_id, "reason": "test promotion"})
     assert promote_res.status_code == 200
     assert promote_res.json()["role"] == "ADMIN"
 

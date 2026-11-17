@@ -12,7 +12,7 @@ from app.models.verification import VerificationAudit
 from app.schemas.campaign import CampaignCreate, CampaignUpdateSchema, CampaignResponse, CampaignListResponse
 from app.schemas.ai import VerificationResult
 from app.services.ai_verifier import ai_verifier
-from app.services.auth_dependencies import get_current_user, get_current_user_or_demo
+from app.services.auth_dependencies import get_current_user
 from app.services import dev_hybrid_v4_flag  # development-only hybrid v4 integration; OFF unless SEVAFUND_DEV_HYBRID_V4=1
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
@@ -122,7 +122,7 @@ def list_campaigns(
 @router.post("", response_model=CampaignResponse, status_code=status.HTTP_201_CREATED)
 async def create_campaign(
     campaign_in: CampaignCreate,
-    current_user: User = Depends(get_current_user_or_demo),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     # Convert proof documents to JSON

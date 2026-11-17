@@ -123,8 +123,8 @@ def test_unauthenticated_requests_obtain_no_token(client, db_session):
     other_key = pyjwt.encode({"sub": "1", "role": "ADMIN", "iat": 1, "exp": 4102444800}, secrets.token_urlsafe(48),
                              algorithm="HS256")
     assert client.get("/api/auth/me", headers={"Authorization": f"Bearer {other_key}"}).status_code == 401
-    assert client.post("/api/auth/promote-admin", json={"user_id": 1, "secret_key": "guess"}).status_code == 403
-    assert client.post("/api/auth/promote-admin", json={"user_id": 1, "secret_key": CONFIG_DEFAULT_KEY}).status_code == 403
+    for key in ("guess", CONFIG_DEFAULT_KEY):                     # no shared secret grants admin rights
+        assert client.post("/api/auth/promote-admin", json={"user_id": 1, "secret_key": key}).status_code == 401
 
 
 def test_password_login_still_works(client, db_session):

@@ -32,7 +32,7 @@ class OTPVerifyRequest(BaseModel):
 
 class MakeAdminRequest(BaseModel):
     user_id: int
-    secret_key: str
+    reason: Optional[str] = None   # recorded in the admin audit log
 
 class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

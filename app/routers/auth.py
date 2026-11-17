@@ -2,13 +2,14 @@ import datetime
 import logging
 import os
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
 from app.database import get_db
 from app.models.user import User
 from app.models.otp import OTPRecord
+from app.models.audit_log import AdminAuditLog
 from app.config import settings
 from app.schemas.user import (
     UserRegister,
@@ -33,7 +34,6 @@ from app.services.security import (
     GoogleSignInUnavailable,
     InvalidGoogleToken
 )
-import secrets
 from app.services.auth_dependencies import (
     get_current_user,
     get_current_user_optional,
@@ -332,22 +332,33 @@ def get_profile(current_user: User = Depends(get_current_user)):
 @router.post("/promote-admin", response_model=UserResponse)
 def promote_user_to_admin(
     req: MakeAdminRequest,
+    request: Request,
+    current_admin: User = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     """
-    Secure endpoint to promote a user to ADMIN role using platform master SECRET_KEY.
+    ADMIN ONLY: an authenticated administrator promotes another user to ADMIN; every promotion is written to the
+    admin audit log.  No shared secret (in particular not SECRET_KEY) grants administrator rights.  The first
+    administrator is created by an operator with direct database access (locally: seed_data.py).
     """
-    if not secrets.compare_digest(str(req.secret_key or "").encode("utf-8"), settings.SECRET_KEY.encode("utf-8")):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid secret key. Admin promotion unauthorized."
-        )
-
     user = db.query(User).filter(User.id == req.user_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    if user.role == "ADMIN":
+        return UserResponse.model_validate(user)
 
+    previous_role = user.role
     user.role = "ADMIN"
+    db.add(AdminAuditLog(
+        admin_id=current_admin.id,
+        action="USER_PROMOTED_TO_ADMIN",
+        target_type="USER",
+        target_id=user.id,
+        previous_status=previous_role,
+        new_status="ADMIN",
+        reason=req.reason or "Promoted by an administrator",
+        ip_address=request.client.host if request.client else None
+    ))
     db.commit()
     db.refresh(user)
     return UserResponse.model_validate(user)

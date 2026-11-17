@@ -1,4 +1,5 @@
-def test_indian_donation_via_upi_and_80g_receipt(client):
+def test_indian_donation_via_upi_and_80g_receipt(client, make_user):
+    _, organiser = make_user()
     # 1. Create Indian campaign
     c_res = client.post("/api/campaigns", json={
         "title": "Delhi Flood Relief Clean Drinking Water",
@@ -8,7 +9,7 @@ def test_indian_donation_via_upi_and_80g_receipt(client):
         "city": "New Delhi",
         "state": "Delhi",
         "country": "IN"
-    })
+    }, headers=organiser)
     assert c_res.status_code == 201
     campaign_id = c_res.json()["id"]
 
@@ -72,7 +73,8 @@ def test_indian_donation_via_upi_and_80g_receipt(client):
     assert rec_res.json()["transaction_ref"] == ref
     assert rec_res.json()["currency"] == "INR"
 
-def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session):
+def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session, make_user):
+    _, organiser = make_user()
     from app.models.user import User
     from app.services.security import hash_password, create_access_token
 
@@ -111,7 +113,7 @@ def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session):
         "city": "Bengaluru",
         "state": "Karnataka",
         "country": "IN"
-    })
+    }, headers=organiser)
     assert c_res.status_code == 201
     campaign_id = c_res.json()["id"]
 

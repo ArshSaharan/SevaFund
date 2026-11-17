@@ -27,6 +27,25 @@ def no_live_gemini(monkeypatch):
     monkeypatch.setattr(ai_assistant, "api_key", "")
 
 
+@pytest.fixture
+def make_user(db_session):
+    """Explicit offline test fixture: creates a user directly in the test database and returns (user, auth headers).
+    This is the only place tests obtain an identity without going through a login route."""
+    import uuid
+    from app.models.user import User
+    from app.services.security import create_access_token, hash_password
+
+    def _make(role="USER", email=None):
+        user = User(email=email or f"{role.lower()}-{uuid.uuid4().hex[:10]}@test.local",
+                    hashed_password=hash_password("Test-Only-Password-1"), full_name=f"Test {role.title()}", role=role,
+                    is_identity_verified=True)
+        db_session.add(user)
+        db_session.commit()
+        db_session.refresh(user)
+        return user, {"Authorization": f"Bearer {create_access_token({'sub': str(user.id), 'role': user.role})}"}
+    return _make
+
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
     Base.metadata.create_all(bind=test_engine)

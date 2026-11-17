@@ -62,30 +62,6 @@ def get_current_user(
         )
     return user
 
-def get_current_user_or_demo(
-    authorization: Optional[str] = Header(None),
-    db: Session = Depends(get_db)
-) -> User:
-    """
-    Used for endpoints where demo convenience is helpful if no token is passed.
-    """
-    user = get_current_user_optional(authorization, db)
-    if user:
-        return user
-        
-    demo_user = db.query(User).filter(User.email == "organizer@crowdfund-demo.com").first()
-    if not demo_user:
-        demo_user = User(
-            email="organizer@crowdfund-demo.com",
-            full_name="Sarah Jenkins",
-            role="USER",
-            is_identity_verified=True
-        )
-        db.add(demo_user)
-        db.commit()
-        db.refresh(demo_user)
-    return demo_user
-
 def require_admin(
     current_user: User = Depends(get_current_user)
 ) -> User:

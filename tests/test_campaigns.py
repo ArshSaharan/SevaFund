@@ -1,4 +1,5 @@
-def test_create_and_auto_verify_indian_campaign(client):
+def test_create_and_auto_verify_indian_campaign(client, make_user):
+    _, headers = make_user()
     payload = {
         "title": "Supporting Rohit's Pediatric Heart Surgery at Narayana Health",
         "subtitle": "Help save 4-year-old Rohit with urgent open heart congenital defect repair in Bengaluru.",
@@ -28,7 +29,7 @@ def test_create_and_auto_verify_indian_campaign(client):
         ]
     }
 
-    response = client.post("/api/campaigns", json=payload)
+    response = client.post("/api/campaigns", json=payload, headers=headers)
     assert response.status_code == 201
     data = response.json()
     assert data["title"] == payload["title"]
@@ -53,7 +54,8 @@ def test_create_and_auto_verify_indian_campaign(client):
     items = list_res.json()["items"]
     assert any(c["id"] == campaign_id for c in items)
 
-def test_campaign_verification_endpoint(client):
+def test_campaign_verification_endpoint(client, make_user):
+    _, headers = make_user()
     create_payload = {
         "title": "Government School Digital Classroom Project in Pune",
         "category": "EDUCATION",
@@ -63,11 +65,11 @@ def test_campaign_verification_endpoint(client):
         "state": "Maharashtra",
         "country": "IN"
     }
-    create_res = client.post("/api/campaigns", json=create_payload)
+    create_res = client.post("/api/campaigns", json=create_payload, headers=headers)
     assert create_res.status_code == 201
     campaign_id = create_res.json()["id"]
 
-    verify_res = client.post(f"/api/campaigns/{campaign_id}/verify")
+    verify_res = client.post(f"/api/campaigns/{campaign_id}/verify", headers=headers)
     assert verify_res.status_code == 200
     vdata = verify_res.json()
     assert "authenticity_score" in vdata
