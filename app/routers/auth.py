@@ -32,7 +32,8 @@ from app.services.security import (
     verify_otp_hash,
     verify_google_id_token,
     GoogleSignInUnavailable,
-    InvalidGoogleToken
+    InvalidGoogleToken,
+    google_client_id
 )
 from app.services.auth_dependencies import (
     get_current_user,
@@ -175,6 +176,20 @@ def google_auth(auth_in: GoogleAuthRequest, db: Session = Depends(get_db)):
 # Indian Mobile OTP Authentication (6-digit crypto OTP)
 # ==============================================================================
 
+PHONE_SIGN_IN_UNAVAILABLE = ("Phone verification is temporarily unavailable. "
+                             "Please sign in with your email and password.")
+
+
+@router.get("/methods")
+def sign_in_methods():
+    """Which sign-in methods this server can offer.  Email and password is always the primary method; Google only
+    when a client ID is configured; phone OTP only when an SMS provider is configured (a configured provider can
+    still fail, for example with exhausted credits, in which case /otp/send reports it as unavailable)."""
+    from app.services.sms_service import sms_configured
+    return {"primary": "password", "password": True, "google": google_client_id() is not None,
+            "phone_otp": sms_configured()}
+
+
 @router.post("/otp/send", response_model=OTPSendResponse)
 async def send_otp(req: OTPSendRequest, db: Session = Depends(get_db)):
     """
@@ -186,6 +201,10 @@ async def send_otp(req: OTPSendRequest, db: Session = Depends(get_db)):
         phone = normalize_indian_phone(req.phone_number)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    from app.services.sms_service import send_real_sms_otp, sms_configured
+    if not sms_configured():           # no provider: generate nothing, contact nobody
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=PHONE_SIGN_IN_UNAVAILABLE)
 
     # Rate limiting: max 3 OTP requests per 10 minutes per phone
     ten_minutes_ago = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
@@ -213,10 +232,8 @@ async def send_otp(req: OTPSendRequest, db: Session = Depends(get_db)):
     db.add(otp_record)
     db.commit()
 
-    # Trigger real SMS dispatch (Fast2SMS / Twilio)
-    from app.services.sms_service import send_real_sms_otp
+    # Trigger SMS dispatch (Fast2SMS / Twilio).  Neither the code nor the provider response is logged.
     sms_status = await send_real_sms_otp(phone, otp_code)
-    logger.info(f"📱 [SMS OTP] Status for {phone}: {sms_status}")
 
     sms_success = sms_status.get("success", False) is True
     sms_provider = sms_status.get("provider", "UNKNOWN")
@@ -226,11 +243,8 @@ async def send_otp(req: OTPSendRequest, db: Session = Depends(get_db)):
     if not sms_success or sms_provider == "SIMULATION":
         otp_record.expires_at = datetime.datetime.utcnow()      # unusable, still counts towards the rate limit
         db.commit()
-        logger.warning("SMS OTP delivery unavailable for %s via %s", phone, sms_provider)
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Phone sign-in is unavailable: the verification SMS could not be sent."
-        )
+        logger.warning("SMS OTP delivery failed via %s; phone verification unavailable", sms_provider)
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=PHONE_SIGN_IN_UNAVAILABLE)
 
     return OTPSendResponse(
         phone_number=phone,

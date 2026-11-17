@@ -24,7 +24,14 @@ export interface OTPSendResponse {
   phone_number: string;
   message: string;
   expires_in_seconds: number;
-  dev_otp?: string;
+}
+
+/** Sign-in methods the server can offer; email & password is always available and primary. */
+export interface SignInMethods {
+  primary: 'password';
+  password: boolean;
+  google: boolean;
+  phone_otp: boolean;
 }
 
 @Injectable({
@@ -72,6 +79,10 @@ export class AuthService {
     return this.http.post<TokenResponse>(`${this.apiUrl}/google`, { id_token: idToken }).pipe(
       tap(res => this.handleAuthSuccess(res))
     );
+  }
+
+  getSignInMethods(): Observable<SignInMethods> {
+    return this.http.get<SignInMethods>(`${this.apiUrl}/methods`);
   }
 
   sendMobileOtp(phoneNumber: string): Observable<OTPSendResponse> {

@@ -37,6 +37,7 @@ def sms_outbox(monkeypatch):
         return {"success": True, "provider": "TEST_SMS"}
     import app.services.sms_service as sms_service
     monkeypatch.setattr(sms_service, "send_real_sms_otp", fake_send)
+    monkeypatch.setattr(sms_service, "sms_configured", lambda: True)       # isolated fake provider only
     return sent
 
 

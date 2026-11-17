@@ -6,9 +6,25 @@ from app.models.campaign import Campaign
 from app.models.donation import Donation
 from app.models.update import CampaignUpdate
 from app.models.verification import VerificationAudit
+import os
 from app.services.security import hash_password
 
+# Demo-account passwords come from .env (SEED_USER_PASSWORD, SEED_ADMIN_PASSWORD) and are never printed.
+_KNOWN_WEAK = {"password", "password123", "admin", "admin123", "12345678", "123456789012", "changeme", "letmein"}
+
+
+def seed_password(name: str) -> str:
+    """A configured, reasonably strong demo password, or a clear refusal before anything is changed."""
+    value = os.getenv(name, "")
+    if (len(value) < 12 or value.lower() in _KNOWN_WEAK or len(set(value)) < 6
+            or value.lower().startswith(("replace", "change", "your", "example"))):
+        raise SystemExit(f"Refusing to seed: set {name} in .env to a private password of at least 12 characters "
+                         f"(it is used for the demo accounts and is never printed).")
+    return value
+
+
 def seed():
+    user_password, admin_password = seed_password("SEED_USER_PASSWORD"), seed_password("SEED_ADMIN_PASSWORD")
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
@@ -19,7 +35,7 @@ def seed():
     priya = User(
         email="priya.sharma@example.com",
         phone_number="+919876543210",
-        hashed_password=hash_password("password123"),
+        hashed_password=hash_password(user_password),
         full_name="Priya Sharma",
         role="USER",
         is_identity_verified=True,
@@ -29,7 +45,7 @@ def seed():
     rahul = User(
         email="rahul.verma@example.com",
         phone_number="+919812345678",
-        hashed_password=hash_password("password123"),
+        hashed_password=hash_password(user_password),
         full_name="Rahul Verma",
         role="USER",
         is_identity_verified=True,
@@ -39,7 +55,7 @@ def seed():
     admin_user = User(
         email="admin@crowdfund-trust.in",
         phone_number="+919999988888",
-        hashed_password=hash_password("admin123"),
+        hashed_password=hash_password(admin_password),
         full_name="Vikram Mehta (Trust & Safety Lead)",
         role="ADMIN",
         is_identity_verified=True,

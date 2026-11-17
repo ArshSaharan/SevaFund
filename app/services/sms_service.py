@@ -1,15 +1,36 @@
 import os
 import logging
 import httpx
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
+# OTP codes and provider response bodies are never written to logs or returned to callers.
+_PLACEHOLDER_PREFIXES = ("your", "replace", "change", "xxx", "<")
+
+
+def _configured(value: str) -> bool:
+    value = (value or "").strip()
+    return bool(value) and not value.lower().startswith(_PLACEHOLDER_PREFIXES)
+
+
+def sms_configured() -> bool:
+    """True when an SMS provider is configured (Fast2SMS key, or the full Twilio trio).  Configured does not
+    guarantee delivery (for example, exhausted credits); a failed send is reported as unavailable."""
+    if _configured(os.getenv("FAST2SMS_API_KEY", "")):
+        return True
+    return all(_configured(os.getenv(name, "")) for name in ("TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_PHONE"))
+
+
+def _masked(e164: str) -> str:
+    return f"{e164[:3]}******{e164[-4:]}" if len(e164) > 7 else "***"
+
+
 async def send_real_sms_otp(phone_number: str, otp_code: str) -> Dict[str, Any]:
     """
-    Sends a real SMS OTP to an Indian mobile number.
-    Supports Fast2SMS (India's leading DLT-ready OTP provider) and Twilio.
-    Falls back gracefully with logging if no third-party SMS key is configured.
+    Sends an SMS OTP to an Indian mobile number through Fast2SMS or Twilio.
+    Returns only {"success": bool, "provider": str}.  Without a configured provider nothing is sent
+    (provider "SIMULATION", success False) and the caller must treat phone sign-in as unavailable.
     """
     clean_10_digit = phone_number.replace("+91", "").replace(" ", "").strip()
     full_e164 = f"+91{clean_10_digit}"
@@ -20,14 +41,14 @@ async def send_real_sms_otp(phone_number: str, otp_code: str) -> Dict[str, Any]:
     twilio_phone = os.getenv("TWILIO_FROM_PHONE", "").strip()
 
     # 1. Option A: Fast2SMS (Indian Gateway)
-    if fast2sms_key:
+    if _configured(fast2sms_key):
         try:
             url = "https://www.fast2sms.com/dev/bulkV2"
             headers = {
                 "authorization": fast2sms_key,
                 "Content-Type": "application/x-www-form-urlencoded"
             }
-            
+
             # Step A1: Try dedicated DLT OTP route first
             payload_otp = {
                 "variables_values": str(otp_code),
@@ -38,11 +59,11 @@ async def send_real_sms_otp(phone_number: str, otp_code: str) -> Dict[str, Any]:
                 resp = await client.post(url, data=payload_otp, headers=headers)
                 data = resp.json()
                 if resp.status_code == 200 and data.get("return") is True:
-                    logger.info(f"✅ Real SMS dispatched via Fast2SMS (OTP route) to {full_e164}: {data}")
-                    return {"success": True, "provider": "Fast2SMS (OTP Route)", "details": data}
+                    logger.info("SMS OTP dispatched via Fast2SMS (OTP route) to %s", _masked(full_e164))
+                    return {"success": True, "provider": "Fast2SMS (OTP Route)"}
 
-                # Step A2: If OTP route requires website verification (status 996), fallback to Quick SMS (route='q')
-                logger.info(f"Fast2SMS OTP route response: {data}. Falling back to Quick SMS (route='q')...")
+                # Step A2: If the OTP route is not enabled for this account, fall back to Quick SMS (route='q')
+                logger.info("Fast2SMS OTP route refused (HTTP %s); trying Quick SMS route", resp.status_code)
                 payload_quick = {
                     "route": "q",
                     "message": f"Your SevaFund India verification code is {otp_code}. Valid for 5 minutes.",
@@ -51,17 +72,16 @@ async def send_real_sms_otp(phone_number: str, otp_code: str) -> Dict[str, Any]:
                 resp_q = await client.post(url, data=payload_quick, headers=headers)
                 data_q = resp_q.json()
                 if resp_q.status_code == 200 and data_q.get("return") is True:
-                    logger.info(f"✅ Real SMS dispatched via Fast2SMS (Quick Route) to {full_e164}: {data_q}")
-                    return {"success": True, "provider": "Fast2SMS", "details": data_q}
-                else:
-                    logger.error(f"❌ Fast2SMS Quick Route error: {data_q}")
-                    return {"success": False, "provider": "Fast2SMS", "details": data_q}
+                    logger.info("SMS OTP dispatched via Fast2SMS (Quick route) to %s", _masked(full_e164))
+                    return {"success": True, "provider": "Fast2SMS"}
+                logger.error("Fast2SMS Quick route failed (HTTP %s)", resp_q.status_code)
+                return {"success": False, "provider": "Fast2SMS"}
         except Exception as e:
-            logger.error(f"Failed to send SMS via Fast2SMS: {e}")
-            return {"success": False, "provider": "Fast2SMS", "error": str(e)}
+            logger.error("Failed to send SMS via Fast2SMS: %s", type(e).__name__)
+            return {"success": False, "provider": "Fast2SMS"}
 
     # 2. Option B: Twilio
-    if twilio_sid and twilio_token and twilio_phone:
+    if _configured(twilio_sid) and _configured(twilio_token) and _configured(twilio_phone):
         try:
             url = f"https://api.twilio.com/2010-04-01/Accounts/{twilio_sid}/Messages.json"
             data = {
@@ -72,19 +92,14 @@ async def send_real_sms_otp(phone_number: str, otp_code: str) -> Dict[str, Any]:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.post(url, data=data, auth=(twilio_sid, twilio_token))
                 if resp.status_code in (200, 201):
-                    logger.info(f"✅ Real SMS sent via Twilio to {full_e164}")
+                    logger.info("SMS OTP sent via Twilio to %s", _masked(full_e164))
                     return {"success": True, "provider": "Twilio"}
-                else:
-                    logger.error(f"❌ Twilio error: {resp.text}")
-                    return {"success": False, "provider": "Twilio", "error": resp.text}
+                logger.error("Twilio send failed (HTTP %s)", resp.status_code)
+                return {"success": False, "provider": "Twilio"}
         except Exception as e:
-            logger.error(f"Failed to send SMS via Twilio: {e}")
-            return {"success": False, "provider": "Twilio", "error": str(e)}
+            logger.error("Failed to send SMS via Twilio: %s", type(e).__name__)
+            return {"success": False, "provider": "Twilio"}
 
-    # 3. Fallback: Local Developer Simulation
-    logger.info(f"📱 [DEV SMS SIMULATION] OTP for {full_e164}: {otp_code} (No SMS API Key configured in .env)")
-    return {
-        "success": True,
-        "provider": "SIMULATION",
-        "message": "Real SMS key not configured in .env; generated OTP available in dev response."
-    }
+    # 3. No provider configured: nothing is sent, and the code is not logged.
+    logger.warning("No SMS provider configured; phone verification is unavailable")
+    return {"success": False, "provider": "SIMULATION"}

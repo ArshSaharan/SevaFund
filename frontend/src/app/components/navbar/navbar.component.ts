@@ -7,6 +7,7 @@ import {
   NgZone,
   OnDestroy,
   ViewChild,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -14,7 +15,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationStart, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, SignInMethods } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { SmoothScrollService } from '../../services/smooth-scroll.service';
 import { gsap, ScrollTrigger, isBrowser } from '../../animation/gsap';
@@ -191,14 +192,18 @@ function loadGoogleIdentity(): Promise<void> {
         </div>
 
         <div class="auth-tabs" role="tablist">
+          <button type="button" role="tab" class="tab-btn" [class.active]="authMethod === 'EMAIL'" [attr.aria-selected]="authMethod === 'EMAIL'" (click)="authMethod = 'EMAIL'">Email &amp; password</button>
+          <button *ngIf="signInMethods().google" type="button" role="tab" class="tab-btn" [class.active]="authMethod === 'GOOGLE'" [attr.aria-selected]="authMethod === 'GOOGLE'" (click)="authMethod = 'GOOGLE'">Google</button>
           <button type="button" role="tab" class="tab-btn" [class.active]="authMethod === 'OTP'" [attr.aria-selected]="authMethod === 'OTP'" (click)="authMethod = 'OTP'">Mobile OTP</button>
-          <button type="button" role="tab" class="tab-btn" [class.active]="authMethod === 'GOOGLE'" [attr.aria-selected]="authMethod === 'GOOGLE'" (click)="authMethod = 'GOOGLE'">Google</button>
-          <button type="button" role="tab" class="tab-btn" [class.active]="authMethod === 'EMAIL'" [attr.aria-selected]="authMethod === 'EMAIL'" (click)="authMethod = 'EMAIL'">Email</button>
         </div>
 
         <!-- Mobile OTP -->
         <div class="auth-body" *ngIf="authMethod === 'OTP'">
-          <div *ngIf="!otpSent()">
+          <div class="phone-unavailable" *ngIf="phoneUnavailable()" role="status">
+            Phone verification is temporarily unavailable. Please sign in with your email and password.
+            <button type="button" class="btn-link" (click)="authMethod = 'EMAIL'">Use email &amp; password</button>
+          </div>
+          <div *ngIf="!otpSent() && !phoneUnavailable()">
             <label class="form-label" for="auth-phone">Indian mobile number</label>
             <div class="phone-input-wrap">
               <span class="phone-prefix">+91</span>
@@ -252,9 +257,6 @@ function loadGoogleIdentity(): Promise<void> {
               {{ otpLoading() ? 'Verifying…' : 'Verify & sign in' }}
             </button>
 
-            <div class="dev-otp-hint" *ngIf="devOtp()">
-              <span>Demo OTP:</span> <strong>{{ devOtp() }}</strong>
-            </div>
           </div>
         </div>
 
@@ -713,13 +715,12 @@ function loadGoogleIdentity(): Promise<void> {
       font-size: inherit;
     }
 
-    .dev-otp-hint {
-      margin-top: 14px;
-      padding: 8px 12px;
+    .phone-unavailable {
+      padding: 10px 12px;
       border-radius: var(--radius-md);
       background: var(--warning-light);
       border: 1px solid var(--warning-border);
-      font-size: 12px;
+      font-size: 13px;
       color: var(--warning);
       text-align: center;
     }
@@ -782,7 +783,7 @@ export class NavbarComponent implements AfterViewInit, AfterViewChecked, OnDestr
 
   menuOpen = signal(false);
   showAuthModal = signal(false);
-  authMethod: 'OTP' | 'GOOGLE' | 'EMAIL' = 'OTP';
+  authMethod: 'OTP' | 'GOOGLE' | 'EMAIL' = 'EMAIL';
 
   // OTP state
   phoneNumber = '';
@@ -790,7 +791,11 @@ export class NavbarComponent implements AfterViewInit, AfterViewChecked, OnDestr
   fullName = '';
   otpSent = signal(false);
   otpLoading = signal(false);
-  devOtp = signal('');
+
+  // Sign-in methods offered by the server (email & password is always available and primary)
+  signInMethods = signal<SignInMethods>({ primary: 'password', password: true, google: false, phone_otp: false });
+  phoneUnavailable = computed(() => !this.signInMethods().phone_otp || this.phoneSendFailed());
+  private phoneSendFailed = signal(false);
 
   // Google state
   googleLoading = signal(false);
@@ -913,6 +918,14 @@ export class NavbarComponent implements AfterViewInit, AfterViewChecked, OnDestr
 
   openAuthModal(): void {
     this.authError.set('');
+    this.phoneSendFailed.set(false);
+    this.authService.getSignInMethods().subscribe({
+      next: (methods) => {
+        this.signInMethods.set(methods);
+        if (this.authMethod === 'GOOGLE' && !methods.google) this.authMethod = 'EMAIL';
+      },
+      error: () => this.signInMethods.set({ primary: 'password', password: true, google: false, phone_otp: false }),
+    });
     this.showAuthModal.set(true);
     this.smoothScroll.lock();
   }
@@ -926,13 +939,16 @@ export class NavbarComponent implements AfterViewInit, AfterViewChecked, OnDestr
     this.otpLoading.set(true);
     this.authError.set('');
     this.authService.sendMobileOtp(this.phoneNumber).subscribe({
-      next: (res) => {
+      next: () => {
         this.otpSent.set(true);
         this.otpLoading.set(false);
-        if (res.dev_otp) this.devOtp.set(res.dev_otp);
       },
       error: (err) => {
         this.otpLoading.set(false);
+        if (err?.status === 503) {
+          this.phoneSendFailed.set(true);
+          return;
+        }
         this.authError.set(err?.error?.detail || 'Failed to send OTP.');
       }
     });
