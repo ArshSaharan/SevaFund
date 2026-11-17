@@ -3,6 +3,11 @@
 .env.local
 .env.*.local
 *.env
+.env.*
+!.env.example
+
+# Uploaded beneficiary documents (private; never commit)
+uploads/
 
 # SQLite Databases & Local Data
 *.db
