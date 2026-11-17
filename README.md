@@ -29,7 +29,7 @@ SevaFund addresses critical challenges unique to Indian crowdfunding:
   - Score < 50.0: REJECTED with detailed feedback for the organizer.
 
 ### 2. Payment Gateway and 80G Tax Deductions
-- **Razorpay Integration**: Supports live and test gateway orders via Razorpay Checkout modal, with fallback simulation mode for local development.
+- **Razorpay Integration**: Orders are created through Razorpay and stored server-side. A donation is recorded only after the server verifies the payment, and there is no simulation mode in the application.
 - **Payment Methods**: Direct UPI QR and intents, Netbanking (SBI, HDFC, ICICI, Axis, PNB), and Card processing.
 - **Section 80G Certificates**: Instant generation of digital tax receipts with unique registration numbers (`80G-YYYY-XXXXX`), donor PAN, and downloadable format.
 - **Direct Recipient Transparency**: Every campaign clearly displays the verified beneficiary or hospital billing desk receiving the disbursements.
@@ -132,8 +132,8 @@ Configure the following variables in `.env`:
 - `SECRET_KEY`: **Required.** A private random string for JWT signing, for example from `python3 -c "import secrets; print(secrets.token_urlsafe(64))"`. The application refuses to start if it is missing, shorter than 32 characters, a placeholder, or a publicly known value.
 - `FAST2SMS_API_KEY` (or `TWILIO_*`): Required for phone (OTP) sign-in. The code is only ever delivered by SMS, never returned by the API; if no SMS can be sent, OTP sign-in returns 503.
 - `GOOGLE_CLIENT_ID`: Google Cloud Web Client ID (Authorized JavaScript origin: `http://localhost:4200`). Required for Google sign-in: ID tokens are verified with Google's library (signature, expiry, audience and issuer) and must carry a verified email. Without it, Google sign-in returns 503 (fails closed).
-- `RAZORPAY_KEY_ID`: Razorpay Test Key ID (leave blank to run in simulation mode).
-- `RAZORPAY_KEY_SECRET`: Razorpay Test Key Secret.
+- `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`: required for online donations. Use Test Mode keys (`rzp_test_...`) locally, so no real money moves. Without valid keys, donation checkout returns 503 and nothing is recorded.
+- `RAZORPAY_WEBHOOK_SECRET`: required for `POST /api/donations/webhook` (otherwise 503).
 - `GEMINI_API_KEY`: Google Gemini API key (optional; system includes offline heuristic verifier).
 
 ### 3. Backend Setup
@@ -253,6 +253,13 @@ All 17 tests validate business rules, 80G receipt number formats, fee calculatio
 
 - Environment variables and database credentials are excluded from version control via `.gitignore`.
 - Passwords are encrypted using bcrypt.
-- Razorpay webhook signatures and payment signatures are validated using HMAC-SHA256.
+- **Payment verification.** A donation is recorded only when every one of these checks passes:
+  - the order was created by this server for the same campaign;
+  - the Razorpay signature `HMAC-SHA256(key_secret, order_id|payment_id)` verifies;
+  - the amount plus tip equals the order amount, and the currency is INR;
+  - Razorpay reports the payment as `captured` for that order.
+- **Duplicates.** Each order and each payment is recorded once; duplicates get HTTP 409, or `duplicate` for webhooks.
+- **Webhooks.** They require `RAZORPAY_WEBHOOK_SECRET` and a valid `X-Razorpay-Signature`.
+- **Tests.** They pay through an isolated fake gateway. They never contact Razorpay or an SMS provider, and they never see credentials from `.env`.
 - Admin endpoints require JWT tokens with the administrator role.
 - Donor PAN numbers are secured and visible exclusively to authorized administrators for 80G statutory reporting.

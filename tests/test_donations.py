@@ -1,4 +1,4 @@
-def test_indian_donation_via_upi_and_80g_receipt(client, make_user):
+def test_indian_donation_via_upi_and_80g_receipt(client, make_user, fake_razorpay):
     _, organiser = make_user()
     # 1. Create Indian campaign
     c_res = client.post("/api/campaigns", json={
@@ -27,7 +27,9 @@ def test_indian_donation_via_upi_and_80g_receipt(client, make_user):
         "is_anonymous": False
     }
 
-    donate_res = client.post(f"/api/campaigns/{campaign_id}/donate", json=donation_payload)
+    # Paid through the isolated test Razorpay (order -> simulated checkout -> verified confirmation)
+    donate_res = fake_razorpay.checkout(client, campaign_id, donation_payload["amount"], tip=donation_payload["tip_amount"],
+                                        **{k: v for k, v in donation_payload.items() if k not in ("amount", "tip_amount")})
     assert donate_res.status_code == 201
     receipt = donate_res.json()
     assert receipt["campaign_id"] == campaign_id
@@ -48,13 +50,8 @@ def test_indian_donation_via_upi_and_80g_receipt(client, make_user):
     assert cdata["currency"] == "INR"
 
     # 4. Make an anonymous UPI donation of ₹500
-    anon_res = client.post(f"/api/campaigns/{campaign_id}/donate", json={
-        "amount": 500.0,
-        "tip_amount": 0.0,
-        "donor_name": "Secret Donor",
-        "payment_method": "UPI",
-        "is_anonymous": True
-    })
+    anon_res = fake_razorpay.checkout(client, campaign_id, 500.0, tip=0.0, donor_name="Secret Donor",
+                                      payment_method="UPI", is_anonymous=True)
     assert anon_res.status_code == 201
 
     # Check privacy masking
@@ -73,7 +70,7 @@ def test_indian_donation_via_upi_and_80g_receipt(client, make_user):
     assert rec_res.json()["transaction_ref"] == ref
     assert rec_res.json()["currency"] == "INR"
 
-def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session, make_user):
+def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session, make_user, fake_razorpay):
     _, organiser = make_user()
     from app.models.user import User
     from app.services.security import hash_password, create_access_token
@@ -121,16 +118,18 @@ def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session, ma
     order_res = client.post("/api/donations/create-order", json={
         "campaign_id": campaign_id,
         "amount": 5000.0,
+        "tip_amount": 150.0,
         "currency": "INR"
     })
     assert order_res.status_code == 200
     order_data = order_res.json()
     assert order_data["campaign_id"] == campaign_id
-    assert order_data["amount"] == 500000  # 5000 INR = 500000 paise
+    assert order_data["amount"] == 515000  # (5000 + 150 tip) INR = 515000 paise
     assert order_data["currency"] == "INR"
     assert order_data["order_id"].startswith("order_")
 
-    # 4. Complete donation with gateway payment ref
+    # 4. The donor pays in the (isolated, simulated) Razorpay checkout; the server verifies and records it
+    paid = fake_razorpay.pay(order_data["order_id"])
     donate_res = client.post(f"/api/campaigns/{campaign_id}/donate", json={
         "amount": 5000.0,
         "tip_amount": 150.0,
@@ -139,16 +138,14 @@ def test_razorpay_gateway_order_and_admin_donation_ledger(client, db_session, ma
         "donor_phone": "9876500001",
         "donor_pan": "ABCDE9999Z",
         "payment_method": "RAZORPAY",
-        "gateway_order_id": order_data["order_id"],
-        "gateway_payment_id": "pay_mock_998877",
-        "gateway_signature": "sig_mock_signature",
+        **paid,
         "is_anonymous": True,  # Anonymous to public
         "support_message": "Get well soon, little champion!"
     })
     assert donate_res.status_code == 201
     receipt = donate_res.json()
     assert receipt["gateway_order_id"] == order_data["order_id"]
-    assert receipt["gateway_payment_id"] == "pay_mock_998877"
+    assert receipt["gateway_payment_id"] == paid["gateway_payment_id"]
 
     # 5. Test Admin Donations Ledger RBAC:
     # 5a. Anonymous user blocked (401)

@@ -20,6 +20,7 @@ class DonationCreate(BaseModel):
 class CreateGatewayOrderRequest(BaseModel):
     campaign_id: int
     amount: float = Field(..., gt=0)
+    tip_amount: float = Field(default=0.0, ge=0)
     currency: str = "INR"
 
 class CreateGatewayOrderResponse(BaseModel):

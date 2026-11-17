@@ -1,7 +1,3 @@
-import os
-import json
-import hmac
-import hashlib
 import datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
@@ -20,7 +16,8 @@ from app.schemas.donation import (
     CreateGatewayOrderRequest,
     CreateGatewayOrderResponse
 )
-from app.services.payment_service import payment_service
+from app.services.payment_service import (payment_service, PaymentAlreadyRecorded, PaymentRejected,
+                                          PaymentUnavailable)
 from app.routers.auth import get_current_user_optional
 
 router = APIRouter(tags=["Donations & Indian Payments"])
@@ -49,7 +46,12 @@ def create_payment_order(
         if blocked:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=blocked)
 
-    order_info = payment_service.create_gateway_order(campaign, req.amount)
+    if (req.currency or "INR").upper() != "INR":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only INR payments are supported.")
+    try:
+        order_info = payment_service.create_gateway_order(db, campaign, req.amount, req.tip_amount)
+    except PaymentUnavailable as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
     return CreateGatewayOrderResponse(
         order_id=order_info["order_id"],
         amount=order_info["amount"],
@@ -82,26 +84,17 @@ def make_donation(
         if blocked:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=blocked)
 
-    # Optional signature verification if razorpay order was used
-    if donation_in.gateway_order_id and donation_in.gateway_payment_id and donation_in.gateway_signature:
-        is_valid = payment_service.verify_gateway_signature(
-            donation_in.gateway_order_id,
-            donation_in.gateway_payment_id,
-            donation_in.gateway_signature
-        )
-        if not is_valid:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Payment signature verification failed."
-            )
-
+    # A donation is recorded only for a verified, captured Razorpay payment of a stored order of this campaign.
     donor_id = current_user.id if current_user else None
-    donation = payment_service.process_donation(
-        db=db,
-        campaign=campaign,
-        donation_in=donation_in,
-        donor_id=donor_id
-    )
+    try:
+        donation = payment_service.record_verified_donation(db=db, campaign=campaign, donation_in=donation_in,
+                                                            donor_id=donor_id)
+    except PaymentRejected as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except PaymentAlreadyRecorded as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+    except PaymentUnavailable as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
 
     total_charged = round(donation.amount + donation.tip_amount, 2)
     tax_note = f" 80G Tax Exemption Certificate #{donation.tax_exemption_80g_number} issued for Income Tax deduction." if donation.tax_exemption_80g_number else ""
@@ -197,49 +190,13 @@ async def razorpay_webhook(
     db: Session = Depends(get_db)
 ):
     """
-    Production Webhook Endpoint for Razorpay Server-to-Server callbacks.
-    Ensures donations are fulfilled even if the donor closes the browser tab after UPI payment.
+    Razorpay server-to-server callback.  Requires RAZORPAY_WEBHOOK_SECRET and a valid X-Razorpay-Signature over the
+    raw body; the payment must match a stored order (amount, currency, captured).  Each payment is recorded once.
     """
     body_bytes = await request.body()
-    signature = request.headers.get("X-Razorpay-Signature", "")
-
-    webhook_secret = os.getenv("RAZORPAY_WEBHOOK_SECRET") or settings.RAZORPAY_KEY_SECRET
-    if webhook_secret and webhook_secret != "mock_razorpay_secret" and signature:
-        expected = hmac.new(webhook_secret.encode("utf-8"), body_bytes, hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(expected, signature):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid webhook signature")
-
     try:
-        data = json.loads(body_bytes.decode("utf-8"))
-    except Exception:
-        return {"status": "ignored"}
-
-    event = data.get("event")
-    if event in ("payment.captured", "order.paid"):
-        payment_entity = data.get("payload", {}).get("payment", {}).get("entity", {})
-        order_id = payment_entity.get("order_id")
-        payment_id = payment_entity.get("id")
-        notes = payment_entity.get("notes", {})
-        campaign_id = notes.get("campaign_id")
-
-        if campaign_id:
-            campaign = db.query(Campaign).filter(Campaign.id == int(campaign_id)).first()
-            if campaign:
-                existing = db.query(Donation).filter(
-                    (Donation.gateway_payment_id == payment_id) | 
-                    ((Donation.gateway_order_id == order_id) & (Donation.gateway_order_id.isnot(None)))
-                ).first()
-                if not existing:
-                    amount_inr = payment_entity.get("amount", 0) / 100.0
-                    donation_in = DonationCreate(
-                        amount=amount_inr,
-                        donor_name=notes.get("donor_name") or payment_entity.get("email") or "Kind Supporter",
-                        donor_email=payment_entity.get("email"),
-                        donor_phone=payment_entity.get("contact"),
-                        payment_method="RAZORPAY",
-                        gateway_order_id=order_id,
-                        gateway_payment_id=payment_id
-                    )
-                    payment_service.process_donation(db, campaign, donation_in)
-
-    return {"status": "ok"}
+        return payment_service.handle_webhook(db, body_bytes, request.headers.get("X-Razorpay-Signature"))
+    except PaymentRejected as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except PaymentUnavailable as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))

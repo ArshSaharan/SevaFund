@@ -5,6 +5,8 @@
 Runs the real FastAPI app in-process against a TEMPORARY SQLite database and upload folder (your crowdfund.db and
 uploads/ are not touched), with SEVAFUND_DEV_HYBRID_V4=1, an offline scripted Gemini stand-in and GEMINI_API_KEY="".
 External confirmations are SIMULATED by an admin recording them; nothing is contacted and no API is called.
+Donations are paid through a DEMO-ONLY simulated Razorpay installed in this process (the application itself has no
+payment simulation: without real Razorpay credentials it refuses to create orders or record donations).
 """
 import datetime
 import os
@@ -31,6 +33,44 @@ from independent_v5.preseal import NetworkGuard  # noqa: E402
 
 (TMP / "uploads").mkdir()
 rag.UPLOAD_DIR = documents.UPLOAD_DIR = TMP / "uploads"
+
+
+class DemoRazorpay:
+    """DEMO ONLY: an in-process stand-in for Razorpay's servers.  Creates orders, simulates the donor's checkout and
+    signs the payment with a throwaway secret, so the real server-side verification can be shown.  No money moves."""
+
+    def __init__(self):
+        import secrets
+        self.key_id, self.key_secret = "rzp_test_demosimulation", secrets.token_hex(24)
+        self.orders, self.payments = {}, {}
+
+    def create_order(self, amount_paise, currency, receipt, notes):
+        import secrets
+        order_id = "order_" + secrets.token_hex(7)
+        self.orders[order_id] = {"id": order_id, "amount": amount_paise, "currency": currency}
+        return dict(self.orders[order_id])
+
+    def fetch_payment(self, payment_id):
+        return dict(self.payments[payment_id])
+
+    def pay(self, order_id):
+        import secrets
+        from app.services.payment_service import payment_signature
+        payment_id = "pay_" + secrets.token_hex(7)
+        order = self.orders[order_id]
+        self.payments[payment_id] = {"id": payment_id, "order_id": order_id, "amount": order["amount"],
+                                     "currency": order["currency"], "status": "captured"}
+        return {"gateway_order_id": order_id, "gateway_payment_id": payment_id,
+                "gateway_signature": payment_signature(order_id, payment_id, self.key_secret)}
+
+
+def install_demo_razorpay() -> DemoRazorpay:
+    import importlib
+    from app.config import settings
+    demo = DemoRazorpay()
+    settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET = demo.key_id, demo.key_secret
+    importlib.import_module("app.services.payment_service").get_gateway = lambda: demo
+    return demo
 TODAY = datetime.datetime.utcnow().date()
 
 
@@ -76,8 +116,14 @@ def main():
             f"pending {r['activation']['pending_checks'] or 'none'}")
         return r
 
+    razorpay = install_demo_razorpay()
+
     def donate(cid):
-        r = client.post(f"/api/campaigns/{cid}/donate", json={"amount": 2500, "payment_method": "UPI"})
+        """Order -> simulated checkout -> server-side verification.  Reports the first refusal."""
+        r = client.post("/api/donations/create-order", json={"campaign_id": cid, "amount": 2500})
+        if r.status_code == 200:
+            r = client.post(f"/api/campaigns/{cid}/donate",
+                            json={"amount": 2500, "payment_method": "UPI", **razorpay.pay(r.json()["order_id"])})
         say(f"donation attempt -> HTTP {r.status_code}" + (f" ({r.json().get('detail')})" if r.status_code != 201 else ""))
 
     def identity_checks(cid):

@@ -43,7 +43,9 @@ def uploads(monkeypatch, tmp_path):
 
 
 @pytest.fixture
-def v4(monkeypatch, uploads):
+def v4(monkeypatch, uploads, fake_razorpay):
+    global RAZORPAY
+    RAZORPAY = fake_razorpay              # donations below are paid through the isolated test Razorpay
     monkeypatch.setenv("SEVAFUND_DEV_HYBRID_V4", "1")
     monkeypatch.setenv("SEVAFUND_DEV_HYBRID_V4_GEMINI", "mock-approve")
     return monkeypatch
@@ -118,8 +120,12 @@ def confirm_identity_checks(client, cid, headers):
         assert confirm(client, cid, headers, check, source=source).status_code == 200
 
 
+RAZORPAY = None                           # set per test by a fixture to the isolated FakeRazorpay
+
+
 def donate(client, cid, amount=5000):
-    return client.post(f"/api/campaigns/{cid}/donate", json={"amount": amount, "payment_method": "UPI"})
+    """A complete, verified donation: order -> simulated checkout -> confirmation.  Returns the first refusal."""
+    return RAZORPAY.checkout(client, cid, amount)
 
 
 def payout(client, cid, headers, amount):
@@ -149,7 +155,10 @@ def high_score(monkeypatch):
     monkeypatch.setattr(ai_verifier, "verify_campaign_request", fake)
 
 
-def test_flag_is_off_by_default_and_production_behaviour_is_unchanged(client, db_session, uploads, high_score, monkeypatch):
+def test_flag_is_off_by_default_and_production_behaviour_is_unchanged(client, db_session, uploads, high_score, monkeypatch,
+                                                                       fake_razorpay):
+    global RAZORPAY
+    RAZORPAY = fake_razorpay
     monkeypatch.delenv("SEVAFUND_DEV_HYBRID_V4", raising=False)
     from app.services import dev_hybrid_v4_flag
     assert dev_hybrid_v4_flag.enabled() is False and dev_hybrid_v4_flag.gemini_mode() == "off"

@@ -1,9 +1,28 @@
 import os
+import re
 import secrets
+from pathlib import Path
 
+# ------------------------------------------------------------------------------------------------------------------
+# Test isolation from the developer's .env, set BEFORE the application is imported.  app/config.py calls
+# load_dotenv(), which never overrides variables that are already set, so blanking them here means no real credential
+# from .env reaches the test process: no real Gemini, SMS, Google, Razorpay or seed-account values.
+# ------------------------------------------------------------------------------------------------------------------
+CREDENTIAL_NAME = re.compile(r"KEY|SECRET|TOKEN|SID|PASSWORD|CLIENT_ID|FROM_PHONE", re.I)
+_KNOWN_CREDENTIALS = ("GEMINI_API_KEY", "FAST2SMS_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN",
+                      "TWILIO_FROM_PHONE", "GOOGLE_CLIENT_ID", "RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET",
+                      "RAZORPAY_WEBHOOK_SECRET", "SEED_USER_PASSWORD", "SEED_ADMIN_PASSWORD")
+_ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
+_names = set(_KNOWN_CREDENTIALS)
+if _ENV_FILE.exists():
+    _names |= {line.split("=", 1)[0].strip().removeprefix("export ").strip()
+               for line in _ENV_FILE.read_text(encoding="utf-8", errors="ignore").splitlines()
+               if "=" in line and not line.lstrip().startswith("#")}
+for _name in sorted(n for n in _names if CREDENTIAL_NAME.search(n)):
+    os.environ[_name] = ""
 # Isolated tests sign tokens with a fresh random key, never the developer's .env key or a public default.
-# Set before the application is imported (the app refuses to start without a strong key).
 os.environ["SECRET_KEY"] = secrets.token_urlsafe(48)
+os.environ["DATABASE_URL"] = "sqlite:///./test_crowdfund.db"     # the application engine never opens crowdfund.db
 
 import pytest
 from fastapi.testclient import TestClient
@@ -27,16 +46,98 @@ def no_live_gemini(monkeypatch):
     monkeypatch.setattr(ai_assistant, "api_key", "")
 
 
+class _ExternalHTTPBlocked:
+    """Replaces httpx inside the SMS and payment services during tests: any request fails the test immediately.
+    Exception classes (httpx.HTTPError ...) are passed through so error handling still works."""
+    _REQUESTS = {"post", "get", "put", "patch", "delete", "request", "stream", "Client", "AsyncClient"}
+
+    def __getattr__(self, name):
+        import httpx
+        if name in self._REQUESTS:
+            def refuse(*args, **kwargs):
+                raise AssertionError(f"tests must not call external services (httpx.{name})")
+            return refuse
+        return getattr(httpx, name)
+
+
 @pytest.fixture(autouse=True)
 def no_real_sms_or_payment_credentials(monkeypatch):
-    """Tests never use real SMS or payment credentials loaded from .env.  SMS providers are unset, so nothing can
-    be sent unless a test installs an isolated fake sender (which captures codes inside the test process), and
-    Razorpay runs in its built-in offline demo mode (no API call)."""
-    for name in ("FAST2SMS_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_PHONE"):
+    """Tests never use real SMS or payment credentials and never make real SMS or Razorpay requests.  SMS providers
+    and Razorpay are unconfigured (payments fail closed) unless a test installs an isolated fake (fake_razorpay, or a
+    fake SMS sender that captures codes inside the test process)."""
+    for name in ("FAST2SMS_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_PHONE",
+                 "RAZORPAY_WEBHOOK_SECRET"):
         monkeypatch.delenv(name, raising=False)
     from app.config import settings
-    monkeypatch.setattr(settings, "RAZORPAY_KEY_ID", "rzp_test_sevafund_demo")
-    monkeypatch.setattr(settings, "RAZORPAY_KEY_SECRET", "mock_razorpay_secret")
+    monkeypatch.setattr(settings, "RAZORPAY_KEY_ID", "")
+    monkeypatch.setattr(settings, "RAZORPAY_KEY_SECRET", "")
+    import importlib
+    payment_service = importlib.import_module("app.services.payment_service")   # the module, not the exported object
+    import app.services.sms_service as sms_service
+    monkeypatch.setattr(payment_service, "httpx", _ExternalHTTPBlocked())
+    monkeypatch.setattr(sms_service, "httpx", _ExternalHTTPBlocked())
+
+
+class FakeRazorpay:
+    """Isolated stand-in for Razorpay's servers, inside the test process only.  It creates orders, simulates a
+    checkout payment and signs it with a per-test secret exactly as Razorpay does; it never contacts Razorpay."""
+
+    def __init__(self):
+        self.key_id = "rzp_test_isolatedfixture"
+        self.key_secret = secrets.token_hex(24)
+        self.orders, self.payments, self.fetched = {}, {}, []
+
+    # --- the server-side gateway interface used by app.services.payment_service
+    def create_order(self, amount_paise, currency, receipt, notes):
+        order_id = "order_" + secrets.token_hex(7)
+        self.orders[order_id] = {"id": order_id, "amount": amount_paise, "currency": currency, "receipt": receipt,
+                                 "notes": notes, "status": "created"}
+        return dict(self.orders[order_id])
+
+    def fetch_payment(self, payment_id):
+        from app.services.payment_service import PaymentRejected
+        self.fetched.append(payment_id)
+        if payment_id not in self.payments:
+            raise PaymentRejected("Razorpay has no such payment.")
+        return dict(self.payments[payment_id])
+
+    # --- the donor's checkout, simulated
+    def pay(self, order_id, amount_paise=None, currency="INR", status="captured"):
+        from app.services.payment_service import payment_signature
+        payment_id = "pay_" + secrets.token_hex(7)
+        order = self.orders[order_id]
+        self.payments[payment_id] = {"id": payment_id, "order_id": order_id, "status": status, "currency": currency,
+                                     "amount": order["amount"] if amount_paise is None else amount_paise}
+        return {"gateway_order_id": order_id, "gateway_payment_id": payment_id,
+                "gateway_signature": payment_signature(order_id, payment_id, self.key_secret)}
+
+    def checkout(self, client, campaign_id, amount, tip=0.0, **donation_fields):
+        """create-order -> simulated payment -> /donate.  Returns the first non-200 response, or /donate's."""
+        order = client.post("/api/donations/create-order", json={"campaign_id": campaign_id, "amount": amount,
+                                                                  "tip_amount": tip})
+        if order.status_code != 200:
+            return order
+        paid = self.pay(order.json()["order_id"])
+        return client.post(f"/api/campaigns/{campaign_id}/donate",
+                           json={"amount": amount, "tip_amount": tip, "payment_method": "UPI", **donation_fields, **paid})
+
+
+@pytest.fixture
+def fake_razorpay(monkeypatch):
+    """Test-only Razorpay: configured test credentials plus the in-process FakeRazorpay gateway."""
+    from app.config import settings
+    import importlib
+    payment_service = importlib.import_module("app.services.payment_service")   # the module, not the exported object
+    fake = FakeRazorpay()
+    monkeypatch.setattr(settings, "RAZORPAY_KEY_ID", fake.key_id)
+    monkeypatch.setattr(settings, "RAZORPAY_KEY_SECRET", fake.key_secret)
+
+    def gateway():
+        if not payment_service.razorpay_credentials():
+            raise payment_service.PaymentUnavailable("Online payments are not configured on this server.")
+        return fake
+    monkeypatch.setattr(payment_service, "get_gateway", gateway)
+    return fake
 
 
 @pytest.fixture
