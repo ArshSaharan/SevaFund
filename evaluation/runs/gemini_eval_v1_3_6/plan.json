@@ -1,0 +1,49 @@
+{
+  "dataset": "evaluation/gemini_eval_v1/cases.jsonl",
+  "dataset_sha256": "ce6e4bed21764366fe12a33a7055805a4f0b5c6771d9b3cd3ed92a98964a703c",
+  "configs": [
+    "heuristics_only",
+    "heuristics_lexical",
+    "gemini_no_rag",
+    "gemini_rag",
+    "hybrid"
+  ],
+  "case_ids": [
+    "V3T-064",
+    "V3T-244",
+    "V3T-154",
+    "V3T-044",
+    "V3T-084",
+    "V3T-194",
+    "V3T-224",
+    "V3T-104",
+    "V3T-024",
+    "E150-102"
+  ],
+  "cases": 10,
+  "sample_per_cluster": null,
+  "seed": 20261116,
+  "labels": {
+    "fraudulent": 4,
+    "borderline": 2,
+    "legitimate": 4
+  },
+  "api_calls_required": {
+    "generation": 20,
+    "embedding": 10
+  },
+  "api_calls_total": 30,
+  "assumed_daily_quota": {
+    "generation": 20,
+    "embedding": 1000
+  },
+  "estimated_days_at_quota": {
+    "if_embedding_quota_is_separate_per_model": 1,
+    "if_all_calls_share_the_generation_quota": 2,
+    "excludes": "failed requests (each consumes quota and is retried on a later run) and any other use of the same API key; check the project's per-model limits in Google AI Studio"
+  },
+  "http_requests_per_counted_call": 1,
+  "model": "gemini-3.6-flash",
+  "embedding_model": "gemini-embedding-001",
+  "billing": "No billing change is made by this framework. Quotas are an operator-supplied assumption."
+}

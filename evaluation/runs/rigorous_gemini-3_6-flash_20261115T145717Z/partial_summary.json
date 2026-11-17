@@ -1,0 +1,222 @@
+{
+  "status": "blocked_at_preflight_quota",
+  "final": false,
+  "run_config": {
+    "model": "gemini-3.6-flash",
+    "embedding_model": "gemini-embedding-001",
+    "thinking_level": "LOW",
+    "max_output_tokens": 1024,
+    "temperature": 0.1,
+    "timeout_seconds": {
+      "connect": 10.0,
+      "read": 90.0,
+      "write": 20.0,
+      "pool": 10.0
+    },
+    "retry_policy": {
+      "max_attempts": 4,
+      "base_delay_seconds": 2.0,
+      "max_delay_seconds": 120.0,
+      "daily_quota_retries": 0
+    },
+    "execution": "sequential, one campaign at a time",
+    "dataset": "fundraising_scenarios.jsonl",
+    "dataset_sha256": "cb6d08c426d8ecbfce9c661d9ef32d756ab68a052671c3fadad31d43b1cd3099",
+    "prompt_version": "ai-verifier-structured-rag-v2",
+    "verifier_source_sha256": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+    "runner_source_sha256": "fdeca94836d6cff81b6a82ab26193dd6479f13378e428f12743e921f53d55129",
+    "seed": 20261115,
+    "label_definition": "fraudulent is positive; legitimate and borderline are negative",
+    "decision_definition": "flagged when recommendation is FLAG_FOR_REVIEW or REJECT or red_flags is nonempty",
+    "production_configuration_modified": false,
+    "scoring_thresholds_modified": false
+  },
+  "case_totals": {
+    "gemini_only": 0,
+    "gemini_rag": 0,
+    "hybrid": 0
+  },
+  "pending_case_count": 200,
+  "metrics": {
+    "gemini_only": {
+      "attempted_cases": 0,
+      "successful_predictions": 0,
+      "prediction_coverage": null,
+      "api_success_rate": null,
+      "system_decision_coverage": null,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "false_positive_rate": null,
+      "end_to_end_latency_ms": {
+        "mean": null,
+        "median": null,
+        "p95": null
+      },
+      "label_definition": "Fraudulent is positive; legitimate and borderline are negative. Gemini-only and Gemini+RAG classification metrics use successful model predictions only; failures are abstentions."
+    },
+    "gemini_rag": {
+      "attempted_cases": 0,
+      "successful_predictions": 0,
+      "prediction_coverage": null,
+      "api_success_rate": null,
+      "system_decision_coverage": null,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "false_positive_rate": null,
+      "end_to_end_latency_ms": {
+        "mean": null,
+        "median": null,
+        "p95": null
+      },
+      "label_definition": "Fraudulent is positive; legitimate and borderline are negative. Gemini-only and Gemini+RAG classification metrics use successful model predictions only; failures are abstentions."
+    },
+    "hybrid": {
+      "attempted_cases": 0,
+      "successful_predictions": 0,
+      "prediction_coverage": null,
+      "api_success_rate": null,
+      "system_decision_coverage": null,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "false_positive_rate": null,
+      "end_to_end_latency_ms": {
+        "mean": null,
+        "median": null,
+        "p95": null
+      },
+      "label_definition": "Fraudulent is positive; legitimate and borderline are negative. Gemini-only and Gemini+RAG classification metrics use successful model predictions only; failures are abstentions."
+    }
+  },
+  "paired_rag_ablation": {
+    "shared_successful_case_count": 0,
+    "case_ids": [],
+    "gemini_only": {
+      "attempted_cases": 0,
+      "successful_predictions": 0,
+      "prediction_coverage": null,
+      "api_success_rate": null,
+      "system_decision_coverage": null,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "false_positive_rate": null,
+      "end_to_end_latency_ms": {
+        "mean": null,
+        "median": null,
+        "p95": null
+      },
+      "label_definition": "Fraudulent is positive; legitimate and borderline are negative. Gemini-only and Gemini+RAG classification metrics use successful model predictions only; failures are abstentions."
+    },
+    "gemini_rag": {
+      "attempted_cases": 0,
+      "successful_predictions": 0,
+      "prediction_coverage": null,
+      "api_success_rate": null,
+      "system_decision_coverage": null,
+      "confusion_matrix": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0
+      },
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "false_positive_rate": null,
+      "end_to_end_latency_ms": {
+        "mean": null,
+        "median": null,
+        "p95": null
+      },
+      "label_definition": "Fraudulent is positive; legitimate and borderline are negative. Gemini-only and Gemini+RAG classification metrics use successful model predictions only; failures are abstentions."
+    }
+  },
+  "quota_errors": [
+    {
+      "stage": "generation",
+      "category": "RESOURCE_EXHAUSTED",
+      "http_status": 429,
+      "details": {
+        "provider_status": "RESOURCE_EXHAUSTED",
+        "provider_code": 429,
+        "quota_violations": [
+          {
+            "quota_metric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quota_id": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "quota_value": "20",
+            "dimensions": {
+              "model": "gemini-3.6-flash",
+              "location": "global"
+            }
+          }
+        ],
+        "quota_kind": "daily",
+        "retry_after_header": null,
+        "retry_after_seconds": null,
+        "exception_type": "HTTPStatusError",
+        "attempt": 1
+      }
+    }
+  ],
+  "stop_reason": {
+    "success": false,
+    "stage": "generation",
+    "category": "DAILY_QUOTA_EXHAUSTED",
+    "http_status": 429,
+    "exception_type": "HTTPStatusError",
+    "duration_seconds": 0.477,
+    "details": {
+      "provider_status": "RESOURCE_EXHAUSTED",
+      "provider_code": 429,
+      "quota_violations": [
+        {
+          "quota_metric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+          "quota_id": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+          "quota_value": "20",
+          "dimensions": {
+            "model": "gemini-3.6-flash",
+            "location": "global"
+          }
+        }
+      ],
+      "quota_kind": "daily",
+      "retry_after_header": null,
+      "retry_after_seconds": null,
+      "exception_type": "HTTPStatusError",
+      "attempt": 1,
+      "resume_after_utc": "2026-11-16T08:00:00+00:00"
+    },
+    "retryable": true,
+    "stop_run": true,
+    "retry_after_seconds": null,
+    "latency_seconds": 0.481
+  },
+  "resume_command": "python evaluation/run_reproducible_gemini_eval.py --resume /Users/arshsaharan/Code/crowdfunding/evaluation/runs/rigorous_gemini-3_6-flash_20261115T145717Z"
+}

@@ -1,0 +1,4 @@
+{"n": 1, "stage": "generation", "model": "gemini-3.6-flash", "status": "FAILED", "category": "SERVER_ERROR", "seconds": 0.82, "at": "2026-11-16T20:26:22.616534+00:00"}
+{"n": 2, "stage": "generation", "model": "gemini-3.6-flash", "status": "OK", "category": null, "seconds": 27.703, "at": "2026-11-16T20:26:55.500416+00:00"}
+{"n": 3, "stage": "generation", "model": "gemini-3.6-flash", "status": "FAILED", "category": "QUOTA_EXHAUSTED", "seconds": 0.537, "at": "2026-11-16T20:26:56.040587+00:00"}
+{"n": 4, "stage": "generation", "model": "gemini-3.6-flash", "status": "FAILED", "category": "SERVER_ERROR", "seconds": 0.798, "at": "2026-11-17T08:10:29.743192+00:00"}

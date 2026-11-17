@@ -1,0 +1,5 @@
+{"config": "gemini_no_rag", "case_id": "V3T-071", "stage": "generation", "category": "READ_TIMEOUT", "status_code": null, "exception_type": "ReadTimeout", "duration_seconds": 180.137, "at": "2026-11-16T13:12:33.178863+00:00"}
+{"config": "gemini_rag", "case_id": "V3T-071", "stage": "generation", "category": "SERVER_ERROR", "status_code": 503, "exception_type": null, "duration_seconds": 4.325, "at": "2026-11-16T13:12:43.512503+00:00"}
+{"config": "gemini_no_rag", "case_id": "V3T-131", "stage": "generation", "category": "READ_TIMEOUT", "status_code": null, "exception_type": "ReadTimeout", "duration_seconds": 180.065, "at": "2026-11-16T13:15:45.255254+00:00"}
+{"config": "gemini_rag", "case_id": "V3T-131", "stage": "generation", "category": "READ_TIMEOUT", "status_code": null, "exception_type": "ReadTimeout", "duration_seconds": 180.056, "at": "2026-11-16T13:18:51.323309+00:00"}
+{"config": "gemini_rag", "case_id": "V3T-201", "stage": "generation", "category": "SERVER_ERROR", "status_code": 503, "exception_type": null, "duration_seconds": 20.596, "at": "2026-11-16T13:22:12.744889+00:00"}

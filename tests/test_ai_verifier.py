@@ -77,3 +77,39 @@ def test_indian_specificity_extractor():
     )
     assert score >= 50.0
     assert any("hospital" in s.lower() or "aiims" in s.lower() for s in signals)
+
+def test_education_specificity_uses_education_evidence():
+    signals, score = extract_specificity_signals(
+        "Sahyadri Public School fee notice for student ID EDU-2041 lists tuition, books, and the July payment period.",
+        location="Jaipur, Rajasthan",
+        category="EDUCATION",
+    )
+    assert score >= 65.0
+    assert any("education" in signal.lower() or "institution" in signal.lower() for signal in signals)
+
+def test_explicit_guaranteed_cure_is_flagged_across_wording_variants():
+    flags, _ = detect_red_flags("The treatment promises a guaranteed recovery in days through a secret cure without a clinician.")
+    assert any("unverified" in flag.lower() or "cure" in flag.lower() for flag in flags)
+
+def test_advance_release_fee_is_flagged_without_medical_context():
+    flags, _ = detect_red_flags("Pay an upfront release charge to receive the promised education grant.")
+    assert any("fee" in flag.lower() or "advance" in flag.lower() for flag in flags)
+
+def test_brief_story_is_missing_information_not_a_fraud_flag():
+    flags, _ = detect_red_flags("Help needed for my family.")
+    assert flags == []
+
+def test_education_verification_requests_category_relevant_proof():
+    result = ai_verifier._verify_with_local_heuristics(
+        title="Help with education costs",
+        category="EDUCATION",
+        story="A student needs help with course expenses.",
+        goal_amount=90000,
+        beneficiary_name="Riya Patel",
+        beneficiary_type="SELF",
+        location="Jaipur, Rajasthan",
+        proof_documents=[],
+    )
+    requirements = " ".join(result.missing_requirements).lower()
+    assert "fee notice" in requirements or "enrollment" in requirements
+    assert "hospital estimate" not in requirements

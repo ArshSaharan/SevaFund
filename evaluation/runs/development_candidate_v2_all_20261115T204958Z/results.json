@@ -1,0 +1,5106 @@
+{
+  "run_id": "development_candidate_v2_all_20261115T204958Z",
+  "created_at_utc": "2026-11-15T20:49:58.024500+00:00",
+  "split_evaluated": "all",
+  "dataset": "development_scenarios_v2.jsonl",
+  "dataset_sha256": "9c0d89ab1be941bdb92150e5eacf86cd50c45356a19f056d2f8886a9255af5c0",
+  "synthetic": true,
+  "cases": 120,
+  "labels": {
+    "legitimate": 45,
+    "fraudulent": 45,
+    "borderline": 30
+  },
+  "evaluation_mode": "Offline deterministic engines; Gemini generation, embeddings and OCR disabled and guarded",
+  "gemini_calls_made": 0,
+  "positive_class": "fraudulent; legitimate and borderline are negative",
+  "flag_definition": "FLAG_FOR_REVIEW or REJECTED (legacy engines: also any emitted red flag). NEEDS_MORE_INFORMATION is never counted as a fraud detection in primary metrics.",
+  "input_paths": {
+    "baseline": "AIVerifierService fallback with lexical top-5 retrieval",
+    "candidate_v1": "top-5 lexically retrieved chunks (its frozen protocol)",
+    "candidate_v2": "every uploaded document, extracted in full with rag.extract_document_text"
+  },
+  "v1_retrieval_coverage": {
+    "cases_with_documents": 112,
+    "cases_where_some_document_was_not_retrieved": 0
+  },
+  "metrics": {
+    "baseline": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 13,
+        "false_positive": 25,
+        "false_negative": 32,
+        "true_negative": 50
+      },
+      "precision": 0.3421,
+      "precision_ci95": [
+        0.2121,
+        0.5011
+      ],
+      "recall": 0.2889,
+      "recall_ci95": [
+        0.1773,
+        0.4337
+      ],
+      "f1": 0.3133,
+      "false_positive_rate": 0.3333,
+      "false_positive_rate_ci95": [
+        0.2371,
+        0.4458
+      ],
+      "legitimate_false_positive_rate": 0.2889,
+      "fraudulent_auto_approval_rate": 0.7111,
+      "legitimate_auto_approval_rate": 0.7111,
+      "manual_review_rate": 0.3167,
+      "needs_more_information_rate": 0.0,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.3167,
+      "decision_counts": {
+        "APPROVED": 82,
+        "NEEDS_MORE_INFORMATION": 0,
+        "FLAG_FOR_REVIEW": 38,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 32,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 13,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 32,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 13,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 18,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.2889,
+        "false_positive_rate": 0.3333
+      },
+      "latency_ms": {
+        "mean": 0.583,
+        "median": 0.553,
+        "p95": 0.751
+      }
+    },
+    "candidate_v1": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 11,
+        "false_positive": 21,
+        "false_negative": 34,
+        "true_negative": 54
+      },
+      "precision": 0.3438,
+      "precision_ci95": [
+        0.2041,
+        0.5169
+      ],
+      "recall": 0.2444,
+      "recall_ci95": [
+        0.1424,
+        0.3867
+      ],
+      "f1": 0.2857,
+      "false_positive_rate": 0.28,
+      "false_positive_rate_ci95": [
+        0.191,
+        0.3904
+      ],
+      "legitimate_false_positive_rate": 0.2889,
+      "fraudulent_auto_approval_rate": 0.5333,
+      "legitimate_auto_approval_rate": 0.5111,
+      "manual_review_rate": 0.2583,
+      "needs_more_information_rate": 0.1667,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.1,
+      "human_follow_up_rate": 0.525,
+      "decision_counts": {
+        "APPROVED": 57,
+        "NEEDS_MORE_INFORMATION": 20,
+        "FLAG_FOR_REVIEW": 31,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 12
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 23,
+          "NEEDS_MORE_INFORMATION": 4,
+          "FLAG_FOR_REVIEW": 13,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 5
+        },
+        "fraudulent": {
+          "APPROVED": 24,
+          "NEEDS_MORE_INFORMATION": 4,
+          "FLAG_FOR_REVIEW": 11,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 6
+        },
+        "borderline": {
+          "APPROVED": 10,
+          "NEEDS_MORE_INFORMATION": 12,
+          "FLAG_FOR_REVIEW": 7,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.3333,
+        "false_positive_rate": 0.4933
+      },
+      "latency_ms": {
+        "mean": 0.46,
+        "median": 0.477,
+        "p95": 0.664
+      }
+    },
+    "candidate_v2": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 39,
+        "false_positive": 4,
+        "false_negative": 6,
+        "true_negative": 71
+      },
+      "precision": 0.907,
+      "precision_ci95": [
+        0.784,
+        0.9632
+      ],
+      "recall": 0.8667,
+      "recall_ci95": [
+        0.7382,
+        0.9374
+      ],
+      "f1": 0.8864,
+      "false_positive_rate": 0.0533,
+      "false_positive_rate_ci95": [
+        0.0209,
+        0.1293
+      ],
+      "legitimate_false_positive_rate": 0.0667,
+      "fraudulent_auto_approval_rate": 0.0667,
+      "legitimate_auto_approval_rate": 0.8667,
+      "manual_review_rate": 0.3417,
+      "needs_more_information_rate": 0.2917,
+      "rejection_rate": 0.0167,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.65,
+      "decision_counts": {
+        "APPROVED": 42,
+        "NEEDS_MORE_INFORMATION": 35,
+        "FLAG_FOR_REVIEW": 41,
+        "REJECTED": 2,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 39,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 37,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 29,
+          "FLAG_FOR_REVIEW": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.9333,
+        "false_positive_rate": 0.48
+      },
+      "latency_ms": {
+        "mean": 5.633,
+        "median": 5.788,
+        "p95": 10.823
+      }
+    }
+  },
+  "by_category": {
+    "baseline": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 17,
+          "false_negative": 4,
+          "true_negative": 8
+        },
+        "precision": 0.3929,
+        "precision_ci95": [
+          0.2357,
+          0.5759
+        ],
+        "recall": 0.7333,
+        "recall_ci95": [
+          0.4805,
+          0.891
+        ],
+        "f1": 0.5116,
+        "false_positive_rate": 0.68,
+        "false_positive_rate_ci95": [
+          0.4841,
+          0.828
+        ],
+        "legitimate_false_positive_rate": 0.6667,
+        "fraudulent_auto_approval_rate": 0.2667,
+        "legitimate_auto_approval_rate": 0.3333,
+        "manual_review_rate": 0.7,
+        "needs_more_information_rate": 0.0,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.7,
+        "decision_counts": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 28,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 5,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 10,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 4,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 11,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 7,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.7333,
+          "false_positive_rate": 0.68
+        },
+        "latency_ms": {
+          "mean": 0.573,
+          "median": 0.594,
+          "p95": 0.738
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 1,
+          "false_positive": 3,
+          "false_negative": 14,
+          "true_negative": 22
+        },
+        "precision": 0.25,
+        "precision_ci95": [
+          0.0456,
+          0.6994
+        ],
+        "recall": 0.0667,
+        "recall_ci95": [
+          0.0119,
+          0.2982
+        ],
+        "f1": 0.1053,
+        "false_positive_rate": 0.12,
+        "false_positive_rate_ci95": [
+          0.0417,
+          0.2996
+        ],
+        "legitimate_false_positive_rate": 0.0667,
+        "fraudulent_auto_approval_rate": 0.9333,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.1,
+        "needs_more_information_rate": 0.0,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.1,
+        "decision_counts": {
+          "APPROVED": 36,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 4,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 8,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 2,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.0667,
+          "false_positive_rate": 0.12
+        },
+        "latency_ms": {
+          "mean": 0.494,
+          "median": 0.481,
+          "p95": 0.599
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 1,
+          "false_positive": 5,
+          "false_negative": 14,
+          "true_negative": 20
+        },
+        "precision": 0.1667,
+        "precision_ci95": [
+          0.0301,
+          0.5635
+        ],
+        "recall": 0.0667,
+        "recall_ci95": [
+          0.0119,
+          0.2982
+        ],
+        "f1": 0.0952,
+        "false_positive_rate": 0.2,
+        "false_positive_rate_ci95": [
+          0.0886,
+          0.3913
+        ],
+        "legitimate_false_positive_rate": 0.1333,
+        "fraudulent_auto_approval_rate": 0.9333,
+        "legitimate_auto_approval_rate": 0.8667,
+        "manual_review_rate": 0.15,
+        "needs_more_information_rate": 0.0,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.15,
+        "decision_counts": {
+          "APPROVED": 34,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 6,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 13,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 2,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 7,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.0667,
+          "false_positive_rate": 0.2
+        },
+        "latency_ms": {
+          "mean": 0.682,
+          "median": 0.59,
+          "p95": 0.751
+        }
+      }
+    },
+    "candidate_v1": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 6,
+          "false_positive": 9,
+          "false_negative": 9,
+          "true_negative": 16
+        },
+        "precision": 0.4,
+        "precision_ci95": [
+          0.1982,
+          0.6425
+        ],
+        "recall": 0.4,
+        "recall_ci95": [
+          0.1982,
+          0.6425
+        ],
+        "f1": 0.4,
+        "false_positive_rate": 0.36,
+        "false_positive_rate_ci95": [
+          0.2025,
+          0.5548
+        ],
+        "legitimate_false_positive_rate": 0.4,
+        "fraudulent_auto_approval_rate": 0.3333,
+        "legitimate_auto_approval_rate": 0.3333,
+        "manual_review_rate": 0.375,
+        "needs_more_information_rate": 0.15,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.175,
+        "human_follow_up_rate": 0.7,
+        "decision_counts": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 6,
+          "FLAG_FOR_REVIEW": 15,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 7
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 5,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 6,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 3
+          },
+          "fraudulent": {
+            "APPROVED": 5,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 6,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 3
+          },
+          "borderline": {
+            "APPROVED": 2,
+            "NEEDS_MORE_INFORMATION": 4,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 1
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.4667,
+          "false_positive_rate": 0.56
+        },
+        "latency_ms": {
+          "mean": 0.489,
+          "median": 0.612,
+          "p95": 0.673
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 4,
+          "false_positive": 9,
+          "false_negative": 11,
+          "true_negative": 16
+        },
+        "precision": 0.3077,
+        "precision_ci95": [
+          0.1268,
+          0.5763
+        ],
+        "recall": 0.2667,
+        "recall_ci95": [
+          0.109,
+          0.5195
+        ],
+        "f1": 0.2857,
+        "false_positive_rate": 0.36,
+        "false_positive_rate_ci95": [
+          0.2025,
+          0.5548
+        ],
+        "legitimate_false_positive_rate": 0.3333,
+        "fraudulent_auto_approval_rate": 0.5333,
+        "legitimate_auto_approval_rate": 0.4667,
+        "manual_review_rate": 0.3,
+        "needs_more_information_rate": 0.25,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.55,
+        "decision_counts": {
+          "APPROVED": 18,
+          "NEEDS_MORE_INFORMATION": 10,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 7,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 5,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 8,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 4,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 4,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.4667,
+          "false_positive_rate": 0.64
+        },
+        "latency_ms": {
+          "mean": 0.424,
+          "median": 0.453,
+          "p95": 0.516
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 1,
+          "false_positive": 3,
+          "false_negative": 14,
+          "true_negative": 22
+        },
+        "precision": 0.25,
+        "precision_ci95": [
+          0.0456,
+          0.6994
+        ],
+        "recall": 0.0667,
+        "recall_ci95": [
+          0.0119,
+          0.2982
+        ],
+        "f1": 0.1053,
+        "false_positive_rate": 0.12,
+        "false_positive_rate_ci95": [
+          0.0417,
+          0.2996
+        ],
+        "legitimate_false_positive_rate": 0.1333,
+        "fraudulent_auto_approval_rate": 0.7333,
+        "legitimate_auto_approval_rate": 0.7333,
+        "manual_review_rate": 0.1,
+        "needs_more_information_rate": 0.1,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.125,
+        "human_follow_up_rate": 0.325,
+        "decision_counts": {
+          "APPROVED": 27,
+          "NEEDS_MORE_INFORMATION": 4,
+          "FLAG_FOR_REVIEW": 4,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 5
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 2,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 2
+          },
+          "fraudulent": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 3
+          },
+          "borderline": {
+            "APPROVED": 5,
+            "NEEDS_MORE_INFORMATION": 4,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.0667,
+          "false_positive_rate": 0.28
+        },
+        "latency_ms": {
+          "mean": 0.467,
+          "median": 0.491,
+          "p95": 0.598
+        }
+      }
+    },
+    "candidate_v2": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "false_negative": 2,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7719,
+          1.0
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.9286,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.3,
+        "needs_more_information_rate": 0.3,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.625,
+        "decision_counts": {
+          "APPROVED": 15,
+          "NEEDS_MORE_INFORMATION": 12,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 12,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 10,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.44
+        },
+        "latency_ms": {
+          "mean": 6.631,
+          "median": 6.368,
+          "p95": 11.003
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 4,
+          "false_negative": 2,
+          "true_negative": 21
+        },
+        "precision": 0.7647,
+        "precision_ci95": [
+          0.5274,
+          0.9045
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.8125,
+        "false_positive_rate": 0.16,
+        "false_positive_rate_ci95": [
+          0.064,
+          0.3465
+        ],
+        "legitimate_false_positive_rate": 0.2,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.7333,
+        "manual_review_rate": 0.425,
+        "needs_more_information_rate": 0.275,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.7,
+        "decision_counts": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 11,
+          "FLAG_FOR_REVIEW": 17,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 13,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 9,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.56
+        },
+        "latency_ms": {
+          "mean": 4.499,
+          "median": 4.748,
+          "p95": 5.855
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "false_negative": 2,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7719,
+          1.0
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.9286,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.3,
+        "needs_more_information_rate": 0.3,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.625,
+        "decision_counts": {
+          "APPROVED": 15,
+          "NEEDS_MORE_INFORMATION": 12,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 12,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 10,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.44
+        },
+        "latency_ms": {
+          "mean": 5.769,
+          "median": 6.022,
+          "p95": 7.783
+        }
+      }
+    }
+  },
+  "by_split": {
+    "baseline": {
+      "tune": {
+        "cases": 72,
+        "confusion_matrix": {
+          "true_positive": 5,
+          "false_positive": 13,
+          "false_negative": 22,
+          "true_negative": 32
+        },
+        "precision": 0.2778,
+        "precision_ci95": [
+          0.125,
+          0.5087
+        ],
+        "recall": 0.1852,
+        "recall_ci95": [
+          0.0818,
+          0.367
+        ],
+        "f1": 0.2222,
+        "false_positive_rate": 0.2889,
+        "false_positive_rate_ci95": [
+          0.1773,
+          0.4337
+        ],
+        "legitimate_false_positive_rate": 0.2222,
+        "fraudulent_auto_approval_rate": 0.8148,
+        "legitimate_auto_approval_rate": 0.7778,
+        "manual_review_rate": 0.25,
+        "needs_more_information_rate": 0.0,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.25,
+        "decision_counts": {
+          "APPROVED": 54,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 18,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 21,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 6,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 22,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 5,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 7,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.1852,
+          "false_positive_rate": 0.2889
+        },
+        "latency_ms": {
+          "mean": 0.61,
+          "median": 0.574,
+          "p95": 0.875
+        }
+      },
+      "validation": {
+        "cases": 48,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 12,
+          "false_negative": 10,
+          "true_negative": 18
+        },
+        "precision": 0.4,
+        "precision_ci95": [
+          0.2188,
+          0.6134
+        ],
+        "recall": 0.4444,
+        "recall_ci95": [
+          0.2456,
+          0.6628
+        ],
+        "f1": 0.4211,
+        "false_positive_rate": 0.4,
+        "false_positive_rate_ci95": [
+          0.2459,
+          0.5768
+        ],
+        "legitimate_false_positive_rate": 0.3889,
+        "fraudulent_auto_approval_rate": 0.5556,
+        "legitimate_auto_approval_rate": 0.6111,
+        "manual_review_rate": 0.4167,
+        "needs_more_information_rate": 0.0,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.4167,
+        "decision_counts": {
+          "APPROVED": 28,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 20,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 7,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 10,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 8,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 7,
+            "NEEDS_MORE_INFORMATION": 0,
+            "FLAG_FOR_REVIEW": 5,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.4444,
+          "false_positive_rate": 0.4
+        },
+        "latency_ms": {
+          "mean": 0.544,
+          "median": 0.536,
+          "p95": 0.745
+        }
+      }
+    },
+    "candidate_v1": {
+      "tune": {
+        "cases": 72,
+        "confusion_matrix": {
+          "true_positive": 3,
+          "false_positive": 6,
+          "false_negative": 24,
+          "true_negative": 39
+        },
+        "precision": 0.3333,
+        "precision_ci95": [
+          0.1206,
+          0.6458
+        ],
+        "recall": 0.1111,
+        "recall_ci95": [
+          0.0385,
+          0.2806
+        ],
+        "f1": 0.1667,
+        "false_positive_rate": 0.1333,
+        "false_positive_rate_ci95": [
+          0.0626,
+          0.2618
+        ],
+        "legitimate_false_positive_rate": 0.1481,
+        "fraudulent_auto_approval_rate": 0.6667,
+        "legitimate_auto_approval_rate": 0.6296,
+        "manual_review_rate": 0.1111,
+        "needs_more_information_rate": 0.2083,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0972,
+        "human_follow_up_rate": 0.4167,
+        "decision_counts": {
+          "APPROVED": 42,
+          "NEEDS_MORE_INFORMATION": 15,
+          "FLAG_FOR_REVIEW": 8,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 7
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 17,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 4,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 3
+          },
+          "fraudulent": {
+            "APPROVED": 18,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 3
+          },
+          "borderline": {
+            "APPROVED": 7,
+            "NEEDS_MORE_INFORMATION": 9,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 1
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.2222,
+          "false_positive_rate": 0.4
+        },
+        "latency_ms": {
+          "mean": 0.472,
+          "median": 0.489,
+          "p95": 0.672
+        }
+      },
+      "validation": {
+        "cases": 48,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 15,
+          "false_negative": 10,
+          "true_negative": 15
+        },
+        "precision": 0.3478,
+        "precision_ci95": [
+          0.1881,
+          0.5511
+        ],
+        "recall": 0.4444,
+        "recall_ci95": [
+          0.2456,
+          0.6628
+        ],
+        "f1": 0.3902,
+        "false_positive_rate": 0.5,
+        "false_positive_rate_ci95": [
+          0.3315,
+          0.6685
+        ],
+        "legitimate_false_positive_rate": 0.5,
+        "fraudulent_auto_approval_rate": 0.3333,
+        "legitimate_auto_approval_rate": 0.3333,
+        "manual_review_rate": 0.4792,
+        "needs_more_information_rate": 0.1042,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.1042,
+        "human_follow_up_rate": 0.6875,
+        "decision_counts": {
+          "APPROVED": 15,
+          "NEEDS_MORE_INFORMATION": 5,
+          "FLAG_FOR_REVIEW": 23,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 5
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 6,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 9,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 2
+          },
+          "fraudulent": {
+            "APPROVED": 6,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 8,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 3
+          },
+          "borderline": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 6,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.5,
+          "false_positive_rate": 0.6333
+        },
+        "latency_ms": {
+          "mean": 0.443,
+          "median": 0.442,
+          "p95": 0.647
+        }
+      }
+    },
+    "candidate_v2": {
+      "tune": {
+        "cases": 72,
+        "confusion_matrix": {
+          "true_positive": 24,
+          "false_positive": 0,
+          "false_negative": 3,
+          "true_negative": 45
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.862,
+          1.0
+        ],
+        "recall": 0.8889,
+        "recall_ci95": [
+          0.7194,
+          0.9615
+        ],
+        "f1": 0.9412,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.0787
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0741,
+        "legitimate_auto_approval_rate": 0.963,
+        "manual_review_rate": 0.3333,
+        "needs_more_information_rate": 0.2778,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.6111,
+        "decision_counts": {
+          "APPROVED": 28,
+          "NEEDS_MORE_INFORMATION": 20,
+          "FLAG_FOR_REVIEW": 24,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 26,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 2,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 24,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 18,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9259,
+          "false_positive_rate": 0.4222
+        },
+        "latency_ms": {
+          "mean": 5.513,
+          "median": 5.882,
+          "p95": 8.226
+        }
+      },
+      "validation": {
+        "cases": 48,
+        "confusion_matrix": {
+          "true_positive": 15,
+          "false_positive": 4,
+          "false_negative": 3,
+          "true_negative": 26
+        },
+        "precision": 0.7895,
+        "precision_ci95": [
+          0.5667,
+          0.9149
+        ],
+        "recall": 0.8333,
+        "recall_ci95": [
+          0.6078,
+          0.9416
+        ],
+        "f1": 0.8108,
+        "false_positive_rate": 0.1333,
+        "false_positive_rate_ci95": [
+          0.0531,
+          0.2968
+        ],
+        "legitimate_false_positive_rate": 0.1667,
+        "fraudulent_auto_approval_rate": 0.0556,
+        "legitimate_auto_approval_rate": 0.7222,
+        "manual_review_rate": 0.3542,
+        "needs_more_information_rate": 0.3125,
+        "rejection_rate": 0.0417,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.7083,
+        "decision_counts": {
+          "APPROVED": 14,
+          "NEEDS_MORE_INFORMATION": 15,
+          "FLAG_FOR_REVIEW": 17,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 13,
+            "NEEDS_MORE_INFORMATION": 2,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 2,
+            "FLAG_FOR_REVIEW": 13,
+            "REJECTED": 2,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 11,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9444,
+          "false_positive_rate": 0.5667
+        },
+        "latency_ms": {
+          "mean": 5.813,
+          "median": 5.5,
+          "p95": 11.003
+        }
+      }
+    }
+  },
+  "by_family_v2": {
+    "coaching_and_exam_fees": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 1,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.2077,
+        0.9385
+      ],
+      "f1": 0.8,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.3333,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.25,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.5,
+      "decision_counts": {
+        "APPROVED": 4,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 2,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 1,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.6667,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 4.825,
+        "median": 4.903,
+        "p95": 4.977
+      }
+    },
+    "engineering_tuition": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 5.642,
+        "median": 5.628,
+        "p95": 5.862
+      }
+    },
+    "flood_relief_kits": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 6.455,
+        "median": 6.429,
+        "p95": 6.643
+      }
+    },
+    "leukemia_chemo": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 1,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.2077,
+        0.9385
+      ],
+      "f1": 0.8,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.125,
+      "needs_more_information_rate": 0.375,
+      "rejection_rate": 0.125,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 3,
+        "FLAG_FOR_REVIEW": 1,
+        "REJECTED": 1,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 1,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 5.3,
+        "median": 5.79,
+        "p95": 6.268
+      }
+    },
+    "library_reading_room": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 1,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.2077,
+        0.9385
+      ],
+      "f1": 0.8,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 0.6667,
+      "manual_review_rate": 0.25,
+      "needs_more_information_rate": 0.5,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.75,
+      "decision_counts": {
+        "APPROVED": 2,
+        "NEEDS_MORE_INFORMATION": 4,
+        "FLAG_FOR_REVIEW": 2,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 2,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.6
+      },
+      "latency_ms": {
+        "mean": 4.821,
+        "median": 5.5,
+        "p95": 6.715
+      }
+    },
+    "neonatal_icu": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 6.037,
+        "median": 5.948,
+        "p95": 6.33
+      }
+    },
+    "nursing_diploma": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 4.57,
+        "median": 4.97,
+        "p95": 5.971
+      }
+    },
+    "overseas_masters_deposit": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 4,
+        "false_negative": 0,
+        "true_negative": 1
+      },
+      "precision": 0.4286,
+      "precision_ci95": [
+        0.1582,
+        0.7495
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 0.6,
+      "false_positive_rate": 0.8,
+      "false_positive_rate_ci95": [
+        0.3755,
+        0.9638
+      ],
+      "legitimate_false_positive_rate": 1.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 0.0,
+      "manual_review_rate": 0.875,
+      "needs_more_information_rate": 0.125,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 1.0,
+      "decision_counts": {
+        "APPROVED": 0,
+        "NEEDS_MORE_INFORMATION": 1,
+        "FLAG_FOR_REVIEW": 7,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 1.0
+      },
+      "latency_ms": {
+        "mean": 3.874,
+        "median": 4.25,
+        "p95": 4.504
+      }
+    },
+    "renal_transplant": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 5.602,
+        "median": 6.103,
+        "p95": 7.549
+      }
+    },
+    "road_accident_trauma": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 0.6667,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.375,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.75,
+      "decision_counts": {
+        "APPROVED": 2,
+        "NEEDS_MORE_INFORMATION": 3,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 2,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.6
+      },
+      "latency_ms": {
+        "mean": 6.17,
+        "median": 7.692,
+        "p95": 8.008
+      }
+    },
+    "school_fees_arrears": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 1,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.2077,
+        0.9385
+      ],
+      "f1": 0.8,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 0.6667,
+      "manual_review_rate": 0.25,
+      "needs_more_information_rate": 0.5,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.75,
+      "decision_counts": {
+        "APPROVED": 2,
+        "NEEDS_MORE_INFORMATION": 4,
+        "FLAG_FOR_REVIEW": 2,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 2,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.6
+      },
+      "latency_ms": {
+        "mean": 3.586,
+        "median": 4.028,
+        "p95": 4.22
+      }
+    },
+    "school_toilet_block": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 1,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.2077,
+        0.9385
+      ],
+      "f1": 0.8,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.3333,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.25,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.5,
+      "decision_counts": {
+        "APPROVED": 4,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 2,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 1,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.6667,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 4.589,
+        "median": 5.068,
+        "p95": 5.485
+      }
+    },
+    "spinal_surgery": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 2,
+        "false_positive": 0,
+        "false_negative": 1,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.2077,
+        0.9385
+      ],
+      "f1": 0.8,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.3333,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.25,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.5,
+      "decision_counts": {
+        "APPROVED": 4,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 2,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 1,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.6667,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 5.737,
+        "median": 6.112,
+        "p95": 7.973
+      }
+    },
+    "village_borewell": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.375,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 3,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 7.404,
+        "median": 8.18,
+        "p95": 9.218
+      }
+    },
+    "women_tailoring_centre": {
+      "cases": 8,
+      "confusion_matrix": {
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "true_negative": 5
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.4385,
+        1.0
+      ],
+      "recall": 1.0,
+      "recall_ci95": [
+        0.4385,
+        1.0
+      ],
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.4345
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.0,
+      "legitimate_auto_approval_rate": 1.0,
+      "manual_review_rate": 0.25,
+      "needs_more_information_rate": 0.25,
+      "rejection_rate": 0.125,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.625,
+      "decision_counts": {
+        "APPROVED": 3,
+        "NEEDS_MORE_INFORMATION": 2,
+        "FLAG_FOR_REVIEW": 2,
+        "REJECTED": 1,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 0,
+          "FLAG_FOR_REVIEW": 2,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 2,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 1.0,
+        "false_positive_rate": 0.4
+      },
+      "latency_ms": {
+        "mean": 9.886,
+        "median": 10.973,
+        "p95": 12.419
+      }
+    }
+  },
+  "decisions_by_variant": {
+    "already_settled": {
+      "baseline": {
+        "APPROVED": 4,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 3
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 5
+      }
+    },
+    "already_settled+identity_mismatch": {
+      "baseline": {
+        "APPROVED": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 1
+      },
+      "candidate_v2": {
+        "REJECTED": 1
+      }
+    },
+    "ambiguous_identity": {
+      "baseline": {
+        "APPROVED": 4
+      },
+      "candidate_v1": {
+        "APPROVED": 3,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "NEEDS_MORE_INFORMATION": 4
+      }
+    },
+    "amount_inflation": {
+      "baseline": {
+        "APPROVED": 4,
+        "FLAG_FOR_REVIEW": 2
+      },
+      "candidate_v1": {
+        "FLAG_FOR_REVIEW": 3,
+        "APPROVED": 3
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 6
+      }
+    },
+    "clean": {
+      "baseline": {
+        "APPROVED": 11,
+        "FLAG_FOR_REVIEW": 4
+      },
+      "candidate_v1": {
+        "APPROVED": 9,
+        "VERIFICATION_ERROR": 2,
+        "NEEDS_MORE_INFORMATION": 1,
+        "FLAG_FOR_REVIEW": 3
+      },
+      "candidate_v2": {
+        "APPROVED": 14,
+        "FLAG_FOR_REVIEW": 1
+      }
+    },
+    "consistent_fabricated": {
+      "baseline": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 1,
+        "FLAG_FOR_REVIEW": 1,
+        "VERIFICATION_ERROR": 1
+      },
+      "candidate_v2": {
+        "APPROVED": 3
+      }
+    },
+    "date_impossible": {
+      "baseline": {
+        "APPROVED": 3,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 1,
+        "VERIFICATION_ERROR": 2,
+        "NEEDS_MORE_INFORMATION": 1
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 4
+      }
+    },
+    "estimate_revision": {
+      "baseline": {
+        "APPROVED": 1
+      },
+      "candidate_v1": {
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "APPROVED": 1
+      }
+    },
+    "harmless_formatting": {
+      "baseline": {
+        "APPROVED": 11,
+        "FLAG_FOR_REVIEW": 4
+      },
+      "candidate_v1": {
+        "APPROVED": 8,
+        "VERIFICATION_ERROR": 2,
+        "NEEDS_MORE_INFORMATION": 1,
+        "FLAG_FOR_REVIEW": 4
+      },
+      "candidate_v2": {
+        "APPROVED": 14,
+        "FLAG_FOR_REVIEW": 1
+      }
+    },
+    "high_cost": {
+      "baseline": {
+        "FLAG_FOR_REVIEW": 3
+      },
+      "candidate_v1": {
+        "APPROVED": 3
+      },
+      "candidate_v2": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 1
+      }
+    },
+    "id_mismatch": {
+      "baseline": {
+        "APPROVED": 3,
+        "FLAG_FOR_REVIEW": 2
+      },
+      "candidate_v1": {
+        "APPROVED": 2,
+        "VERIFICATION_ERROR": 1,
+        "NEEDS_MORE_INFORMATION": 1,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 5
+      }
+    },
+    "identity_mismatch": {
+      "baseline": {
+        "APPROVED": 3
+      },
+      "candidate_v1": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 3
+      }
+    },
+    "ineligible": {
+      "baseline": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 3
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 3
+      }
+    },
+    "institution_mismatch": {
+      "baseline": {
+        "APPROVED": 3,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 3,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 4
+      }
+    },
+    "missing_required": {
+      "baseline": {
+        "FLAG_FOR_REVIEW": 2,
+        "APPROVED": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 1,
+        "NEEDS_MORE_INFORMATION": 2
+      },
+      "candidate_v2": {
+        "NEEDS_MORE_INFORMATION": 3
+      }
+    },
+    "modest_excess": {
+      "baseline": {
+        "APPROVED": 7,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 3,
+        "FLAG_FOR_REVIEW": 3,
+        "NEEDS_MORE_INFORMATION": 1,
+        "VERIFICATION_ERROR": 1
+      },
+      "candidate_v2": {
+        "NEEDS_MORE_INFORMATION": 8
+      }
+    },
+    "no_documents": {
+      "baseline": {
+        "FLAG_FOR_REVIEW": 8
+      },
+      "candidate_v1": {
+        "NEEDS_MORE_INFORMATION": 8
+      },
+      "candidate_v2": {
+        "NEEDS_MORE_INFORMATION": 8
+      }
+    },
+    "partial_goal": {
+      "baseline": {
+        "APPROVED": 3
+      },
+      "candidate_v1": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "APPROVED": 3
+      }
+    },
+    "partial_paid": {
+      "baseline": {
+        "APPROVED": 5
+      },
+      "candidate_v1": {
+        "FLAG_FOR_REVIEW": 4,
+        "VERIFICATION_ERROR": 1
+      },
+      "candidate_v2": {
+        "APPROVED": 5
+      }
+    },
+    "payment_diversion": {
+      "baseline": {
+        "APPROVED": 4
+      },
+      "candidate_v1": {
+        "APPROVED": 4
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 4
+      }
+    },
+    "payment_diversion+ineligible": {
+      "baseline": {
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v2": {
+        "REJECTED": 1
+      }
+    },
+    "provisional": {
+      "baseline": {
+        "APPROVED": 7,
+        "FLAG_FOR_REVIEW": 3
+      },
+      "candidate_v1": {
+        "NEEDS_MORE_INFORMATION": 3,
+        "APPROVED": 4,
+        "FLAG_FOR_REVIEW": 3
+      },
+      "candidate_v2": {
+        "NEEDS_MORE_INFORMATION": 9,
+        "FLAG_FOR_REVIEW": 1
+      }
+    },
+    "service_mismatch": {
+      "baseline": {
+        "APPROVED": 2,
+        "FLAG_FOR_REVIEW": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 1,
+        "VERIFICATION_ERROR": 2
+      },
+      "candidate_v2": {
+        "FLAG_FOR_REVIEW": 3
+      }
+    },
+    "thin_evidence": {
+      "baseline": {
+        "FLAG_FOR_REVIEW": 2,
+        "APPROVED": 1
+      },
+      "candidate_v1": {
+        "APPROVED": 1,
+        "NEEDS_MORE_INFORMATION": 2
+      },
+      "candidate_v2": {
+        "NEEDS_MORE_INFORMATION": 3
+      }
+    }
+  },
+  "ablation": {
+    "full": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 39,
+        "false_positive": 4,
+        "false_negative": 6,
+        "true_negative": 71
+      },
+      "precision": 0.907,
+      "precision_ci95": [
+        0.784,
+        0.9632
+      ],
+      "recall": 0.8667,
+      "recall_ci95": [
+        0.7382,
+        0.9374
+      ],
+      "f1": 0.8864,
+      "false_positive_rate": 0.0533,
+      "false_positive_rate_ci95": [
+        0.0209,
+        0.1293
+      ],
+      "legitimate_false_positive_rate": 0.0667,
+      "fraudulent_auto_approval_rate": 0.0667,
+      "legitimate_auto_approval_rate": 0.8667,
+      "manual_review_rate": 0.3417,
+      "needs_more_information_rate": 0.2917,
+      "rejection_rate": 0.0167,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.65,
+      "decision_counts": {
+        "APPROVED": 42,
+        "NEEDS_MORE_INFORMATION": 35,
+        "FLAG_FOR_REVIEW": 41,
+        "REJECTED": 2,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 39,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 37,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 29,
+          "FLAG_FOR_REVIEW": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.9333,
+        "false_positive_rate": 0.48
+      },
+      "latency_ms": {
+        "mean": 5.633,
+        "median": 5.788,
+        "p95": 10.823
+      }
+    },
+    "without_cross_document": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 14,
+        "false_positive": 0,
+        "false_negative": 31,
+        "true_negative": 75
+      },
+      "precision": 1.0,
+      "precision_ci95": [
+        0.7847,
+        1.0
+      ],
+      "recall": 0.3111,
+      "recall_ci95": [
+        0.1953,
+        0.4567
+      ],
+      "f1": 0.4746,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.0487
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.6,
+      "legitimate_auto_approval_rate": 0.9333,
+      "manual_review_rate": 0.1083,
+      "needs_more_information_rate": 0.2083,
+      "rejection_rate": 0.0083,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.325,
+      "decision_counts": {
+        "APPROVED": 81,
+        "NEEDS_MORE_INFORMATION": 25,
+        "FLAG_FOR_REVIEW": 13,
+        "REJECTED": 1,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 42,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 27,
+          "NEEDS_MORE_INFORMATION": 4,
+          "FLAG_FOR_REVIEW": 13,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 18,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.4,
+        "false_positive_rate": 0.28
+      },
+      "latency_ms": {
+        "mean": 4.991,
+        "median": 5.191,
+        "p95": 7.774
+      }
+    },
+    "without_category": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 37,
+        "false_positive": 4,
+        "false_negative": 8,
+        "true_negative": 71
+      },
+      "precision": 0.9024,
+      "precision_ci95": [
+        0.7745,
+        0.9614
+      ],
+      "recall": 0.8222,
+      "recall_ci95": [
+        0.6867,
+        0.9071
+      ],
+      "f1": 0.8605,
+      "false_positive_rate": 0.0533,
+      "false_positive_rate_ci95": [
+        0.0209,
+        0.1293
+      ],
+      "legitimate_false_positive_rate": 0.0667,
+      "fraudulent_auto_approval_rate": 0.0667,
+      "legitimate_auto_approval_rate": 0.8222,
+      "manual_review_rate": 0.325,
+      "needs_more_information_rate": 0.325,
+      "rejection_rate": 0.0167,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.6667,
+      "decision_counts": {
+        "APPROVED": 40,
+        "NEEDS_MORE_INFORMATION": 39,
+        "FLAG_FOR_REVIEW": 39,
+        "REJECTED": 2,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 37,
+          "NEEDS_MORE_INFORMATION": 5,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 5,
+          "FLAG_FOR_REVIEW": 35,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 0,
+          "NEEDS_MORE_INFORMATION": 29,
+          "FLAG_FOR_REVIEW": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.9333,
+        "false_positive_rate": 0.5067
+      },
+      "latency_ms": {
+        "mean": 5.136,
+        "median": 5.334,
+        "p95": 8.144
+      }
+    },
+    "without_semantic": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 30,
+        "false_positive": 4,
+        "false_negative": 15,
+        "true_negative": 71
+      },
+      "precision": 0.8824,
+      "precision_ci95": [
+        0.7338,
+        0.9533
+      ],
+      "recall": 0.6667,
+      "recall_ci95": [
+        0.5207,
+        0.7864
+      ],
+      "f1": 0.7595,
+      "false_positive_rate": 0.0533,
+      "false_positive_rate_ci95": [
+        0.0209,
+        0.1293
+      ],
+      "legitimate_false_positive_rate": 0.0667,
+      "fraudulent_auto_approval_rate": 0.2667,
+      "legitimate_auto_approval_rate": 0.8667,
+      "manual_review_rate": 0.2833,
+      "needs_more_information_rate": 0.2167,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.5,
+      "decision_counts": {
+        "APPROVED": 60,
+        "NEEDS_MORE_INFORMATION": 26,
+        "FLAG_FOR_REVIEW": 34,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 39,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 30,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 9,
+          "NEEDS_MORE_INFORMATION": 20,
+          "FLAG_FOR_REVIEW": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.7333,
+        "false_positive_rate": 0.36
+      },
+      "latency_ms": {
+        "mean": 4.557,
+        "median": 4.546,
+        "p95": 9.166
+      }
+    },
+    "requirements_only": {
+      "cases": 120,
+      "confusion_matrix": {
+        "true_positive": 0,
+        "false_positive": 0,
+        "false_negative": 45,
+        "true_negative": 75
+      },
+      "precision": null,
+      "precision_ci95": null,
+      "recall": 0.0,
+      "recall_ci95": [
+        0.0,
+        0.0787
+      ],
+      "f1": 0.0,
+      "false_positive_rate": 0.0,
+      "false_positive_rate_ci95": [
+        0.0,
+        0.0487
+      ],
+      "legitimate_false_positive_rate": 0.0,
+      "fraudulent_auto_approval_rate": 0.9111,
+      "legitimate_auto_approval_rate": 0.9333,
+      "manual_review_rate": 0.0,
+      "needs_more_information_rate": 0.125,
+      "rejection_rate": 0.0,
+      "runtime_error_rate": 0.0,
+      "human_follow_up_rate": 0.125,
+      "decision_counts": {
+        "APPROVED": 105,
+        "NEEDS_MORE_INFORMATION": 15,
+        "FLAG_FOR_REVIEW": 0,
+        "REJECTED": 0,
+        "VERIFICATION_ERROR": 0
+      },
+      "decision_matrix": {
+        "legitimate": {
+          "APPROVED": 42,
+          "NEEDS_MORE_INFORMATION": 3,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "fraudulent": {
+          "APPROVED": 41,
+          "NEEDS_MORE_INFORMATION": 4,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "borderline": {
+          "APPROVED": 22,
+          "NEEDS_MORE_INFORMATION": 8,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "secondary_convention_nmi_counts_as_detection": {
+        "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+        "recall": 0.0889,
+        "false_positive_rate": 0.1467
+      },
+      "latency_ms": {
+        "mean": 4.172,
+        "median": 4.136,
+        "p95": 6.863
+      }
+    }
+  },
+  "ablation_by_category": {
+    "full": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "false_negative": 2,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7719,
+          1.0
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.9286,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.3,
+        "needs_more_information_rate": 0.3,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.625,
+        "decision_counts": {
+          "APPROVED": 15,
+          "NEEDS_MORE_INFORMATION": 12,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 12,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 10,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.44
+        },
+        "latency_ms": {
+          "mean": 6.631,
+          "median": 6.368,
+          "p95": 11.003
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 4,
+          "false_negative": 2,
+          "true_negative": 21
+        },
+        "precision": 0.7647,
+        "precision_ci95": [
+          0.5274,
+          0.9045
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.8125,
+        "false_positive_rate": 0.16,
+        "false_positive_rate_ci95": [
+          0.064,
+          0.3465
+        ],
+        "legitimate_false_positive_rate": 0.2,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.7333,
+        "manual_review_rate": 0.425,
+        "needs_more_information_rate": 0.275,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.7,
+        "decision_counts": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 11,
+          "FLAG_FOR_REVIEW": 17,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 13,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 9,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.56
+        },
+        "latency_ms": {
+          "mean": 4.499,
+          "median": 4.748,
+          "p95": 5.855
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "false_negative": 2,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7719,
+          1.0
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.9286,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.3,
+        "needs_more_information_rate": 0.3,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.625,
+        "decision_counts": {
+          "APPROVED": 15,
+          "NEEDS_MORE_INFORMATION": 12,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 12,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 10,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.44
+        },
+        "latency_ms": {
+          "mean": 5.769,
+          "median": 6.022,
+          "p95": 7.783
+        }
+      }
+    },
+    "without_cross_document": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 5,
+          "false_positive": 0,
+          "false_negative": 10,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.5655,
+          1.0
+        ],
+        "recall": 0.3333,
+        "recall_ci95": [
+          0.1518,
+          0.5829
+        ],
+        "f1": 0.5,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.6,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.1,
+        "needs_more_information_rate": 0.225,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.35,
+        "decision_counts": {
+          "APPROVED": 26,
+          "NEEDS_MORE_INFORMATION": 9,
+          "FLAG_FOR_REVIEW": 4,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 9,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 4,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 7,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.4,
+          "false_positive_rate": 0.32
+        },
+        "latency_ms": {
+          "mean": 5.559,
+          "median": 5.824,
+          "p95": 8.183
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 6,
+          "false_positive": 0,
+          "false_negative": 9,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.6097,
+          1.0
+        ],
+        "recall": 0.4,
+        "recall_ci95": [
+          0.1982,
+          0.6425
+        ],
+        "f1": 0.5714,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.5333,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.15,
+        "needs_more_information_rate": 0.175,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.325,
+        "decision_counts": {
+          "APPROVED": 27,
+          "NEEDS_MORE_INFORMATION": 7,
+          "FLAG_FOR_REVIEW": 6,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 8,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 6,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 5,
+            "NEEDS_MORE_INFORMATION": 5,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.4667,
+          "false_positive_rate": 0.24
+        },
+        "latency_ms": {
+          "mean": 4.193,
+          "median": 4.358,
+          "p95": 5.435
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 3,
+          "false_positive": 0,
+          "false_negative": 12,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.4385,
+          1.0
+        ],
+        "recall": 0.2,
+        "recall_ci95": [
+          0.0705,
+          0.4519
+        ],
+        "f1": 0.3333,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.6667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.075,
+        "needs_more_information_rate": 0.225,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.3,
+        "decision_counts": {
+          "APPROVED": 28,
+          "NEEDS_MORE_INFORMATION": 9,
+          "FLAG_FOR_REVIEW": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 10,
+            "NEEDS_MORE_INFORMATION": 2,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 4,
+            "NEEDS_MORE_INFORMATION": 6,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.3333,
+          "false_positive_rate": 0.28
+        },
+        "latency_ms": {
+          "mean": 5.22,
+          "median": 5.554,
+          "p95": 6.889
+        }
+      }
+    },
+    "without_category": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "false_negative": 2,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7719,
+          1.0
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.9286,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.3,
+        "needs_more_information_rate": 0.3,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.625,
+        "decision_counts": {
+          "APPROVED": 15,
+          "NEEDS_MORE_INFORMATION": 12,
+          "FLAG_FOR_REVIEW": 12,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 12,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 10,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.44
+        },
+        "latency_ms": {
+          "mean": 5.73,
+          "median": 5.976,
+          "p95": 8.4
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 4,
+          "false_negative": 2,
+          "true_negative": 21
+        },
+        "precision": 0.7647,
+        "precision_ci95": [
+          0.5274,
+          0.9045
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.6212,
+          0.9626
+        ],
+        "f1": 0.8125,
+        "false_positive_rate": 0.16,
+        "false_positive_rate_ci95": [
+          0.064,
+          0.3465
+        ],
+        "legitimate_false_positive_rate": 0.2,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.7333,
+        "manual_review_rate": 0.425,
+        "needs_more_information_rate": 0.275,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.7,
+        "decision_counts": {
+          "APPROVED": 12,
+          "NEEDS_MORE_INFORMATION": 11,
+          "FLAG_FOR_REVIEW": 17,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 13,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 9,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.56
+        },
+        "latency_ms": {
+          "mean": 4.332,
+          "median": 4.494,
+          "p95": 5.558
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "false_negative": 4,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7412,
+          1.0
+        ],
+        "recall": 0.7333,
+        "recall_ci95": [
+          0.4805,
+          0.891
+        ],
+        "f1": 0.8462,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.8,
+        "manual_review_rate": 0.25,
+        "needs_more_information_rate": 0.4,
+        "rejection_rate": 0.025,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.675,
+        "decision_counts": {
+          "APPROVED": 13,
+          "NEEDS_MORE_INFORMATION": 16,
+          "FLAG_FOR_REVIEW": 10,
+          "REJECTED": 1,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 12,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 1,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 10,
+            "REJECTED": 1,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 10,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.52
+        },
+        "latency_ms": {
+          "mean": 5.345,
+          "median": 5.666,
+          "p95": 7.062
+        }
+      }
+    },
+    "without_semantic": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "false_negative": 7,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.6756,
+          1.0
+        ],
+        "recall": 0.5333,
+        "recall_ci95": [
+          0.3012,
+          0.7519
+        ],
+        "f1": 0.6957,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.4,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.2,
+        "needs_more_information_rate": 0.2,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.4,
+        "decision_counts": {
+          "APPROVED": 24,
+          "NEEDS_MORE_INFORMATION": 8,
+          "FLAG_FOR_REVIEW": 8,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 6,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 8,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 4,
+            "NEEDS_MORE_INFORMATION": 6,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.6,
+          "false_positive_rate": 0.28
+        },
+        "latency_ms": {
+          "mean": 5.545,
+          "median": 5.13,
+          "p95": 9.779
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 4,
+          "false_negative": 4,
+          "true_negative": 21
+        },
+        "precision": 0.7333,
+        "precision_ci95": [
+          0.4805,
+          0.891
+        ],
+        "recall": 0.7333,
+        "recall_ci95": [
+          0.4805,
+          0.891
+        ],
+        "f1": 0.7333,
+        "false_positive_rate": 0.16,
+        "false_positive_rate_ci95": [
+          0.064,
+          0.3465
+        ],
+        "legitimate_false_positive_rate": 0.2,
+        "fraudulent_auto_approval_rate": 0.2,
+        "legitimate_auto_approval_rate": 0.7333,
+        "manual_review_rate": 0.375,
+        "needs_more_information_rate": 0.225,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.6,
+        "decision_counts": {
+          "APPROVED": 16,
+          "NEEDS_MORE_INFORMATION": 9,
+          "FLAG_FOR_REVIEW": 15,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 11,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 11,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 2,
+            "NEEDS_MORE_INFORMATION": 7,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.8,
+          "false_positive_rate": 0.48
+        },
+        "latency_ms": {
+          "mean": 3.542,
+          "median": 3.769,
+          "p95": 4.548
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "false_negative": 4,
+          "true_negative": 25
+        },
+        "precision": 1.0,
+        "precision_ci95": [
+          0.7412,
+          1.0
+        ],
+        "recall": 0.7333,
+        "recall_ci95": [
+          0.4805,
+          0.891
+        ],
+        "f1": 0.8462,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.2,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.275,
+        "needs_more_information_rate": 0.225,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.5,
+        "decision_counts": {
+          "APPROVED": 20,
+          "NEEDS_MORE_INFORMATION": 9,
+          "FLAG_FOR_REVIEW": 11,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 11,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 7,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.8,
+          "false_positive_rate": 0.32
+        },
+        "latency_ms": {
+          "mean": 4.584,
+          "median": 4.754,
+          "p95": 6.408
+        }
+      }
+    },
+    "requirements_only": {
+      "COMMUNITY": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 15,
+          "true_negative": 25
+        },
+        "precision": null,
+        "precision_ci95": null,
+        "recall": 0.0,
+        "recall_ci95": [
+          0.0,
+          0.2039
+        ],
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.9333,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.0,
+        "needs_more_information_rate": 0.125,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.125,
+        "decision_counts": {
+          "APPROVED": 35,
+          "NEEDS_MORE_INFORMATION": 5,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 7,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.0667,
+          "false_positive_rate": 0.16
+        },
+        "latency_ms": {
+          "mean": 4.545,
+          "median": 4.73,
+          "p95": 6.933
+        }
+      },
+      "EDUCATION": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 15,
+          "true_negative": 25
+        },
+        "precision": null,
+        "precision_ci95": null,
+        "recall": 0.0,
+        "recall_ci95": [
+          0.0,
+          0.2039
+        ],
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.9333,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.0,
+        "needs_more_information_rate": 0.1,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.1,
+        "decision_counts": {
+          "APPROVED": 36,
+          "NEEDS_MORE_INFORMATION": 4,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 8,
+            "NEEDS_MORE_INFORMATION": 2,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.0667,
+          "false_positive_rate": 0.12
+        },
+        "latency_ms": {
+          "mean": 3.893,
+          "median": 3.509,
+          "p95": 5.755
+        }
+      },
+      "MEDICAL": {
+        "cases": 40,
+        "confusion_matrix": {
+          "true_positive": 0,
+          "false_positive": 0,
+          "false_negative": 15,
+          "true_negative": 25
+        },
+        "precision": null,
+        "precision_ci95": null,
+        "recall": 0.0,
+        "recall_ci95": [
+          0.0,
+          0.2039
+        ],
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "false_positive_rate_ci95": [
+          0.0,
+          0.1332
+        ],
+        "legitimate_false_positive_rate": 0.0,
+        "fraudulent_auto_approval_rate": 0.8667,
+        "legitimate_auto_approval_rate": 0.9333,
+        "manual_review_rate": 0.0,
+        "needs_more_information_rate": 0.15,
+        "rejection_rate": 0.0,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.15,
+        "decision_counts": {
+          "APPROVED": 34,
+          "NEEDS_MORE_INFORMATION": 6,
+          "FLAG_FOR_REVIEW": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 14,
+            "NEEDS_MORE_INFORMATION": 1,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 13,
+            "NEEDS_MORE_INFORMATION": 2,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 7,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 0,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.1333,
+          "false_positive_rate": 0.16
+        },
+        "latency_ms": {
+          "mean": 4.078,
+          "median": 4.313,
+          "p95": 5.413
+        }
+      }
+    }
+  },
+  "document_consistency": {
+    "candidate_v2": {
+      "by_planted_kind": {
+        "amount": {
+          "planted": 6,
+          "detected_as_material": 6,
+          "detected_any_severity": 6,
+          "material_detection_rate": 1.0
+        },
+        "chronology": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "eligibility": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "identifier": {
+          "planted": 5,
+          "detected_as_material": 5,
+          "detected_any_severity": 5,
+          "material_detection_rate": 1.0
+        },
+        "identity": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "institution": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "payment_routing": {
+          "planted": 5,
+          "detected_as_material": 5,
+          "detected_any_severity": 5,
+          "material_detection_rate": 1.0
+        },
+        "service": {
+          "planted": 3,
+          "detected_as_material": 3,
+          "detected_any_severity": 3,
+          "material_detection_rate": 1.0
+        },
+        "settlement": {
+          "planted": 6,
+          "detected_as_material": 6,
+          "detected_any_severity": 6,
+          "material_detection_rate": 1.0
+        }
+      },
+      "overall_material_detection_rate": 1.0,
+      "legitimate_cases_with_material_finding": 3,
+      "legitimate_cases_with_any_finding": 3,
+      "borderline_cases_with_material_finding": 1,
+      "fraud_cases_without_planted_inconsistency": {
+        "DV2-022": "APPROVED",
+        "DV2-030": "NEEDS_MORE_INFORMATION",
+        "DV2-062": "NEEDS_MORE_INFORMATION",
+        "DV2-078": "APPROVED",
+        "DV2-102": "APPROVED",
+        "DV2-118": "NEEDS_MORE_INFORMATION"
+      },
+      "note": "Fraud cases without a planted inconsistency are consistent-but-fabricated or thin-evidence dossiers; no dossier-only verifier can establish fraud for them."
+    },
+    "v2_without_cross_document": {
+      "by_planted_kind": {
+        "amount": {
+          "planted": 6,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "chronology": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "eligibility": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "identifier": {
+          "planted": 5,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "identity": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "institution": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "payment_routing": {
+          "planted": 5,
+          "detected_as_material": 5,
+          "detected_any_severity": 5,
+          "material_detection_rate": 1.0
+        },
+        "service": {
+          "planted": 3,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "settlement": {
+          "planted": 6,
+          "detected_as_material": 6,
+          "detected_any_severity": 6,
+          "material_detection_rate": 1.0
+        }
+      },
+      "overall_material_detection_rate": 0.3659,
+      "legitimate_cases_with_material_finding": 0,
+      "legitimate_cases_with_any_finding": 0,
+      "borderline_cases_with_material_finding": 0,
+      "fraud_cases_without_planted_inconsistency": {
+        "DV2-022": "APPROVED",
+        "DV2-030": "NEEDS_MORE_INFORMATION",
+        "DV2-062": "NEEDS_MORE_INFORMATION",
+        "DV2-078": "APPROVED",
+        "DV2-102": "APPROVED",
+        "DV2-118": "NEEDS_MORE_INFORMATION"
+      },
+      "note": "Fraud cases without a planted inconsistency are consistent-but-fabricated or thin-evidence dossiers; no dossier-only verifier can establish fraud for them."
+    },
+    "v2_without_category": {
+      "by_planted_kind": {
+        "amount": {
+          "planted": 6,
+          "detected_as_material": 6,
+          "detected_any_severity": 6,
+          "material_detection_rate": 1.0
+        },
+        "chronology": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "eligibility": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "identifier": {
+          "planted": 5,
+          "detected_as_material": 5,
+          "detected_any_severity": 5,
+          "material_detection_rate": 1.0
+        },
+        "identity": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "institution": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "payment_routing": {
+          "planted": 5,
+          "detected_as_material": 5,
+          "detected_any_severity": 5,
+          "material_detection_rate": 1.0
+        },
+        "service": {
+          "planted": 3,
+          "detected_as_material": 1,
+          "detected_any_severity": 3,
+          "material_detection_rate": 0.3333
+        },
+        "settlement": {
+          "planted": 6,
+          "detected_as_material": 6,
+          "detected_any_severity": 6,
+          "material_detection_rate": 1.0
+        }
+      },
+      "overall_material_detection_rate": 0.9512,
+      "legitimate_cases_with_material_finding": 3,
+      "legitimate_cases_with_any_finding": 5,
+      "borderline_cases_with_material_finding": 1,
+      "fraud_cases_without_planted_inconsistency": {
+        "DV2-022": "APPROVED",
+        "DV2-030": "NEEDS_MORE_INFORMATION",
+        "DV2-062": "NEEDS_MORE_INFORMATION",
+        "DV2-078": "APPROVED",
+        "DV2-102": "APPROVED",
+        "DV2-118": "NEEDS_MORE_INFORMATION"
+      },
+      "note": "Fraud cases without a planted inconsistency are consistent-but-fabricated or thin-evidence dossiers; no dossier-only verifier can establish fraud for them."
+    },
+    "v2_without_semantic": {
+      "by_planted_kind": {
+        "amount": {
+          "planted": 6,
+          "detected_as_material": 6,
+          "detected_any_severity": 6,
+          "material_detection_rate": 1.0
+        },
+        "chronology": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "eligibility": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "identifier": {
+          "planted": 5,
+          "detected_as_material": 5,
+          "detected_any_severity": 5,
+          "material_detection_rate": 1.0
+        },
+        "identity": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "institution": {
+          "planted": 4,
+          "detected_as_material": 4,
+          "detected_any_severity": 4,
+          "material_detection_rate": 1.0
+        },
+        "payment_routing": {
+          "planted": 5,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "service": {
+          "planted": 3,
+          "detected_as_material": 3,
+          "detected_any_severity": 3,
+          "material_detection_rate": 1.0
+        },
+        "settlement": {
+          "planted": 6,
+          "detected_as_material": 2,
+          "detected_any_severity": 2,
+          "material_detection_rate": 0.3333
+        }
+      },
+      "overall_material_detection_rate": 0.6829,
+      "legitimate_cases_with_material_finding": 3,
+      "legitimate_cases_with_any_finding": 3,
+      "borderline_cases_with_material_finding": 1,
+      "fraud_cases_without_planted_inconsistency": {
+        "DV2-022": "APPROVED",
+        "DV2-030": "NEEDS_MORE_INFORMATION",
+        "DV2-062": "NEEDS_MORE_INFORMATION",
+        "DV2-078": "APPROVED",
+        "DV2-102": "APPROVED",
+        "DV2-118": "NEEDS_MORE_INFORMATION"
+      },
+      "note": "Fraud cases without a planted inconsistency are consistent-but-fabricated or thin-evidence dossiers; no dossier-only verifier can establish fraud for them."
+    },
+    "v2_requirements_only": {
+      "by_planted_kind": {
+        "amount": {
+          "planted": 6,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "chronology": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "eligibility": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "identifier": {
+          "planted": 5,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "identity": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "institution": {
+          "planted": 4,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "payment_routing": {
+          "planted": 5,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "service": {
+          "planted": 3,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        },
+        "settlement": {
+          "planted": 6,
+          "detected_as_material": 0,
+          "detected_any_severity": 0,
+          "material_detection_rate": 0.0
+        }
+      },
+      "overall_material_detection_rate": 0.0,
+      "legitimate_cases_with_material_finding": 0,
+      "legitimate_cases_with_any_finding": 0,
+      "borderline_cases_with_material_finding": 0,
+      "fraud_cases_without_planted_inconsistency": {
+        "DV2-022": "APPROVED",
+        "DV2-030": "NEEDS_MORE_INFORMATION",
+        "DV2-062": "NEEDS_MORE_INFORMATION",
+        "DV2-078": "APPROVED",
+        "DV2-102": "APPROVED",
+        "DV2-118": "NEEDS_MORE_INFORMATION"
+      },
+      "note": "Fraud cases without a planted inconsistency are consistent-but-fabricated or thin-evidence dossiers; no dossier-only verifier can establish fraud for them."
+    }
+  },
+  "robustness": {
+    "currency_style": {
+      "decision_agreement": 0.9667,
+      "metrics": {
+        "cases": 120,
+        "confusion_matrix": {
+          "true_positive": 39,
+          "false_positive": 4,
+          "false_negative": 6,
+          "true_negative": 71
+        },
+        "precision": 0.907,
+        "precision_ci95": [
+          0.784,
+          0.9632
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.7382,
+          0.9374
+        ],
+        "f1": 0.8864,
+        "false_positive_rate": 0.0533,
+        "false_positive_rate_ci95": [
+          0.0209,
+          0.1293
+        ],
+        "legitimate_false_positive_rate": 0.0667,
+        "fraudulent_auto_approval_rate": 0.0444,
+        "legitimate_auto_approval_rate": 0.8,
+        "manual_review_rate": 0.3417,
+        "needs_more_information_rate": 0.325,
+        "rejection_rate": 0.0167,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.6833,
+        "decision_counts": {
+          "APPROVED": 38,
+          "NEEDS_MORE_INFORMATION": 39,
+          "FLAG_FOR_REVIEW": 41,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 36,
+            "NEEDS_MORE_INFORMATION": 6,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 2,
+            "NEEDS_MORE_INFORMATION": 4,
+            "FLAG_FOR_REVIEW": 37,
+            "REJECTED": 2,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 29,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9556,
+          "false_positive_rate": 0.52
+        },
+        "latency_ms": {
+          "mean": 5.58,
+          "median": 5.72,
+          "p95": 10.386
+        }
+      },
+      "changed_cases": [
+        {
+          "case_id": "DV2-017",
+          "variant": "clean",
+          "from": "APPROVED",
+          "to": "NEEDS_MORE_INFORMATION"
+        },
+        {
+          "case_id": "DV2-018",
+          "variant": "harmless_formatting",
+          "from": "APPROVED",
+          "to": "NEEDS_MORE_INFORMATION"
+        },
+        {
+          "case_id": "DV2-019",
+          "variant": "estimate_revision",
+          "from": "APPROVED",
+          "to": "NEEDS_MORE_INFORMATION"
+        },
+        {
+          "case_id": "DV2-022",
+          "variant": "consistent_fabricated",
+          "from": "APPROVED",
+          "to": "NEEDS_MORE_INFORMATION"
+        }
+      ]
+    },
+    "date_style": {
+      "decision_agreement": 1.0,
+      "metrics": {
+        "cases": 120,
+        "confusion_matrix": {
+          "true_positive": 39,
+          "false_positive": 4,
+          "false_negative": 6,
+          "true_negative": 71
+        },
+        "precision": 0.907,
+        "precision_ci95": [
+          0.784,
+          0.9632
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.7382,
+          0.9374
+        ],
+        "f1": 0.8864,
+        "false_positive_rate": 0.0533,
+        "false_positive_rate_ci95": [
+          0.0209,
+          0.1293
+        ],
+        "legitimate_false_positive_rate": 0.0667,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.8667,
+        "manual_review_rate": 0.3417,
+        "needs_more_information_rate": 0.2917,
+        "rejection_rate": 0.0167,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.65,
+        "decision_counts": {
+          "APPROVED": 42,
+          "NEEDS_MORE_INFORMATION": 35,
+          "FLAG_FOR_REVIEW": 41,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 39,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 37,
+            "REJECTED": 2,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 29,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.48
+        },
+        "latency_ms": {
+          "mean": 5.698,
+          "median": 5.768,
+          "p95": 10.897
+        }
+      },
+      "changed_cases": []
+    },
+    "name_style": {
+      "decision_agreement": 1.0,
+      "metrics": {
+        "cases": 120,
+        "confusion_matrix": {
+          "true_positive": 39,
+          "false_positive": 4,
+          "false_negative": 6,
+          "true_negative": 71
+        },
+        "precision": 0.907,
+        "precision_ci95": [
+          0.784,
+          0.9632
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.7382,
+          0.9374
+        ],
+        "f1": 0.8864,
+        "false_positive_rate": 0.0533,
+        "false_positive_rate_ci95": [
+          0.0209,
+          0.1293
+        ],
+        "legitimate_false_positive_rate": 0.0667,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.8667,
+        "manual_review_rate": 0.3417,
+        "needs_more_information_rate": 0.2917,
+        "rejection_rate": 0.0167,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.65,
+        "decision_counts": {
+          "APPROVED": 42,
+          "NEEDS_MORE_INFORMATION": 35,
+          "FLAG_FOR_REVIEW": 41,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 39,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 37,
+            "REJECTED": 2,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 29,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.48
+        },
+        "latency_ms": {
+          "mean": 5.661,
+          "median": 5.822,
+          "p95": 10.596
+        }
+      },
+      "changed_cases": []
+    },
+    "layout_collapse": {
+      "decision_agreement": 1.0,
+      "metrics": {
+        "cases": 120,
+        "confusion_matrix": {
+          "true_positive": 39,
+          "false_positive": 4,
+          "false_negative": 6,
+          "true_negative": 71
+        },
+        "precision": 0.907,
+        "precision_ci95": [
+          0.784,
+          0.9632
+        ],
+        "recall": 0.8667,
+        "recall_ci95": [
+          0.7382,
+          0.9374
+        ],
+        "f1": 0.8864,
+        "false_positive_rate": 0.0533,
+        "false_positive_rate_ci95": [
+          0.0209,
+          0.1293
+        ],
+        "legitimate_false_positive_rate": 0.0667,
+        "fraudulent_auto_approval_rate": 0.0667,
+        "legitimate_auto_approval_rate": 0.8667,
+        "manual_review_rate": 0.3417,
+        "needs_more_information_rate": 0.2917,
+        "rejection_rate": 0.0167,
+        "runtime_error_rate": 0.0,
+        "human_follow_up_rate": 0.65,
+        "decision_counts": {
+          "APPROVED": 42,
+          "NEEDS_MORE_INFORMATION": 35,
+          "FLAG_FOR_REVIEW": 41,
+          "REJECTED": 2,
+          "VERIFICATION_ERROR": 0
+        },
+        "decision_matrix": {
+          "legitimate": {
+            "APPROVED": 39,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 3,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          },
+          "fraudulent": {
+            "APPROVED": 3,
+            "NEEDS_MORE_INFORMATION": 3,
+            "FLAG_FOR_REVIEW": 37,
+            "REJECTED": 2,
+            "VERIFICATION_ERROR": 0
+          },
+          "borderline": {
+            "APPROVED": 0,
+            "NEEDS_MORE_INFORMATION": 29,
+            "FLAG_FOR_REVIEW": 1,
+            "REJECTED": 0,
+            "VERIFICATION_ERROR": 0
+          }
+        },
+        "secondary_convention_nmi_counts_as_detection": {
+          "note": "Reported for transparency only. Not the primary metric: an information request is not a fraud finding.",
+          "recall": 0.9333,
+          "false_positive_rate": 0.48
+        },
+        "latency_ms": {
+          "mean": 5.353,
+          "median": 5.28,
+          "p95": 10.19
+        }
+      },
+      "changed_cases": []
+    }
+  },
+  "v2_errors_vs_ground_truth": [
+    {
+      "case_id": "DV2-022",
+      "ground_truth": "fraudulent",
+      "variant": "consistent_fabricated",
+      "decision": "APPROVED",
+      "finding_codes": [],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-030",
+      "ground_truth": "fraudulent",
+      "variant": "thin_evidence",
+      "decision": "NEEDS_MORE_INFORMATION",
+      "finding_codes": [],
+      "unmet": [
+        "cost_evidence",
+        "clinical_record",
+        "institution_named"
+      ]
+    },
+    {
+      "case_id": "DV2-035",
+      "ground_truth": "legitimate",
+      "variant": "missing_required",
+      "decision": "NEEDS_MORE_INFORMATION",
+      "finding_codes": [],
+      "unmet": [
+        "cost_evidence",
+        "clinical_record",
+        "institution_named"
+      ]
+    },
+    {
+      "case_id": "DV2-059",
+      "ground_truth": "legitimate",
+      "variant": "missing_required",
+      "decision": "NEEDS_MORE_INFORMATION",
+      "finding_codes": [],
+      "unmet": [
+        "cost_evidence"
+      ]
+    },
+    {
+      "case_id": "DV2-062",
+      "ground_truth": "fraudulent",
+      "variant": "thin_evidence",
+      "decision": "NEEDS_MORE_INFORMATION",
+      "finding_codes": [],
+      "unmet": [
+        "cost_evidence",
+        "enrolment_proof",
+        "institution_named"
+      ]
+    },
+    {
+      "case_id": "DV2-065",
+      "ground_truth": "legitimate",
+      "variant": "clean",
+      "decision": "FLAG_FOR_REVIEW",
+      "finding_codes": [
+        "AMOUNT_EXCEEDS_BALANCE"
+      ],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-066",
+      "ground_truth": "legitimate",
+      "variant": "harmless_formatting",
+      "decision": "FLAG_FOR_REVIEW",
+      "finding_codes": [
+        "AMOUNT_EXCEEDS_BALANCE"
+      ],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-067",
+      "ground_truth": "legitimate",
+      "variant": "high_cost",
+      "decision": "FLAG_FOR_REVIEW",
+      "finding_codes": [
+        "AMOUNT_EXCEEDS_BALANCE"
+      ],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-072",
+      "ground_truth": "borderline",
+      "variant": "provisional",
+      "decision": "FLAG_FOR_REVIEW",
+      "finding_codes": [
+        "AMOUNT_EXCEEDS_BALANCE",
+        "DOCUMENT_NOT_FINAL"
+      ],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-078",
+      "ground_truth": "fraudulent",
+      "variant": "consistent_fabricated",
+      "decision": "APPROVED",
+      "finding_codes": [],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-102",
+      "ground_truth": "fraudulent",
+      "variant": "consistent_fabricated",
+      "decision": "APPROVED",
+      "finding_codes": [],
+      "unmet": []
+    },
+    {
+      "case_id": "DV2-115",
+      "ground_truth": "legitimate",
+      "variant": "missing_required",
+      "decision": "NEEDS_MORE_INFORMATION",
+      "finding_codes": [],
+      "unmet": [
+        "cost_evidence",
+        "itemised_budget"
+      ]
+    },
+    {
+      "case_id": "DV2-118",
+      "ground_truth": "fraudulent",
+      "variant": "thin_evidence",
+      "decision": "NEEDS_MORE_INFORMATION",
+      "finding_codes": [],
+      "unmet": [
+        "cost_evidence",
+        "organisation_identity",
+        "itemised_budget",
+        "institution_named"
+      ]
+    }
+  ],
+  "reproducibility": {
+    "python": "3.9.6",
+    "engine_version": "sevafund-development-candidate-v2.0",
+    "config": {
+      "enable_cross_document": true,
+      "enable_category": true,
+      "enable_semantic": true,
+      "flag_confidence": 0.6,
+      "reject_confidence": 0.8,
+      "amount_tolerance": 0.1,
+      "amount_material_ratio": 1.5,
+      "future_grace_days": 1,
+      "lapsed_deadline_days": 120,
+      "stale_document_days": 540,
+      "min_traceability": 2
+    },
+    "config_digest": "2ac4e448f21d1983",
+    "v2_package": {
+      "files": {
+        "__init__.py": "d9fe21d044c591c32009a6085bc7fcdd4ba1062b6d0db0ec385157f26b57b86f",
+        "audit.py": "ecceea9d807b5324f5be4f508ca74c91a7c4e86b92b07a49949910ebc958180e",
+        "category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+        "config.py": "64183f6dd1d43389ec703c440f7d3e32712c3d316df0641f4fa33fb763926bdc",
+        "consistency.py": "b99a99feb5238ebc04fc4e7ce52923306c8176f20219fb2ffee1acd7b1caf663",
+        "decision.py": "31d0be642c6733388259e63c4b6faae25e177b023b571418b23bbf889c2f9252",
+        "engine.py": "b1cbd655d230c70289b9887baaa92fa0476785f534270688c714830ec561932b",
+        "extraction.py": "d7d41933f0e41f8ee055a29ae6184d5b6a2ed266cd8a7946f72fa1c4661242ee",
+        "money.py": "b23903cc81065d098a2c1ae38b99cc6a73664849ed9892d7509c62422daa5e03",
+        "normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+        "schemas.py": "928523f2b05017ab9566d546a9d6a6af31955c7119e7c69e3d5ce8699edd8e36",
+        "semantic.py": "69fc99590098d1a16d1a193a1ec98764dfae74cf38c28228ebc21842d340315b"
+      },
+      "combined": "a054be91b210c9e22cbc2965e8978a6fda9b07ff10f1893aecc872ba04be6fc6"
+    },
+    "matches_freeze_manifest": true,
+    "candidate_v1_sha256": "f6bba947d5ec1202502ece19e02fdf24b93cdb623a12a59d6eced670118e4eec",
+    "baseline_verifier_sha256": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+    "fraud_rules_sha256": "f47e641743d1d66272cf36d6bfa2053245bbf2b68bf15b19075fab41cf97279f",
+    "rag_sha256": "95b14980be44fd6b658cd4025a0c24a90447a53fb212f42cede257b2f4f71309",
+    "generator_sha256": "3433dde0268fa083f6b9606320a2d592445037e34ddcd5a7736f1b40c764c41a",
+    "runner_sha256": "e5c44b6631c8cba95dda0196f723871ecbeac30956310d52e3ea5f0b92775564",
+    "perturbations_sha256": "986a2560c401c90126406ee2acdfef286e04ca1aa241ecf84a3453ed7effe97c"
+  },
+  "interpretation": "Synthetic development corpus authored together with the candidate. Results show behaviour on these scenario designs only and are not estimates of real-world accuracy.",
+  "v1_error_types": {
+    "ValueError": 12
+  }
+}

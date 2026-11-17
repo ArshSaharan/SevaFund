@@ -3,6 +3,11 @@
 .env.local
 .env.*.local
 *.env
+.env.*
+!.env.example
+
+# Uploaded beneficiary documents (private; never commit)
+uploads/
 
 # SQLite Databases & Local Data
 *.db
@@ -70,3 +75,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# SQLite journal / shared-memory files (the databases themselves are ignored above)
+*.sqlite3-shm
+*.sqlite3-wal
+*.db-shm
+*.db-wal
+*.db-journal

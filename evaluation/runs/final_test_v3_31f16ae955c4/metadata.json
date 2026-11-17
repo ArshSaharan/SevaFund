@@ -1,0 +1,52 @@
+{
+  "api_calls": 0,
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "effect": "One V2 case evaluated; no predictions persisted.",
+      "error": "KeyError: 'split' in shared case serializer",
+      "status": "aborted_before_pair_completion"
+    },
+    {
+      "attempt": 2,
+      "effect": "All 300 V2 and 300 V3 case predictions persisted; CSV/report recovery followed without verifier calls.",
+      "error": "ValueError: CSV fields omitted split and information_request_count",
+      "status": "paired_predictions_persisted_export_failed"
+    },
+    {
+      "attempt": 3,
+      "effect": "Recomputed aggregate metrics and wrote complete CSV/report without running either engine.",
+      "status": "artifacts_finalized_from_saved_predictions"
+    }
+  ],
+  "authorship": "single project author; no independent authorship or human adjudication",
+  "commands": [
+    "./.venv/bin/python -B evaluation/verify_candidate_v3_freeze.py",
+    "./.venv/bin/python -B evaluation/evaluate_final_test_v3.py",
+    "./.venv/bin/python -B evaluation/finalize_final_test_v3.py"
+  ],
+  "completed_paired_evaluations": 1,
+  "config_digest": "b6607c134cebf4ea",
+  "config_sha256": "3835a9c2e20bd30e079664ca775b22f1becf25176ad2b85e4c9bd14598bfc9e9",
+  "created_utc": "2026-11-16T10:11:06.299344+00:00",
+  "dependencies": {
+    "pydantic": "2.13.5",
+    "pytest": "8.4.2"
+  },
+  "execution_count": 2,
+  "final_dataset": "evaluation/final_test_scenarios_v3.jsonl",
+  "final_dataset_rows": 300,
+  "final_dataset_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+  "finalizer_sha256": "005c2de2220723e7ba2e6cbc42a623bc615b89610937a3a46f5819e27e5bbbdf",
+  "frozen_engine_version": "sevafund-development-candidate-v3.0",
+  "generator_sha256": "c1eb37b825e42f7ddfef450a655d78e06a8e20c264d29385ea6811a285e4ea08",
+  "python": "3.9.6",
+  "rag": "none; offline full document text",
+  "result_finalization": "Derived metrics, CSV and report from persisted paired predictions; no verifier execution.",
+  "runner_sha256": "4e5c36440a63e330d140f5b7fb63106cb795de9d104c00aeb1ae017598f997cd",
+  "scenario_families": 30,
+  "synthetic": true,
+  "v2_package_sha256": "a054be91b210c9e22cbc2965e8978a6fda9b07ff10f1893aecc872ba04be6fc6",
+  "v3_freeze_manifest_sha256": "c984647adef5cb89aec61f00c056bd941d49ecbc86f92fbe4316a43b7713e183",
+  "v3_package_sha256": "ba1b045e8b9d594891b6aaa4ac8c55b1758f48007a9d0261b177788f2363a7cd"
+}

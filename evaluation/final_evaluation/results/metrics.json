@@ -1,0 +1,1417 @@
+{
+  "meta": {
+    "api_calls": 0,
+    "gemini_failures": 4,
+    "gemini_script": {
+      "approve": 28,
+      "failure": 4,
+      "flag": 10,
+      "flag_unquoted": 4,
+      "nmi": 14
+    },
+    "hybrid_v4_policy": "hybrid-v4-dev-1",
+    "hybrid_v4_settings_digest": "a4f5b7e7ae280dc4",
+    "label": "DEVELOPER-DESIGNED SYNTHETIC EVALUATION - NOT INDEPENDENT VALIDATION. Gemini responses are scripted; external confirmations are simulated and do not show that real-world verification works.",
+    "network_connections_attempted": 0,
+    "scenarios": 60,
+    "scenarios_sha256": "f09a77af9f019efde10ccd8f13bf07500bc4dd672c7c4528677602b98a78eb6c",
+    "strata": {
+      "BC": 10,
+      "FD": 15,
+      "FS": 10,
+      "LC": 15,
+      "LI": 10
+    },
+    "systems": {
+      "hybrid_v2": "frozen hybrid v2 (development_gemini_verification); frozen workflow",
+      "hybrid_v3": "frozen hybrid v3 (development_hybrid_v3); frozen workflow",
+      "hybrid_v4": "hybrid v4 (development_hybrid_v4); four-check workflow with assisted route",
+      "v3_frozen": "frozen V3 (development_verifier_v3) alone; frozen workflow"
+    }
+  },
+  "metrics": {
+    "hybrid_v2": {
+      "activations_failing_activation_recheck": {
+        "count": 0,
+        "n": 17,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          18.4
+        ]
+      },
+      "activations_without_independent_amount_confirmation": {
+        "count": 17,
+        "n": 17,
+        "percent": 100.0,
+        "wilson95": [
+          81.6,
+          100.0
+        ]
+      },
+      "assisted_route_taken": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "borderline_activated_simulated": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "borderline_provisionally_approved": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "decisions_by_stratum": {
+        "BC": {
+          "APPROVED": 2,
+          "FLAG_FOR_REVIEW": 6,
+          "NEEDS_MORE_INFORMATION": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "FD": {
+          "APPROVED": 1,
+          "FLAG_FOR_REVIEW": 11,
+          "NEEDS_MORE_INFORMATION": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "FS": {
+          "APPROVED": 7,
+          "FLAG_FOR_REVIEW": 2,
+          "NEEDS_MORE_INFORMATION": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "LC": {
+          "APPROVED": 10,
+          "FLAG_FOR_REVIEW": 3,
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "LI": {
+          "APPROVED": 1,
+          "FLAG_FOR_REVIEW": 2,
+          "NEEDS_MORE_INFORMATION": 6,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        }
+      },
+      "explanations": {
+        "decisions_with_reason": {
+          "count": 60,
+          "n": 60,
+          "percent": 100.0,
+          "wilson95": [
+            94.0,
+            100.0
+          ]
+        },
+        "detections_with_document_evidence": {
+          "count": 0,
+          "n": 24,
+          "percent": 0.0,
+          "wilson95": [
+            0.0,
+            13.8
+          ]
+        },
+        "detections_with_review_basis": {
+          "count": 0,
+          "n": 24,
+          "percent": 0.0,
+          "wilson95": [
+            0.0,
+            13.8
+          ]
+        },
+        "tamper_evident_audit_log": {
+          "count": 0,
+          "n": 60,
+          "percent": 0.0,
+          "wilson95": [
+            0.0,
+            6.0
+          ]
+        }
+      },
+      "false_positive_cases": [
+        "FE-LC-MED-01",
+        "FE-LC-MED-05",
+        "FE-LC-EDU-01",
+        "FE-LI-EDU-02",
+        "FE-LI-MED-04"
+      ],
+      "false_positives_all_legitimate": {
+        "count": 5,
+        "n": 25,
+        "percent": 20.0,
+        "wilson95": [
+          8.9,
+          39.1
+        ]
+      },
+      "false_positives_complete": {
+        "count": 3,
+        "n": 15,
+        "percent": 20.0,
+        "wilson95": [
+          7.0,
+          45.2
+        ]
+      },
+      "false_positives_incomplete": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "fraud_activated_cases": [
+        "FE-FS-MED-02",
+        "FE-FS-EDU-02",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_activated_simulated": {
+        "count": 4,
+        "n": 25,
+        "percent": 16.0,
+        "wilson95": [
+          6.4,
+          34.6
+        ]
+      },
+      "fraud_detected_all": {
+        "count": 13,
+        "n": 25,
+        "percent": 52.0,
+        "wilson95": [
+          33.5,
+          70.0
+        ]
+      },
+      "fraud_detected_detectable": {
+        "count": 11,
+        "n": 15,
+        "percent": 73.3,
+        "wilson95": [
+          48.0,
+          89.1
+        ]
+      },
+      "fraud_detected_sophisticated": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "fraud_held_before_activation_simulated": {
+        "count": 21,
+        "n": 25,
+        "percent": 84.0,
+        "wilson95": [
+          65.3,
+          93.6
+        ]
+      },
+      "fraud_missed_cases": [
+        "FE-FD-MED-02",
+        "FE-FD-MED-05",
+        "FE-FD-EDU-05",
+        "FE-FD-COM-04",
+        "FE-FS-MED-01",
+        "FE-FS-MED-02",
+        "FE-FS-MED-04",
+        "FE-FS-EDU-01",
+        "FE-FS-EDU-02",
+        "FE-FS-EDU-03",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_provisionally_approved": {
+        "count": 8,
+        "n": 25,
+        "percent": 32.0,
+        "wilson95": [
+          17.2,
+          51.6
+        ]
+      },
+      "genuine_but_informal_activated_simulated": {
+        "count": 1,
+        "n": 5,
+        "percent": 20.0,
+        "wilson95": [
+          3.6,
+          62.5
+        ]
+      },
+      "incomplete_provisionally_approved": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "information_requests_all": {
+        "count": 11,
+        "n": 60,
+        "percent": 18.3,
+        "wilson95": [
+          10.6,
+          29.9
+        ]
+      },
+      "information_requests_legitimate_complete": {
+        "count": 1,
+        "n": 15,
+        "percent": 6.7,
+        "wilson95": [
+          1.2,
+          29.8
+        ]
+      },
+      "information_requests_legitimate_incomplete": {
+        "count": 6,
+        "n": 10,
+        "percent": 60.0,
+        "wilson95": [
+          31.3,
+          83.2
+        ]
+      },
+      "legitimate_complete_activated_simulated": {
+        "count": 10,
+        "n": 15,
+        "percent": 66.7,
+        "wilson95": [
+          41.7,
+          84.8
+        ]
+      },
+      "legitimate_complete_approved": {
+        "count": 10,
+        "n": 15,
+        "percent": 66.7,
+        "wilson95": [
+          41.7,
+          84.8
+        ]
+      },
+      "legitimate_incomplete_activated_simulated": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "manual_reviews_at_confirmation_simulated": {
+        "cases": [
+          "FE-FD-EDU-05",
+          "FE-FS-MED-01",
+          "FE-FS-EDU-01"
+        ],
+        "count": 3
+      },
+      "manual_reviews_automated": {
+        "count": 24,
+        "n": 60,
+        "percent": 40.0,
+        "wilson95": [
+          28.6,
+          52.6
+        ]
+      },
+      "rejections": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "rejections_without_v3_rejection": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "verification_failures": {
+        "count": 4,
+        "n": 60,
+        "percent": 6.7,
+        "wilson95": [
+          2.6,
+          15.9
+        ]
+      }
+    },
+    "hybrid_v3": {
+      "activations_failing_activation_recheck": {
+        "count": 0,
+        "n": 17,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          18.4
+        ]
+      },
+      "activations_without_independent_amount_confirmation": {
+        "count": 17,
+        "n": 17,
+        "percent": 100.0,
+        "wilson95": [
+          81.6,
+          100.0
+        ]
+      },
+      "assisted_route_taken": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "borderline_activated_simulated": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "borderline_provisionally_approved": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "decisions_by_stratum": {
+        "BC": {
+          "APPROVED": 1,
+          "FLAG_FOR_REVIEW": 6,
+          "NEEDS_MORE_INFORMATION": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "FD": {
+          "APPROVED": 1,
+          "FLAG_FOR_REVIEW": 12,
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "FS": {
+          "APPROVED": 7,
+          "FLAG_FOR_REVIEW": 2,
+          "NEEDS_MORE_INFORMATION": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "LC": {
+          "APPROVED": 12,
+          "FLAG_FOR_REVIEW": 1,
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "LI": {
+          "APPROVED": 0,
+          "FLAG_FOR_REVIEW": 2,
+          "NEEDS_MORE_INFORMATION": 7,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        }
+      },
+      "explanations": {
+        "decisions_with_reason": {
+          "count": 60,
+          "n": 60,
+          "percent": 100.0,
+          "wilson95": [
+            94.0,
+            100.0
+          ]
+        },
+        "detections_with_document_evidence": {
+          "count": 3,
+          "n": 23,
+          "percent": 13.0,
+          "wilson95": [
+            4.5,
+            32.1
+          ]
+        },
+        "detections_with_review_basis": {
+          "count": 23,
+          "n": 23,
+          "percent": 100.0,
+          "wilson95": [
+            85.7,
+            100.0
+          ]
+        },
+        "tamper_evident_audit_log": {
+          "count": 0,
+          "n": 60,
+          "percent": 0.0,
+          "wilson95": [
+            0.0,
+            6.0
+          ]
+        }
+      },
+      "false_positive_cases": [
+        "FE-LC-MED-05",
+        "FE-LI-EDU-02",
+        "FE-LI-MED-04"
+      ],
+      "false_positives_all_legitimate": {
+        "count": 3,
+        "n": 25,
+        "percent": 12.0,
+        "wilson95": [
+          4.2,
+          30.0
+        ]
+      },
+      "false_positives_complete": {
+        "count": 1,
+        "n": 15,
+        "percent": 6.7,
+        "wilson95": [
+          1.2,
+          29.8
+        ]
+      },
+      "false_positives_incomplete": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "fraud_activated_cases": [
+        "FE-FS-MED-02",
+        "FE-FS-EDU-02",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_activated_simulated": {
+        "count": 4,
+        "n": 25,
+        "percent": 16.0,
+        "wilson95": [
+          6.4,
+          34.6
+        ]
+      },
+      "fraud_detected_all": {
+        "count": 14,
+        "n": 25,
+        "percent": 56.0,
+        "wilson95": [
+          37.1,
+          73.3
+        ]
+      },
+      "fraud_detected_detectable": {
+        "count": 12,
+        "n": 15,
+        "percent": 80.0,
+        "wilson95": [
+          54.8,
+          93.0
+        ]
+      },
+      "fraud_detected_sophisticated": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "fraud_held_before_activation_simulated": {
+        "count": 21,
+        "n": 25,
+        "percent": 84.0,
+        "wilson95": [
+          65.3,
+          93.6
+        ]
+      },
+      "fraud_missed_cases": [
+        "FE-FD-MED-02",
+        "FE-FD-EDU-05",
+        "FE-FD-COM-04",
+        "FE-FS-MED-01",
+        "FE-FS-MED-02",
+        "FE-FS-MED-04",
+        "FE-FS-EDU-01",
+        "FE-FS-EDU-02",
+        "FE-FS-EDU-03",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_provisionally_approved": {
+        "count": 8,
+        "n": 25,
+        "percent": 32.0,
+        "wilson95": [
+          17.2,
+          51.6
+        ]
+      },
+      "genuine_but_informal_activated_simulated": {
+        "count": 0,
+        "n": 5,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          43.5
+        ]
+      },
+      "incomplete_provisionally_approved": {
+        "count": 0,
+        "n": 10,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          27.8
+        ]
+      },
+      "information_requests_all": {
+        "count": 12,
+        "n": 60,
+        "percent": 20.0,
+        "wilson95": [
+          11.8,
+          31.8
+        ]
+      },
+      "information_requests_legitimate_complete": {
+        "count": 1,
+        "n": 15,
+        "percent": 6.7,
+        "wilson95": [
+          1.2,
+          29.8
+        ]
+      },
+      "information_requests_legitimate_incomplete": {
+        "count": 7,
+        "n": 10,
+        "percent": 70.0,
+        "wilson95": [
+          39.7,
+          89.2
+        ]
+      },
+      "legitimate_complete_activated_simulated": {
+        "count": 12,
+        "n": 15,
+        "percent": 80.0,
+        "wilson95": [
+          54.8,
+          93.0
+        ]
+      },
+      "legitimate_complete_approved": {
+        "count": 12,
+        "n": 15,
+        "percent": 80.0,
+        "wilson95": [
+          54.8,
+          93.0
+        ]
+      },
+      "legitimate_incomplete_activated_simulated": {
+        "count": 0,
+        "n": 10,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          27.8
+        ]
+      },
+      "manual_reviews_at_confirmation_simulated": {
+        "cases": [
+          "FE-FD-EDU-05",
+          "FE-FS-MED-01",
+          "FE-FS-EDU-01"
+        ],
+        "count": 3
+      },
+      "manual_reviews_automated": {
+        "count": 23,
+        "n": 60,
+        "percent": 38.3,
+        "wilson95": [
+          27.1,
+          51.0
+        ]
+      },
+      "rejections": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "rejections_without_v3_rejection": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "verification_failures": {
+        "count": 4,
+        "n": 60,
+        "percent": 6.7,
+        "wilson95": [
+          2.6,
+          15.9
+        ]
+      }
+    },
+    "hybrid_v4": {
+      "activations_failing_activation_recheck": {
+        "count": 0,
+        "n": 19,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          16.8
+        ]
+      },
+      "activations_without_independent_amount_confirmation": {
+        "count": 0,
+        "n": 19,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          16.8
+        ]
+      },
+      "assisted_route_taken": {
+        "count": 7,
+        "n": 60,
+        "percent": 11.7,
+        "wilson95": [
+          5.8,
+          22.2
+        ]
+      },
+      "borderline_activated_simulated": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "borderline_provisionally_approved": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "decisions_by_stratum": {
+        "BC": {
+          "APPROVED": 1,
+          "FLAG_FOR_REVIEW": 6,
+          "NEEDS_MORE_INFORMATION": 3,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "FD": {
+          "APPROVED": 0,
+          "FLAG_FOR_REVIEW": 14,
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "FS": {
+          "APPROVED": 7,
+          "FLAG_FOR_REVIEW": 2,
+          "NEEDS_MORE_INFORMATION": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "LC": {
+          "APPROVED": 12,
+          "FLAG_FOR_REVIEW": 1,
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        },
+        "LI": {
+          "APPROVED": 0,
+          "FLAG_FOR_REVIEW": 2,
+          "NEEDS_MORE_INFORMATION": 7,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 1
+        }
+      },
+      "explanations": {
+        "decisions_with_reason": {
+          "count": 60,
+          "n": 60,
+          "percent": 100.0,
+          "wilson95": [
+            94.0,
+            100.0
+          ]
+        },
+        "detections_with_document_evidence": {
+          "count": 23,
+          "n": 25,
+          "percent": 92.0,
+          "wilson95": [
+            75.0,
+            97.8
+          ]
+        },
+        "detections_with_review_basis": {
+          "count": 25,
+          "n": 25,
+          "percent": 100.0,
+          "wilson95": [
+            86.7,
+            100.0
+          ]
+        },
+        "tamper_evident_audit_log": {
+          "count": 60,
+          "n": 60,
+          "percent": 100.0,
+          "wilson95": [
+            94.0,
+            100.0
+          ]
+        }
+      },
+      "false_positive_cases": [
+        "FE-LC-MED-05",
+        "FE-LI-EDU-02",
+        "FE-LI-MED-04"
+      ],
+      "false_positives_all_legitimate": {
+        "count": 3,
+        "n": 25,
+        "percent": 12.0,
+        "wilson95": [
+          4.2,
+          30.0
+        ]
+      },
+      "false_positives_complete": {
+        "count": 1,
+        "n": 15,
+        "percent": 6.7,
+        "wilson95": [
+          1.2,
+          29.8
+        ]
+      },
+      "false_positives_incomplete": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "fraud_activated_cases": [
+        "FE-FS-COM-03"
+      ],
+      "fraud_activated_simulated": {
+        "count": 1,
+        "n": 25,
+        "percent": 4.0,
+        "wilson95": [
+          0.7,
+          19.5
+        ]
+      },
+      "fraud_detected_all": {
+        "count": 16,
+        "n": 25,
+        "percent": 64.0,
+        "wilson95": [
+          44.5,
+          79.8
+        ]
+      },
+      "fraud_detected_detectable": {
+        "count": 14,
+        "n": 15,
+        "percent": 93.3,
+        "wilson95": [
+          70.2,
+          98.8
+        ]
+      },
+      "fraud_detected_sophisticated": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "fraud_held_before_activation_simulated": {
+        "count": 24,
+        "n": 25,
+        "percent": 96.0,
+        "wilson95": [
+          80.5,
+          99.3
+        ]
+      },
+      "fraud_missed_cases": [
+        "FE-FD-MED-02",
+        "FE-FS-MED-01",
+        "FE-FS-MED-02",
+        "FE-FS-MED-04",
+        "FE-FS-EDU-01",
+        "FE-FS-EDU-02",
+        "FE-FS-EDU-03",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_provisionally_approved": {
+        "count": 7,
+        "n": 25,
+        "percent": 28.0,
+        "wilson95": [
+          14.3,
+          47.6
+        ]
+      },
+      "genuine_but_informal_activated_simulated": {
+        "count": 4,
+        "n": 5,
+        "percent": 80.0,
+        "wilson95": [
+          37.5,
+          96.4
+        ]
+      },
+      "incomplete_provisionally_approved": {
+        "count": 0,
+        "n": 10,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          27.8
+        ]
+      },
+      "information_requests_all": {
+        "count": 12,
+        "n": 60,
+        "percent": 20.0,
+        "wilson95": [
+          11.8,
+          31.8
+        ]
+      },
+      "information_requests_legitimate_complete": {
+        "count": 1,
+        "n": 15,
+        "percent": 6.7,
+        "wilson95": [
+          1.2,
+          29.8
+        ]
+      },
+      "information_requests_legitimate_incomplete": {
+        "count": 7,
+        "n": 10,
+        "percent": 70.0,
+        "wilson95": [
+          39.7,
+          89.2
+        ]
+      },
+      "legitimate_complete_activated_simulated": {
+        "count": 11,
+        "n": 15,
+        "percent": 73.3,
+        "wilson95": [
+          48.0,
+          89.1
+        ]
+      },
+      "legitimate_complete_approved": {
+        "count": 12,
+        "n": 15,
+        "percent": 80.0,
+        "wilson95": [
+          54.8,
+          93.0
+        ]
+      },
+      "legitimate_incomplete_activated_simulated": {
+        "count": 6,
+        "n": 10,
+        "percent": 60.0,
+        "wilson95": [
+          31.3,
+          83.2
+        ]
+      },
+      "manual_reviews_at_confirmation_simulated": {
+        "cases": [
+          "FE-FS-MED-01",
+          "FE-FS-MED-02",
+          "FE-FS-EDU-01",
+          "FE-FS-EDU-02",
+          "FE-FS-COM-02",
+          "FE-BC-MED-03"
+        ],
+        "count": 6
+      },
+      "manual_reviews_automated": {
+        "count": 25,
+        "n": 60,
+        "percent": 41.7,
+        "wilson95": [
+          30.1,
+          54.3
+        ]
+      },
+      "rejections": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "rejections_without_v3_rejection": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "verification_failures": {
+        "count": 3,
+        "n": 60,
+        "percent": 5.0,
+        "wilson95": [
+          1.7,
+          13.7
+        ]
+      }
+    },
+    "v3_frozen": {
+      "activations_failing_activation_recheck": {
+        "count": 0,
+        "n": 30,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          11.3
+        ]
+      },
+      "activations_without_independent_amount_confirmation": {
+        "count": 30,
+        "n": 30,
+        "percent": 100.0,
+        "wilson95": [
+          88.6,
+          100.0
+        ]
+      },
+      "assisted_route_taken": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "borderline_activated_simulated": {
+        "count": 4,
+        "n": 10,
+        "percent": 40.0,
+        "wilson95": [
+          16.8,
+          68.7
+        ]
+      },
+      "borderline_provisionally_approved": {
+        "count": 5,
+        "n": 10,
+        "percent": 50.0,
+        "wilson95": [
+          23.7,
+          76.3
+        ]
+      },
+      "decisions_by_stratum": {
+        "BC": {
+          "APPROVED": 5,
+          "FLAG_FOR_REVIEW": 4,
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "FD": {
+          "APPROVED": 5,
+          "FLAG_FOR_REVIEW": 8,
+          "NEEDS_MORE_INFORMATION": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "FS": {
+          "APPROVED": 9,
+          "FLAG_FOR_REVIEW": 1,
+          "NEEDS_MORE_INFORMATION": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "LC": {
+          "APPROVED": 14,
+          "FLAG_FOR_REVIEW": 1,
+          "NEEDS_MORE_INFORMATION": 0,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        },
+        "LI": {
+          "APPROVED": 7,
+          "FLAG_FOR_REVIEW": 1,
+          "NEEDS_MORE_INFORMATION": 2,
+          "REJECTED": 0,
+          "VERIFICATION_ERROR": 0
+        }
+      },
+      "explanations": {
+        "decisions_with_reason": {
+          "count": 60,
+          "n": 60,
+          "percent": 100.0,
+          "wilson95": [
+            94.0,
+            100.0
+          ]
+        },
+        "detections_with_document_evidence": {
+          "count": 15,
+          "n": 15,
+          "percent": 100.0,
+          "wilson95": [
+            79.6,
+            100.0
+          ]
+        },
+        "detections_with_review_basis": {
+          "count": 0,
+          "n": 15,
+          "percent": 0.0,
+          "wilson95": [
+            0.0,
+            20.4
+          ]
+        },
+        "tamper_evident_audit_log": {
+          "count": 0,
+          "n": 60,
+          "percent": 0.0,
+          "wilson95": [
+            0.0,
+            6.0
+          ]
+        }
+      },
+      "false_positive_cases": [
+        "FE-LC-MED-01",
+        "FE-LI-MED-04"
+      ],
+      "false_positives_all_legitimate": {
+        "count": 2,
+        "n": 25,
+        "percent": 8.0,
+        "wilson95": [
+          2.2,
+          25.0
+        ]
+      },
+      "false_positives_complete": {
+        "count": 1,
+        "n": 15,
+        "percent": 6.7,
+        "wilson95": [
+          1.2,
+          29.8
+        ]
+      },
+      "false_positives_incomplete": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "fraud_activated_cases": [
+        "FE-FS-MED-02",
+        "FE-FS-MED-03",
+        "FE-FS-EDU-02",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_activated_simulated": {
+        "count": 5,
+        "n": 25,
+        "percent": 20.0,
+        "wilson95": [
+          8.9,
+          39.1
+        ]
+      },
+      "fraud_detected_all": {
+        "count": 9,
+        "n": 25,
+        "percent": 36.0,
+        "wilson95": [
+          20.2,
+          55.5
+        ]
+      },
+      "fraud_detected_detectable": {
+        "count": 8,
+        "n": 15,
+        "percent": 53.3,
+        "wilson95": [
+          30.1,
+          75.2
+        ]
+      },
+      "fraud_detected_sophisticated": {
+        "count": 1,
+        "n": 10,
+        "percent": 10.0,
+        "wilson95": [
+          1.8,
+          40.4
+        ]
+      },
+      "fraud_held_before_activation_simulated": {
+        "count": 20,
+        "n": 25,
+        "percent": 80.0,
+        "wilson95": [
+          60.9,
+          91.1
+        ]
+      },
+      "fraud_missed_cases": [
+        "FE-FD-MED-02",
+        "FE-FD-MED-05",
+        "FE-FD-MED-06",
+        "FE-FD-EDU-01",
+        "FE-FD-EDU-04",
+        "FE-FD-EDU-05",
+        "FE-FD-COM-04",
+        "FE-FS-MED-01",
+        "FE-FS-MED-02",
+        "FE-FS-MED-03",
+        "FE-FS-MED-04",
+        "FE-FS-EDU-01",
+        "FE-FS-EDU-02",
+        "FE-FS-EDU-03",
+        "FE-FS-COM-02",
+        "FE-FS-COM-03"
+      ],
+      "fraud_provisionally_approved": {
+        "count": 14,
+        "n": 25,
+        "percent": 56.0,
+        "wilson95": [
+          37.1,
+          73.3
+        ]
+      },
+      "genuine_but_informal_activated_simulated": {
+        "count": 4,
+        "n": 5,
+        "percent": 80.0,
+        "wilson95": [
+          37.5,
+          96.4
+        ]
+      },
+      "incomplete_provisionally_approved": {
+        "count": 7,
+        "n": 10,
+        "percent": 70.0,
+        "wilson95": [
+          39.7,
+          89.2
+        ]
+      },
+      "information_requests_all": {
+        "count": 5,
+        "n": 60,
+        "percent": 8.3,
+        "wilson95": [
+          3.6,
+          18.1
+        ]
+      },
+      "information_requests_legitimate_complete": {
+        "count": 0,
+        "n": 15,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          20.4
+        ]
+      },
+      "information_requests_legitimate_incomplete": {
+        "count": 2,
+        "n": 10,
+        "percent": 20.0,
+        "wilson95": [
+          5.7,
+          51.0
+        ]
+      },
+      "legitimate_complete_activated_simulated": {
+        "count": 14,
+        "n": 15,
+        "percent": 93.3,
+        "wilson95": [
+          70.2,
+          98.8
+        ]
+      },
+      "legitimate_complete_approved": {
+        "count": 14,
+        "n": 15,
+        "percent": 93.3,
+        "wilson95": [
+          70.2,
+          98.8
+        ]
+      },
+      "legitimate_incomplete_activated_simulated": {
+        "count": 7,
+        "n": 10,
+        "percent": 70.0,
+        "wilson95": [
+          39.7,
+          89.2
+        ]
+      },
+      "manual_reviews_at_confirmation_simulated": {
+        "cases": [
+          "FE-FD-MED-05",
+          "FE-FD-EDU-01",
+          "FE-FD-EDU-04",
+          "FE-FD-EDU-05",
+          "FE-FD-COM-04",
+          "FE-FS-MED-01",
+          "FE-FS-EDU-01",
+          "FE-FS-EDU-03"
+        ],
+        "count": 8
+      },
+      "manual_reviews_automated": {
+        "count": 15,
+        "n": 60,
+        "percent": 25.0,
+        "wilson95": [
+          15.8,
+          37.2
+        ]
+      },
+      "rejections": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "rejections_without_v3_rejection": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      },
+      "verification_failures": {
+        "count": 0,
+        "n": 60,
+        "percent": 0.0,
+        "wilson95": [
+          0.0,
+          6.0
+        ]
+      }
+    }
+  }
+}

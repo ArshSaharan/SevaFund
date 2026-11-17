@@ -1,9 +1,11 @@
 import pytest
 from app.models.user import User
 
-def test_google_auth_flow(client, db_session):
-    # 1. Authenticate with Google ID token (using simulated dev token)
-    res = client.post("/api/auth/google", json={"id_token": "mock_google_ananya_sharma"})
+
+def test_google_auth_flow(client, db_session, google_signer):
+    # 1. Authenticate with a Google ID token signed by the isolated test signer and verified by google-auth
+    token_in = google_signer.token(email="ananya@gmail.com", sub="google-sub-ananya")
+    res = client.post("/api/auth/google", json={"id_token": token_in})
     assert res.status_code == 200
     data = res.json()
     assert "access_token" in data
@@ -14,7 +16,8 @@ def test_google_auth_flow(client, db_session):
     assert user_info["is_identity_verified"] is True
 
     # 2. Re-authenticating with the same Google ID logs into the existing user
-    res2 = client.post("/api/auth/google", json={"id_token": "mock_google_ananya_sharma"})
+    res2 = client.post("/api/auth/google", json={"id_token": google_signer.token(email="ananya@gmail.com",
+                                                                                sub="google-sub-ananya")})
     assert res2.status_code == 200
     assert res2.json()["user"]["id"] == user_info["id"]
 
@@ -24,7 +27,20 @@ def test_google_auth_flow(client, db_session):
     assert me_res.status_code == 200
     assert me_res.json()["email"] == "ananya@gmail.com"
 
-def test_indian_mobile_otp_flow(client, db_session):
+@pytest.fixture
+def sms_outbox(monkeypatch):
+    """Isolated SMS provider: captures codes instead of sending them (the API never returns the code)."""
+    sent = {}
+
+    async def fake_send(phone_number, otp_code):
+        sent[phone_number] = otp_code
+        return {"success": True, "provider": "TEST_SMS"}
+    import app.services.sms_service as sms_service
+    monkeypatch.setattr(sms_service, "send_real_sms_otp", fake_send)
+    return sent
+
+
+def test_indian_mobile_otp_flow(client, db_session, sms_outbox):
     phone = "9876543210"
 
     # 1. Invalid phone format check
@@ -32,12 +48,13 @@ def test_indian_mobile_otp_flow(client, db_session):
     assert invalid_res.status_code == 400
     assert "Invalid Indian mobile number" in invalid_res.json()["detail"]
 
-    # 2. Send valid OTP
+    # 2. Send valid OTP: delivered by SMS only, never returned in the response
     send_res = client.post("/api/auth/otp/send", json={"phone_number": phone})
     assert send_res.status_code == 200
     send_data = send_res.json()
     assert send_data["phone_number"] == "+919876543210"
-    otp_code = send_data["dev_otp"]
+    assert send_data["dev_otp"] is None
+    otp_code = sms_outbox["+919876543210"]
     assert len(otp_code) == 6
 
     # 3. Failed OTP attempt check
@@ -67,7 +84,7 @@ def test_indian_mobile_otp_flow(client, db_session):
     assert me_res.status_code == 200
     assert me_res.json()["phone_number"] == "+919876543210"
 
-def test_otp_rate_limiting(client, db_session):
+def test_otp_rate_limiting(client, db_session, sms_outbox):
     rate_test_phone = "9811122233"
     # Send 3 OTPs (within allowed limit)
     for _ in range(3):
@@ -79,7 +96,7 @@ def test_otp_rate_limiting(client, db_session):
     assert blocked_res.status_code == 429
     assert "Too many OTP requests" in blocked_res.json()["detail"]
 
-def test_admin_promotion_and_security_headers(client, db_session):
+def test_admin_promotion_and_security_headers(client, db_session, make_user):
     # 1. Register a regular user
     reg_res = client.post("/api/auth/register", json={
         "email": "candidate@example.com",
@@ -94,12 +111,16 @@ def test_admin_promotion_and_security_headers(client, db_session):
     forbidden_res = client.get("/api/admin/flagged", headers={"Authorization": f"Bearer {user_token}"})
     assert forbidden_res.status_code == 403
 
-    # 3. Promote user to admin with platform secret key
+    # 3. The candidate cannot promote itself, even when presenting the platform signing key
     from app.config import settings
-    promote_res = client.post("/api/auth/promote-admin", json={
-        "user_id": user_id,
-        "secret_key": settings.SECRET_KEY
-    })
+    self_res = client.post("/api/auth/promote-admin", headers={"Authorization": f"Bearer {user_token}"},
+                           json={"user_id": user_id, "secret_key": settings.SECRET_KEY})
+    assert self_res.status_code == 403
+
+    # 4. An authenticated administrator (explicit test fixture) promotes the candidate
+    _, admin_headers = make_user("ADMIN")
+    promote_res = client.post("/api/auth/promote-admin", headers=admin_headers,
+                              json={"user_id": user_id, "reason": "test promotion"})
     assert promote_res.status_code == 200
     assert promote_res.json()["role"] == "ADMIN"
 

@@ -1,0 +1,141 @@
+{
+  "dataset": "fundraising_scenarios.jsonl",
+  "synthetic": true,
+  "evaluation_path": "Gemini preflight passed; mixed live Gemini and local fallback responses. Per-case model attribution is in predictions_live_gemini.csv.",
+  "gemini_successful_cases": 7,
+  "local_fallback_cases": 193,
+  "decision_rule": "Flagged when recommendation is FLAG_FOR_REVIEW or REJECT, or red_flags is non-empty; mirrors campaign submission status logic.",
+  "binary_mapping": "Fraudulent is positive; legitimate and borderline are negative so flagged borderline cases count as false positives.",
+  "overall": {
+    "cases": 200,
+    "confusion_matrix": {
+      "true_positive": 76,
+      "false_positive": 58,
+      "false_negative": 4,
+      "true_negative": 62
+    },
+    "precision": 0.5672,
+    "recall": 0.95,
+    "f1": 0.7103,
+    "false_positive_rate": 0.4833,
+    "latency_ms": {
+      "mean": 2585.6,
+      "median": 1173.57,
+      "p95": 16392.06
+    }
+  },
+  "clearly_labeled_only_excluding_borderline": {
+    "cases": 160,
+    "confusion_matrix": {
+      "true_positive": 76,
+      "false_positive": 23,
+      "false_negative": 4,
+      "true_negative": 57
+    },
+    "precision": 0.7677,
+    "recall": 0.95,
+    "f1": 0.8492,
+    "false_positive_rate": 0.2875,
+    "latency_ms": {
+      "mean": 3071.78,
+      "median": 1397.94,
+      "p95": 16494.45
+    }
+  },
+  "legitimate_only_false_positive_rate": 0.2875,
+  "borderline_flag_rate": 0.875,
+  "by_ground_truth": {
+    "legitimate": {
+      "count": 80,
+      "flagged": 23
+    },
+    "fraudulent": {
+      "count": 80,
+      "flagged": 76
+    },
+    "borderline": {
+      "count": 40,
+      "flagged": 35
+    }
+  },
+  "by_category": {
+    "COMMUNITY": {
+      "cases": 21,
+      "confusion_matrix": {
+        "true_positive": 8,
+        "false_positive": 13,
+        "false_negative": 0,
+        "true_negative": 0
+      },
+      "precision": 0.381,
+      "recall": 1.0,
+      "f1": 0.5517,
+      "false_positive_rate": 1.0,
+      "latency_ms": {
+        "mean": 1112.34,
+        "median": 1442.18,
+        "p95": 1704.4
+      }
+    },
+    "EDUCATION": {
+      "cases": 29,
+      "confusion_matrix": {
+        "true_positive": 12,
+        "false_positive": 17,
+        "false_negative": 0,
+        "true_negative": 0
+      },
+      "precision": 0.4138,
+      "recall": 1.0,
+      "f1": 0.5854,
+      "false_positive_rate": 1.0,
+      "latency_ms": {
+        "mean": 836.63,
+        "median": 550.78,
+        "p95": 1665.54
+      }
+    },
+    "MEDICAL": {
+      "cases": 150,
+      "confusion_matrix": {
+        "true_positive": 56,
+        "false_positive": 28,
+        "false_negative": 4,
+        "true_negative": 62
+      },
+      "precision": 0.6667,
+      "recall": 0.9333,
+      "f1": 0.7778,
+      "false_positive_rate": 0.3111,
+      "latency_ms": {
+        "mean": 3129.99,
+        "median": 1199.89,
+        "p95": 16511.16
+      }
+    }
+  },
+  "gemini_only_success_subset": {
+    "cases": 7,
+    "confusion_matrix": {
+      "true_positive": 0,
+      "false_positive": 2,
+      "false_negative": 0,
+      "true_negative": 5
+    },
+    "precision": 0.0,
+    "recall": null,
+    "f1": null,
+    "false_positive_rate": 0.2857,
+    "latency_ms": {
+      "mean": 13832.55,
+      "median": 14575.82,
+      "p95": 14791.09
+    }
+  },
+  "gemini_success_cases_by_ground_truth": {
+    "legitimate": 7,
+    "fraudulent": 0,
+    "borderline": 0
+  },
+  "gemini_api_status": "Preflight passed. 7 of 200 verification calls returned Gemini results; 193 used fallback. Per-call failure reasons were not captured."
+}

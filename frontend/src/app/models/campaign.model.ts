@@ -107,6 +107,7 @@ export interface VerificationResult {
   missing_requirements?: string[];
   confidence?: number;
   model_used?: string;
+  fallback_reason?: string | null;
   supporting_evidence?: Array<{
     document_title: string;
     doc_type: string;

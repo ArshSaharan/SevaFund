@@ -1,0 +1,5 @@
+case_id,field,labeller_a_value,labeller_b_value,adjudicated_value,adjudicator_id,reason
+ENG-MED-0005-A,truth_label,borderline,legitimate,borderline,ENG-J01,The MRI shows no nerve compression; surgery may not be indicated.
+ENG-MED-0005-A,acceptable_end_states,NEEDS_MORE_INFORMATION;FLAG_FOR_REVIEW,APPROVED,NEEDS_MORE_INFORMATION;FLAG_FOR_REVIEW,ENG-J01,Follows the truth label.
+ENG-COM-0005-A,documentation,complete,incomplete,complete,ENG-J01,A self-prepared budget is the expected cost evidence for a volunteer kitchen.
+ENG-COM-0005-A,missing_items,,COST,-,ENG-J01,Follows documentation.

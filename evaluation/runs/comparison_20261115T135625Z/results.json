@@ -1,0 +1,12 @@
+{
+  "status": "blocked_at_preflight",
+  "dataset": "fundraising_scenarios.jsonl",
+  "synthetic": true,
+  "case_count": 200,
+  "cases_sent": 0,
+  "reason": "generation:READ_TIMEOUT:HTTP_NA:ReadTimeout:180.108s",
+  "models": {
+    "generation": "gemini-3.8-flash",
+    "embedding": "gemini-embedding-001"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "amount_material_ratio": 1.5,
+  "amount_tolerance": 0.1,
+  "enable_category": true,
+  "enable_cross_document": true,
+  "enable_evidence_tiers": true,
+  "enable_financial_parsing": true,
+  "enable_semantic": true,
+  "enable_uncertainty_policy": true,
+  "flag_confidence": 0.6,
+  "future_grace_days": 1,
+  "lapsed_deadline_days": 120,
+  "min_traceability": 2,
+  "reject_confidence": 0.8,
+  "stale_document_days": 540,
+  "verified_fx_rates": {}
+}

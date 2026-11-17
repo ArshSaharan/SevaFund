@@ -1,0 +1,41 @@
+{
+  "generation": {
+    "success": false,
+    "stage": "generation",
+    "category": "DAILY_QUOTA_EXHAUSTED",
+    "http_status": 429,
+    "exception_type": "HTTPStatusError",
+    "duration_seconds": 0.477,
+    "details": {
+      "provider_status": "RESOURCE_EXHAUSTED",
+      "provider_code": 429,
+      "quota_violations": [
+        {
+          "quota_metric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+          "quota_id": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+          "quota_value": "20",
+          "dimensions": {
+            "model": "gemini-3.6-flash",
+            "location": "global"
+          }
+        }
+      ],
+      "quota_kind": "daily",
+      "retry_after_header": null,
+      "retry_after_seconds": null,
+      "exception_type": "HTTPStatusError",
+      "attempt": 1,
+      "resume_after_utc": "2026-11-16T08:00:00+00:00"
+    },
+    "retryable": true,
+    "stop_run": true,
+    "retry_after_seconds": null,
+    "latency_seconds": 0.481
+  },
+  "embedding": {
+    "success": true,
+    "response_valid": true,
+    "latency_seconds": 0.632,
+    "http_status": 200
+  }
+}

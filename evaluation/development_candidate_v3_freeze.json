@@ -1,0 +1,151 @@
+{
+  "authorship_limit": "Synthetic scenarios were authored by the project agent; no independent author or human adjudicator was available.",
+  "commands": {
+    "development_evaluation": "./.venv/bin/python -B evaluation/evaluate_development_verifier_v3.py --tag development_v3_frozen",
+    "evaluate_final_test_once": "./.venv/bin/python -B evaluation/evaluate_final_test_v3.py",
+    "generate_final_test_once": "./.venv/bin/python -B evaluation/generate_final_test_v3.py",
+    "regression_tests": "PYTHONPATH=.. ../.venv/bin/pytest -p no:cacheprovider -q ../tests/test_development_verifier_v3.py ../tests/test_development_verifier_v2.py ../tests/test_development_dataset_v3.py"
+  },
+  "config": {
+    "amount_material_ratio": 1.5,
+    "amount_tolerance": 0.1,
+    "enable_category": true,
+    "enable_cross_document": true,
+    "enable_evidence_tiers": true,
+    "enable_financial_parsing": true,
+    "enable_semantic": true,
+    "enable_uncertainty_policy": true,
+    "flag_confidence": 0.6,
+    "future_grace_days": 1,
+    "lapsed_deadline_days": 120,
+    "min_traceability": 2,
+    "reject_confidence": 0.8,
+    "stale_document_days": 540,
+    "verified_fx_rates": {}
+  },
+  "config_digest": "b6607c134cebf4ea",
+  "config_sha256": "3835a9c2e20bd30e079664ca775b22f1becf25176ad2b85e4c9bd14598bfc9e9",
+  "dependencies": {
+    "pydantic": "2.13.5",
+    "pytest": "8.4.2"
+  },
+  "development_dataset": {
+    "path": "evaluation/development_scenarios_v3.jsonl",
+    "rows": 180,
+    "sha256": "683bbcd84eab11b4f468df87ae69317f28ee0877b94184dea5bbb047c6843d8f"
+  },
+  "engine_version": "sevafund-development-candidate-v3.0",
+  "evaluation_scope": "offline heuristic verifier; no Gemini generation, Gemini embeddings, or semantic RAG",
+  "final_test_state": "not generated or evaluated at freeze time",
+  "frozen_at_utc": "2026-11-16T10:07:42.176757+00:00",
+  "post_freeze_rule": "Any change to a V3 package source file or frozen configuration invalidates the final test. Do not tune against final-test outcomes.",
+  "preserved_prior_artifacts": {
+    "evaluation/development_candidate_v2_freeze.json": {
+      "description": "V2 freeze manifest",
+      "sha256": "3d842be04d9ec5a20051550536833ed4cb5d8066e3147cebaa20f428175eed6a"
+    },
+    "evaluation/development_scenarios_v2.jsonl": {
+      "description": "V2 development corpus",
+      "sha256": "9c0d89ab1be941bdb92150e5eacf86cd50c45356a19f056d2f8886a9255af5c0"
+    },
+    "evaluation/development_scenarios_v3_contradiction_only.jsonl": {
+      "description": "V3 corpus used by a superseded run before consistent-fabrication fraud families were included",
+      "sha256": "33cd72b7c829034110700f3226b944c8a3cc26085ff0b30489cb6c4d68c3801c"
+    },
+    "evaluation/development_scenarios_v3_initial.jsonl": {
+      "description": "initial V3 development corpus, superseded because generated issue dates crossed submission date",
+      "sha256": "74f4e53ed2697eab06b36a8bc303b22a6e9c3ff111392c40b09ba04b331de780"
+    },
+    "evaluation/fundraising_scenarios.jsonl": {
+      "description": "previous 200-case holdout corpus",
+      "sha256": "cb6d08c426d8ecbfce9c661d9ef32d756ab68a052671c3fadad31d43b1cd3099"
+    },
+    "evaluation/independent_benchmark_100.jsonl": {
+      "description": "previous 100-case diagnostic benchmark",
+      "sha256": "fc1188c2851342683a096f4235534d9d98deb3f390bd9840feb8b13b9a07aa46"
+    },
+    "evaluation/independent_test_150.jsonl": {
+      "description": "previous 150-case diagnostic benchmark",
+      "sha256": "099016d5da873766fccbd199337a153de62da1ee2b6c1bb8f35b9c5b43b510e0"
+    },
+    "evaluation/results.json": {
+      "description": "existing evaluation results",
+      "sha256": "2f146a10604cd950dd5921bacca8bef50ae80b423069f01dac3ab20ea8ffb455"
+    },
+    "evaluation/results_live_gemini.json": {
+      "description": "existing live-Gemini results",
+      "sha256": "6ebd01bb11a9ed1a567f47af6146923a5521af70c957f01ae9da0dee905151e4"
+    },
+    "evaluation/runs/development_candidate_v2_all_20261115T205042Z/report.md": {
+      "description": "V2 prior evaluation report",
+      "sha256": "5500db85339573c9f50bd708e24dec02b1f657c4e3f9bd920cad0d8adb011782"
+    },
+    "evaluation/runs/development_candidate_v2_all_20261115T205042Z/results.json": {
+      "description": "V2 prior machine-readable results",
+      "sha256": "78b86085e01436c0a0ea61d9b03e1bf2ef30b0aadd9e442f9905cc9c09cddea3"
+    },
+    "evaluation/runs/development_candidate_v2_all_20261116T100640Z/report.md": {
+      "description": "V2 reproducibility report created before V3 freeze",
+      "sha256": "b706e561d746ed8df75ab3abe28c07f6079df9e1f6721ee4264a3428d3341382"
+    },
+    "evaluation/runs/development_candidate_v2_all_20261116T100640Z/results.json": {
+      "description": "V2 reproducibility results created before V3 freeze",
+      "sha256": "31e8611903d5ef70ca96d57c5e8b6b46c53beb8e57a00bd6068c199d31b90ab7"
+    },
+    "evaluation/runs/development_v3_20261116T093632Z/results.json": {
+      "description": "superseded V3 run with invalid future document dates",
+      "sha256": "14e1870f7e563f97fadb1a2d062f4a263bd3bab2f0efd401c0d0a121524d0d38"
+    },
+    "evaluation/runs/development_v3_frozen_20261116T100612Z/results.json": {
+      "description": "final V3 development comparison and ablation results",
+      "sha256": "55d5f4e7867484fbe05030f93cac03d75d5a92937241ba64cfc7ad5a8329eebd"
+    },
+    "evaluation/runs/development_v3_revised_20261116T094732Z/results.json": {
+      "description": "superseded contradiction-only V3 development run",
+      "sha256": "be24a9346f2d0ee20e5e5bc610bfb2407cac68c32beeb673c77d59310ea71a37"
+    }
+  },
+  "production_file_sha256_at_freeze": {
+    "app/services/ai_verifier.py": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+    "app/services/fraud_detector.py": "f47e641743d1d66272cf36d6bfa2053245bbf2b68bf15b19075fab41cf97279f",
+    "app/services/rag.py": "95b14980be44fd6b658cd4025a0c24a90447a53fb212f42cede257b2f4f71309"
+  },
+  "python": "3.9.6",
+  "v2_config_digest": "2ac4e448f21d1983",
+  "v2_package": {
+    "combined": "a054be91b210c9e22cbc2965e8978a6fda9b07ff10f1893aecc872ba04be6fc6",
+    "files": {
+      "__init__.py": "d9fe21d044c591c32009a6085bc7fcdd4ba1062b6d0db0ec385157f26b57b86f",
+      "audit.py": "ecceea9d807b5324f5be4f508ca74c91a7c4e86b92b07a49949910ebc958180e",
+      "category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+      "config.py": "64183f6dd1d43389ec703c440f7d3e32712c3d316df0641f4fa33fb763926bdc",
+      "consistency.py": "b99a99feb5238ebc04fc4e7ce52923306c8176f20219fb2ffee1acd7b1caf663",
+      "decision.py": "31d0be642c6733388259e63c4b6faae25e177b023b571418b23bbf889c2f9252",
+      "engine.py": "b1cbd655d230c70289b9887baaa92fa0476785f534270688c714830ec561932b",
+      "extraction.py": "d7d41933f0e41f8ee055a29ae6184d5b6a2ed266cd8a7946f72fa1c4661242ee",
+      "money.py": "b23903cc81065d098a2c1ae38b99cc6a73664849ed9892d7509c62422daa5e03",
+      "normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+      "schemas.py": "928523f2b05017ab9566d546a9d6a6af31955c7119e7c69e3d5ce8699edd8e36",
+      "semantic.py": "69fc99590098d1a16d1a193a1ec98764dfae74cf38c28228ebc21842d340315b"
+    }
+  },
+  "v3_package": {
+    "combined": "ba1b045e8b9d594891b6aaa4ac8c55b1758f48007a9d0261b177788f2363a7cd",
+    "files": {
+      "__init__.py": "ced58ad69c89af95bf396584cc896f013ce7542471d27d9a627fc95248059cbb",
+      "audit.py": "aa5c44709b4dc08bb7c73f7dd285084b5efa8d65dff2262824a3fab25f9a835b",
+      "category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+      "config.py": "a4db3161f6b72bb03a1c7bc7dd9fed6d6e75b4d09fab010531fddd8dfa8b7428",
+      "consistency.py": "d7d5917f81a212b5e98d579660d586a187562cecdc988cdd25b9cb26067737d1",
+      "decision.py": "bc4b6135ec97fb53e4ccdc39e597eefc4029c7fb326afe3a6af53f14acc27b65",
+      "engine.py": "5b4cb360a5be359f86b2e92099e105dd11502bcbcc69a1e14cdc521ec53eb569",
+      "evidence_policy.py": "1fac2afe23909cde49c012c1768b9e32f47444047f00438e71468f529bcc2fa8",
+      "extraction.py": "c053fe0b7a9d68583d5680eec1a771c90ffad3584ab0c3369bb23c9895ee9815",
+      "money.py": "9cf75f77335e7117beabe50dd75722a84b66d1ecf9d2cc431fafb83e5dd0b1dd",
+      "normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+      "quantitative_consistency.py": "cbe4e6309cebc9a6570951437e7fe9e0785caae275739f49564223b2d21b5927",
+      "schemas.py": "42f93de385a090295a63358606df8c73889e698ad8ad6bd36370bf866d4d4708",
+      "semantic.py": "dfdd824ceafa06da8ddf6a8f1fe0eb36e5c7071df8cf0545b0c2d25443345dfc"
+    }
+  }
+}

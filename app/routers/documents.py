@@ -4,7 +4,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from app.models.user import User
-from app.services.auth_dependencies import get_current_user_or_demo
+from app.services.auth_dependencies import get_current_user
 
 from app.services.rag import UPLOAD_DIR
 
@@ -18,7 +18,7 @@ async def upload_document(
     file: UploadFile = File(...),
     doc_type: str = Form("OTHER"),
     title: Optional[str] = Form(None),
-    current_user: User = Depends(get_current_user_or_demo),
+    current_user: User = Depends(get_current_user),
 ):
     """Store a beneficiary proof file for campaign-scoped retrieval."""
     suffix = Path(file.filename or "").suffix.lower()

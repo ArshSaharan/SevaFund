@@ -1,0 +1,1835 @@
+{
+  "created_utc": "2026-11-17T09:10:13.419044+00:00",
+  "policy_version": "hybrid-v3-dev-1",
+  "settings_digest": "a01273d9e3c89b0e",
+  "classification": "DEVELOPMENT, IN-SAMPLE: the DA cases motivated these changes and the benchmark sets were used to develop V2/V3. No API call was made; Gemini outputs are scripted or saved.",
+  "da_scenarios": [
+    {
+      "case_id": "DA-01",
+      "label": "legitimate",
+      "scenario_type": "VALID_DOCUMENT_DATES",
+      "v3_before": "APPROVED",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_approves": {
+          "hybrid_v2": "APPROVED (BOTH_APPROVE)",
+          "hybrid_v3": "APPROVED (ALL_CHECKS_PASS)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_FRAUD_WARNING)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_WARNING)",
+          "hybrid_v3_review_basis": "UNVERIFIED_MODEL_SUSPICION"
+        }
+      },
+      "v3_effective_after": "APPROVED",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [],
+      "financial_evidence": {
+        "status": "SUPPORTED",
+        "goal": 184600.0,
+        "documented_need": 224600.0
+      },
+      "required_confirmations": [
+        "BENEFICIARY",
+        "PAYMENT_DESTINATION",
+        "INSTITUTION"
+      ]
+    },
+    {
+      "case_id": "DA-02",
+      "label": "legitimate",
+      "scenario_type": "EXPIRED_DOCUMENT",
+      "v3_before": "APPROVED",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_approves": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (EXPIRED_DOCUMENT)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (EXPIRED_DOCUMENT)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (EXPIRED_DOCUMENT)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (EXPIRED_DOCUMENT)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_FRAUD_WARNING)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_WARNING)",
+          "hybrid_v3_review_basis": "UNVERIFIED_MODEL_SUSPICION"
+        },
+        "live_gemini_answer": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (EXPIRED_DOCUMENT)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (EXPIRED_DOCUMENT)",
+          "hybrid_v3_review_basis": null
+        }
+      },
+      "v3_effective_after": "APPROVED",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [],
+      "financial_evidence": {
+        "status": "EXPIRED",
+        "goal": 147000.0,
+        "documented_need": null
+      },
+      "required_confirmations": []
+    },
+    {
+      "case_id": "DA-03",
+      "label": "fraudulent",
+      "scenario_type": "FUTURE_DATED_DOCUMENT",
+      "v3_before": "FLAG_FOR_REVIEW",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_approves": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        }
+      },
+      "v3_effective_after": "FLAG_FOR_REVIEW",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [
+        {
+          "code": "EVENT_DATE_CONFLICT",
+          "summary": "The campaign dates the discharge 11 November 2026; the documents record 13/12/2026 ('Final bill').",
+          "values": [
+            "Campaign text: 11 November 2026",
+            "Final bill: 13/12/2026"
+          ],
+          "basis": "DETERMINISTIC"
+        }
+      ],
+      "financial_evidence": {
+        "status": "FUTURE_DATED",
+        "goal": 236800.0,
+        "documented_need": null
+      },
+      "required_confirmations": []
+    },
+    {
+      "case_id": "DA-04",
+      "label": "legitimate",
+      "scenario_type": "LEGITIMATE_SCHEDULED_EVENT",
+      "v3_before": "FLAG_FOR_REVIEW",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_approves": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (V3_INFORMATION_REQUEST)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_WARNING)",
+          "hybrid_v3_review_basis": "UNVERIFIED_MODEL_SUSPICION"
+        }
+      },
+      "v3_effective_after": "NEEDS_MORE_INFORMATION",
+      "refuted_v3_findings": [
+        "'Surgeon's letter' records an issue date after the campaign was submitted. -> '05/12/2026' is a scheduled date, not a future-issued record"
+      ],
+      "cross_document_findings": [],
+      "financial_evidence": {
+        "status": "SUPPORTED",
+        "goal": 112500.0,
+        "documented_need": 112500.0
+      },
+      "required_confirmations": []
+    },
+    {
+      "case_id": "DA-05",
+      "label": "fraudulent",
+      "scenario_type": "CONTRADICTORY_DOCUMENT_DATES",
+      "v3_before": "APPROVED",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (CROSS_DOCUMENT_CONTRADICTION:DEATH_DATE_CONFLICT)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_approves": {
+          "hybrid_v2": "APPROVED (BOTH_APPROVE)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (CROSS_DOCUMENT_CONTRADICTION:DEATH_DATE_CONFLICT)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (CROSS_DOCUMENT_CONTRADICTION:DEATH_DATE_CONFLICT)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_FRAUD_WARNING)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (CROSS_DOCUMENT_CONTRADICTION:DEATH_DATE_CONFLICT)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        }
+      },
+      "v3_effective_after": "APPROVED",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [
+        {
+          "code": "DEATH_DATE_CONFLICT",
+          "summary": "Two dates of death: 22/04/2026 ('Death certificate') and 14/11/2026 ('Hospital release letter').",
+          "values": [
+            "Death certificate: 22/04/2026",
+            "Hospital release letter: 14/11/2026"
+          ],
+          "basis": "DETERMINISTIC"
+        }
+      ],
+      "financial_evidence": {
+        "status": "SUPPORTED",
+        "goal": 148000.0,
+        "documented_need": 148000.0
+      },
+      "required_confirmations": []
+    },
+    {
+      "case_id": "DA-06",
+      "label": "fraudulent",
+      "scenario_type": "FAKE_BUT_INTERNALLY_CONSISTENT",
+      "v3_before": "APPROVED",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_approves": {
+          "hybrid_v2": "APPROVED (BOTH_APPROVE)",
+          "hybrid_v3": "APPROVED (ALL_CHECKS_PASS)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_FRAUD_WARNING)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_WARNING)",
+          "hybrid_v3_review_basis": "UNVERIFIED_MODEL_SUSPICION"
+        }
+      },
+      "v3_effective_after": "APPROVED",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [],
+      "financial_evidence": {
+        "status": "SUPPORTED",
+        "goal": 640000.0,
+        "documented_need": 640000.0
+      },
+      "required_confirmations": [
+        "BENEFICIARY",
+        "PAYMENT_DESTINATION",
+        "INSTITUTION"
+      ]
+    },
+    {
+      "case_id": "DA-07",
+      "label": "legitimate",
+      "scenario_type": "LEGITIMATE_INCOMPLETE_INFORMATION",
+      "v3_before": "APPROVED",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3": "VERIFICATION_ERROR (GEMINI_FAILED:SERVER_ERROR)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_approves": {
+          "hybrid_v2": "APPROVED (BOTH_APPROVE)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (FINANCIAL_EVIDENCE_MISSING)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "NEEDS_MORE_INFORMATION (GEMINI_INFORMATION_REQUEST)",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION (FINANCIAL_EVIDENCE_MISSING)",
+          "hybrid_v3_review_basis": null
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_FRAUD_WARNING)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (GEMINI_EXPLICIT_WARNING)",
+          "hybrid_v3_review_basis": "UNVERIFIED_MODEL_SUSPICION"
+        }
+      },
+      "v3_effective_after": "APPROVED",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [],
+      "financial_evidence": {
+        "status": "MISSING",
+        "goal": 38500.0,
+        "documented_need": null
+      },
+      "required_confirmations": []
+    },
+    {
+      "case_id": "DA-08",
+      "label": "fraudulent",
+      "scenario_type": "FRAUD_WITH_GENUINE_LOOKING_EVIDENCE",
+      "v3_before": "FLAG_FOR_REVIEW",
+      "by_gemini_output": {
+        "gemini_failed": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_approves": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_info_request_ungrounded_warning": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        },
+        "gemini_flags_ungrounded": {
+          "hybrid_v2": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3": "FLAG_FOR_REVIEW (V3_CONTRADICTION)",
+          "hybrid_v3_review_basis": "DETERMINISTIC_FINDING"
+        }
+      },
+      "v3_effective_after": "FLAG_FOR_REVIEW",
+      "refuted_v3_findings": [],
+      "cross_document_findings": [
+        {
+          "code": "TREATMENT_NOT_INDICATED",
+          "summary": "The campaign seeks revascularisation, surgery, but 'Coronary angiogram report' states it is not indicated or not advised.",
+          "values": [
+            "Coronary angiogram report"
+          ],
+          "basis": "DETERMINISTIC"
+        }
+      ],
+      "financial_evidence": {
+        "status": "INSUFFICIENT_AMOUNT",
+        "goal": 560000.0,
+        "documented_need": 0.0
+      },
+      "required_confirmations": []
+    }
+  ],
+  "historical_10": [
+    {
+      "case_id": "V3T-064",
+      "label": "fraudulent",
+      "v3": "APPROVED",
+      "hybrid_v2": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v3_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3_review_basis": null,
+      "financial": "SUPPORTED",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-244",
+      "label": "fraudulent",
+      "v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2": "FLAG_FOR_REVIEW",
+      "hybrid_v2_trigger": "GEMINI_EXPLICIT_FRAUD_WARNING",
+      "hybrid_v3": "FLAG_FOR_REVIEW",
+      "hybrid_v3_trigger": "GEMINI_EXPLICIT_WARNING",
+      "hybrid_v3_review_basis": "DOCUMENT_SUPPORTED_MODEL_FINDING",
+      "financial": "MISSING",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-154",
+      "label": "fraudulent",
+      "v3": "FLAG_FOR_REVIEW",
+      "hybrid_v2": "FLAG_FOR_REVIEW",
+      "hybrid_v2_trigger": "V3_CONTRADICTION",
+      "hybrid_v3": "FLAG_FOR_REVIEW",
+      "hybrid_v3_trigger": "V3_CONTRADICTION",
+      "hybrid_v3_review_basis": "DETERMINISTIC_FINDING",
+      "financial": "MISSING",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-044",
+      "label": "fraudulent",
+      "v3": "FLAG_FOR_REVIEW",
+      "hybrid_v2": "FLAG_FOR_REVIEW",
+      "hybrid_v2_trigger": "V3_CONTRADICTION",
+      "hybrid_v3": "FLAG_FOR_REVIEW",
+      "hybrid_v3_trigger": "V3_CONTRADICTION",
+      "hybrid_v3_review_basis": "DETERMINISTIC_FINDING",
+      "financial": "SUPPORTED",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-084",
+      "label": "borderline",
+      "v3": "APPROVED",
+      "hybrid_v2": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v3_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3_review_basis": null,
+      "financial": "SUPPORTED",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-194",
+      "label": "borderline",
+      "v3": "APPROVED",
+      "hybrid_v2": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v3_trigger": "FINANCIAL_EVIDENCE_MISSING",
+      "hybrid_v3_review_basis": null,
+      "financial": "MISSING",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-224",
+      "label": "legitimate",
+      "v3": "APPROVED",
+      "hybrid_v2": "APPROVED",
+      "hybrid_v2_trigger": "BOTH_APPROVE",
+      "hybrid_v3": "APPROVED",
+      "hybrid_v3_trigger": "ALL_CHECKS_PASS",
+      "hybrid_v3_review_basis": null,
+      "financial": "SUPPORTED",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-104",
+      "label": "legitimate",
+      "v3": "APPROVED",
+      "hybrid_v2": "VERIFICATION_ERROR",
+      "hybrid_v2_trigger": "GEMINI_FAILED:NOT_RUN",
+      "hybrid_v3": "VERIFICATION_ERROR",
+      "hybrid_v3_trigger": "GEMINI_FAILED:NOT_RUN",
+      "hybrid_v3_review_basis": null,
+      "financial": "SUPPORTED",
+      "cross_document": []
+    },
+    {
+      "case_id": "V3T-024",
+      "label": "legitimate",
+      "v3": "APPROVED",
+      "hybrid_v2": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v3_trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE",
+      "hybrid_v3_review_basis": null,
+      "financial": "UNTRACEABLE",
+      "cross_document": []
+    },
+    {
+      "case_id": "E150-102",
+      "label": "legitimate",
+      "v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2": "NEEDS_MORE_INFORMATION",
+      "hybrid_v2_trigger": "GEMINI_INFORMATION_REQUEST",
+      "hybrid_v3": "NEEDS_MORE_INFORMATION",
+      "hybrid_v3_trigger": "FINANCIAL_EVIDENCE_MISSING",
+      "hybrid_v3_review_basis": null,
+      "financial": "MISSING",
+      "cross_document": []
+    }
+  ],
+  "benchmarks": {
+    "final_test_300": {
+      "cases": 300,
+      "reference_date_basis": {
+        "submitted_on": 300
+      },
+      "decisions": {
+        "v3_alone": {
+          "legitimate": {
+            "APPROVED": 100
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 60,
+            "APPROVED": 20,
+            "NEEDS_MORE_INFORMATION": 20
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 80,
+            "APPROVED": 20
+          }
+        },
+        "hybrid_v2": {
+          "legitimate": {
+            "APPROVED": 100
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 60,
+            "APPROVED": 20,
+            "NEEDS_MORE_INFORMATION": 20
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 80,
+            "APPROVED": 20
+          }
+        },
+        "hybrid_v3": {
+          "legitimate": {
+            "APPROVED": 90,
+            "NEEDS_MORE_INFORMATION": 10
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 60,
+            "APPROVED": 20,
+            "NEEDS_MORE_INFORMATION": 20
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 90,
+            "APPROVED": 10
+          }
+        }
+      },
+      "transitions_hybrid_v2_to_v3": {
+        "legitimate": {
+          "APPROVED -> APPROVED": 90,
+          "APPROVED -> NEEDS_MORE_INFORMATION": 10
+        },
+        "fraudulent": {
+          "FLAG_FOR_REVIEW -> FLAG_FOR_REVIEW": 60,
+          "APPROVED -> APPROVED": 20,
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 20
+        },
+        "borderline": {
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 80,
+          "APPROVED -> APPROVED": 10,
+          "APPROVED -> NEEDS_MORE_INFORMATION": 10
+        }
+      },
+      "cross_document_findings": {},
+      "financial_evidence_status": {
+        "legitimate": {
+          "SUPPORTED": 90,
+          "UNTRACEABLE": 10
+        },
+        "fraudulent": {
+          "SUPPORTED": 60,
+          "MISSING": 40
+        },
+        "borderline": {
+          "MISSING": 60,
+          "SUPPORTED": 30,
+          "NO_AMOUNT": 10
+        }
+      },
+      "v3_future_date_findings_refuted": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "changed_cases": [
+        {
+          "case_id": "V3T-021",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-022",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-023",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-024",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-025",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-026",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-027",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-028",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-029",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-030",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "V3T-191",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-192",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-193",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-194",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-195",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-196",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-197",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-198",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-199",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "V3T-200",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        }
+      ]
+    },
+    "fundraising_200": {
+      "cases": 200,
+      "reference_date_basis": {
+        "latest_document_date": 80,
+        "today_asia_kolkata": 120
+      },
+      "decisions": {
+        "v3_alone": {
+          "legitimate": {
+            "APPROVED": 80
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 20,
+            "NEEDS_MORE_INFORMATION": 60
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 40
+          }
+        },
+        "hybrid_v2": {
+          "legitimate": {
+            "APPROVED": 80
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 20,
+            "NEEDS_MORE_INFORMATION": 60
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 40
+          }
+        },
+        "hybrid_v3": {
+          "legitimate": {
+            "APPROVED": 72,
+            "NEEDS_MORE_INFORMATION": 8
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 20,
+            "NEEDS_MORE_INFORMATION": 60
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 40
+          }
+        }
+      },
+      "transitions_hybrid_v2_to_v3": {
+        "legitimate": {
+          "APPROVED -> APPROVED": 72,
+          "APPROVED -> NEEDS_MORE_INFORMATION": 8
+        },
+        "fraudulent": {
+          "FLAG_FOR_REVIEW -> FLAG_FOR_REVIEW": 20,
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 60
+        },
+        "borderline": {
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 40
+        }
+      },
+      "cross_document_findings": {},
+      "financial_evidence_status": {
+        "legitimate": {
+          "SUPPORTED": 72,
+          "MISSING": 8
+        },
+        "fraudulent": {
+          "UNTRACEABLE": 12,
+          "MISSING": 68
+        },
+        "borderline": {
+          "MISSING": 40
+        }
+      },
+      "v3_future_date_findings_refuted": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "changed_cases": [
+        {
+          "case_id": "SYN-163",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-164",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-168",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-169",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-173",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-174",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-178",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "SYN-179",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        }
+      ]
+    },
+    "independent_test_150": {
+      "cases": 150,
+      "reference_date_basis": {
+        "today_asia_kolkata": 150
+      },
+      "decisions": {
+        "v3_alone": {
+          "legitimate": {
+            "APPROVED": 45,
+            "NEEDS_MORE_INFORMATION": 15
+          },
+          "fraudulent": {
+            "NEEDS_MORE_INFORMATION": 14,
+            "APPROVED": 36,
+            "FLAG_FOR_REVIEW": 10
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 30
+          }
+        },
+        "hybrid_v2": {
+          "legitimate": {
+            "APPROVED": 45,
+            "NEEDS_MORE_INFORMATION": 15
+          },
+          "fraudulent": {
+            "NEEDS_MORE_INFORMATION": 14,
+            "APPROVED": 36,
+            "FLAG_FOR_REVIEW": 10
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 30
+          }
+        },
+        "hybrid_v3": {
+          "legitimate": {
+            "NEEDS_MORE_INFORMATION": 60
+          },
+          "fraudulent": {
+            "NEEDS_MORE_INFORMATION": 50,
+            "FLAG_FOR_REVIEW": 10
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 30
+          }
+        }
+      },
+      "transitions_hybrid_v2_to_v3": {
+        "legitimate": {
+          "APPROVED -> NEEDS_MORE_INFORMATION": 45,
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 15
+        },
+        "fraudulent": {
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 14,
+          "APPROVED -> NEEDS_MORE_INFORMATION": 36,
+          "FLAG_FOR_REVIEW -> FLAG_FOR_REVIEW": 10
+        },
+        "borderline": {
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 30
+        }
+      },
+      "cross_document_findings": {},
+      "financial_evidence_status": {
+        "legitimate": {
+          "MISSING": 36,
+          "NO_AMOUNT": 18,
+          "UNTRACEABLE": 6
+        },
+        "fraudulent": {
+          "MISSING": 60
+        },
+        "borderline": {
+          "MISSING": 24,
+          "UNTRACEABLE": 4,
+          "NO_AMOUNT": 2
+        }
+      },
+      "v3_future_date_findings_refuted": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "changed_cases": [
+        {
+          "case_id": "E150-001",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-003",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-004",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-007",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-008",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-011",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-013",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-014",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-015",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-016",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-017",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-018",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-021",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "E150-023",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-024",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "E150-025",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-026",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-027",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-028",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-031",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-033",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-034",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-035",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-036",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-037",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-038",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-041",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-043",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-044",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-047",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-048",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-051",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-053",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-054",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-057",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-058",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-061",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-063",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-064",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-067",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-068",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-071",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-073",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-074",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-081",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-083",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-084",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-087",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-088",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-091",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "E150-093",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-094",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "E150-101",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-103",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-104",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-105",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-106",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-107",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-108",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-111",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-113",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-114",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-117",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-118",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-121",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-123",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-124",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-127",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-128",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-131",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-133",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-134",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-137",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-138",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-141",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-143",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_NO_AMOUNT"
+        },
+        {
+          "case_id": "E150-144",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-145",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-146",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-147",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "E150-148",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        }
+      ]
+    },
+    "independent_benchmark_100": {
+      "cases": 100,
+      "reference_date_basis": {
+        "today_asia_kolkata": 100
+      },
+      "decisions": {
+        "v3_alone": {
+          "legitimate": {
+            "APPROVED": 6,
+            "NEEDS_MORE_INFORMATION": 34
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 6,
+            "NEEDS_MORE_INFORMATION": 26,
+            "APPROVED": 8
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 17,
+            "APPROVED": 1,
+            "FLAG_FOR_REVIEW": 2
+          }
+        },
+        "hybrid_v2": {
+          "legitimate": {
+            "APPROVED": 6,
+            "NEEDS_MORE_INFORMATION": 34
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 6,
+            "NEEDS_MORE_INFORMATION": 26,
+            "APPROVED": 8
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 17,
+            "APPROVED": 1,
+            "FLAG_FOR_REVIEW": 2
+          }
+        },
+        "hybrid_v3": {
+          "legitimate": {
+            "NEEDS_MORE_INFORMATION": 40
+          },
+          "fraudulent": {
+            "FLAG_FOR_REVIEW": 6,
+            "NEEDS_MORE_INFORMATION": 34
+          },
+          "borderline": {
+            "NEEDS_MORE_INFORMATION": 18,
+            "FLAG_FOR_REVIEW": 2
+          }
+        }
+      },
+      "transitions_hybrid_v2_to_v3": {
+        "legitimate": {
+          "APPROVED -> NEEDS_MORE_INFORMATION": 6,
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 34
+        },
+        "fraudulent": {
+          "FLAG_FOR_REVIEW -> FLAG_FOR_REVIEW": 6,
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 26,
+          "APPROVED -> NEEDS_MORE_INFORMATION": 8
+        },
+        "borderline": {
+          "NEEDS_MORE_INFORMATION -> NEEDS_MORE_INFORMATION": 17,
+          "APPROVED -> NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW -> FLAG_FOR_REVIEW": 2
+        }
+      },
+      "cross_document_findings": {},
+      "financial_evidence_status": {
+        "legitimate": {
+          "UNTRACEABLE": 5,
+          "MISSING": 31,
+          "NO_AMOUNT": 4
+        },
+        "fraudulent": {
+          "UNTRACEABLE": 3,
+          "MISSING": 30,
+          "NO_AMOUNT": 7
+        },
+        "borderline": {
+          "MISSING": 15,
+          "NO_AMOUNT": 3,
+          "UNTRACEABLE": 2
+        }
+      },
+      "v3_future_date_findings_refuted": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "changed_cases": [
+        {
+          "case_id": "IND-001",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "IND-005",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "IND-007",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "IND-008",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "IND-021",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "IND-031",
+          "label": "legitimate",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-045",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-050",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        },
+        {
+          "case_id": "IND-054",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-056",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-066",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-068",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-072",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-076",
+          "label": "fraudulent",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_MISSING"
+        },
+        {
+          "case_id": "IND-085",
+          "label": "borderline",
+          "hybrid_v2": "APPROVED",
+          "hybrid_v3": "NEEDS_MORE_INFORMATION",
+          "trigger": "FINANCIAL_EVIDENCE_UNTRACEABLE"
+        }
+      ]
+    }
+  },
+  "benchmark_summary": [
+    {
+      "dataset": "final_test_300",
+      "system": "v3_alone",
+      "fraud_detected": 60,
+      "fraud_total": 100,
+      "fraud_approved": 20,
+      "legit_escalated": 0,
+      "legit_total": 100,
+      "legit_approved": 100,
+      "information_requests": 100,
+      "manual_reviews": 60
+    },
+    {
+      "dataset": "final_test_300",
+      "system": "hybrid_v2",
+      "fraud_detected": 60,
+      "fraud_total": 100,
+      "fraud_approved": 20,
+      "legit_escalated": 0,
+      "legit_total": 100,
+      "legit_approved": 100,
+      "information_requests": 100,
+      "manual_reviews": 60
+    },
+    {
+      "dataset": "final_test_300",
+      "system": "hybrid_v3",
+      "fraud_detected": 60,
+      "fraud_total": 100,
+      "fraud_approved": 20,
+      "legit_escalated": 0,
+      "legit_total": 100,
+      "legit_approved": 90,
+      "information_requests": 120,
+      "manual_reviews": 60
+    },
+    {
+      "dataset": "fundraising_200",
+      "system": "v3_alone",
+      "fraud_detected": 20,
+      "fraud_total": 80,
+      "fraud_approved": 0,
+      "legit_escalated": 0,
+      "legit_total": 80,
+      "legit_approved": 80,
+      "information_requests": 100,
+      "manual_reviews": 20
+    },
+    {
+      "dataset": "fundraising_200",
+      "system": "hybrid_v2",
+      "fraud_detected": 20,
+      "fraud_total": 80,
+      "fraud_approved": 0,
+      "legit_escalated": 0,
+      "legit_total": 80,
+      "legit_approved": 80,
+      "information_requests": 100,
+      "manual_reviews": 20
+    },
+    {
+      "dataset": "fundraising_200",
+      "system": "hybrid_v3",
+      "fraud_detected": 20,
+      "fraud_total": 80,
+      "fraud_approved": 0,
+      "legit_escalated": 0,
+      "legit_total": 80,
+      "legit_approved": 72,
+      "information_requests": 108,
+      "manual_reviews": 20
+    },
+    {
+      "dataset": "independent_test_150",
+      "system": "v3_alone",
+      "fraud_detected": 10,
+      "fraud_total": 60,
+      "fraud_approved": 36,
+      "legit_escalated": 0,
+      "legit_total": 60,
+      "legit_approved": 45,
+      "information_requests": 59,
+      "manual_reviews": 10
+    },
+    {
+      "dataset": "independent_test_150",
+      "system": "hybrid_v2",
+      "fraud_detected": 10,
+      "fraud_total": 60,
+      "fraud_approved": 36,
+      "legit_escalated": 0,
+      "legit_total": 60,
+      "legit_approved": 45,
+      "information_requests": 59,
+      "manual_reviews": 10
+    },
+    {
+      "dataset": "independent_test_150",
+      "system": "hybrid_v3",
+      "fraud_detected": 10,
+      "fraud_total": 60,
+      "fraud_approved": 0,
+      "legit_escalated": 0,
+      "legit_total": 60,
+      "legit_approved": 0,
+      "information_requests": 140,
+      "manual_reviews": 10
+    },
+    {
+      "dataset": "independent_benchmark_100",
+      "system": "v3_alone",
+      "fraud_detected": 6,
+      "fraud_total": 40,
+      "fraud_approved": 8,
+      "legit_escalated": 0,
+      "legit_total": 40,
+      "legit_approved": 6,
+      "information_requests": 77,
+      "manual_reviews": 8
+    },
+    {
+      "dataset": "independent_benchmark_100",
+      "system": "hybrid_v2",
+      "fraud_detected": 6,
+      "fraud_total": 40,
+      "fraud_approved": 8,
+      "legit_escalated": 0,
+      "legit_total": 40,
+      "legit_approved": 6,
+      "information_requests": 77,
+      "manual_reviews": 8
+    },
+    {
+      "dataset": "independent_benchmark_100",
+      "system": "hybrid_v3",
+      "fraud_detected": 6,
+      "fraud_total": 40,
+      "fraud_approved": 0,
+      "legit_escalated": 0,
+      "legit_total": 40,
+      "legit_approved": 0,
+      "information_requests": 92,
+      "manual_reviews": 8
+    }
+  ]
+}

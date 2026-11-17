@@ -1,0 +1,21 @@
+{
+  "updated_at": "2026-11-16T14:30:00.938814+00:00",
+  "completed_this_run": {
+    "heuristics_only": 10,
+    "heuristics_lexical": 10,
+    "gemini_no_rag": 10,
+    "gemini_rag": 9,
+    "hybrid": 9
+  },
+  "stopped_reason": null,
+  "calls_this_run": {
+    "generation": 20,
+    "embedding": 10
+  },
+  "cumulative_calls": {
+    "generation": 20,
+    "embedding": 10
+  },
+  "transient_generation_failures_total": 1,
+  "resume": null
+}

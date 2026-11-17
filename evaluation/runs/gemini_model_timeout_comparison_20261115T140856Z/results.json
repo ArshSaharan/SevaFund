@@ -1,0 +1,45 @@
+{
+  "status": "complete",
+  "case_count": 0,
+  "models": [
+    "gemini-3.8-flash",
+    "gemini-3.6-flash"
+  ],
+  "thinking_level": "LOW",
+  "max_output_tokens": 256,
+  "httpx_timeouts_seconds": {
+    "connect": 10,
+    "read": 180,
+    "write": 20,
+    "pool": 10
+  },
+  "automatic_retries": 0,
+  "quota_note": "Gemini rate limits are visible in AI Studio; a catalog listing does not expose remaining quota. Each one-shot generation response records quota or availability errors returned by the API.",
+  "catalog": {
+    "success": true,
+    "http_status": 200,
+    "latency_seconds": 0.172,
+    "models_available": {
+      "gemini-3.8-flash": true,
+      "gemini-3.6-flash": true
+    }
+  },
+  "probes": [
+    {
+      "model": "gemini-3.8-flash",
+      "success": false,
+      "latency_seconds": 180.023,
+      "exception_type": "ReadTimeout",
+      "failure_phase": "read"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "success": true,
+      "http_status": 200,
+      "latency_seconds": 1.815,
+      "finish_reason": "STOP",
+      "response_valid": true
+    }
+  ],
+  "logging_policy": "No API key, raw request/response text, or raw provider body is recorded."
+}

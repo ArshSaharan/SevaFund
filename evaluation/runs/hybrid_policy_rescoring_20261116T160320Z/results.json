@@ -1,0 +1,349 @@
+{
+  "created_utc": "2026-11-16T16:03:20.482879+00:00",
+  "experiment": "gemini_eval_v1_3_6",
+  "classification": "DEVELOPMENT, IN-SAMPLE: the improved policy was designed after inspecting these saved outputs.",
+  "policy_version": "hybrid-v2-dev-1",
+  "policy_digest": "00b8a03e36de1bd2",
+  "reference_date_rule": "case submitted_on if present, else the evaluation run date 2026-11-16",
+  "existing_rule_reproduces_recorded_decisions": {
+    "V3T-064": true,
+    "V3T-244": true,
+    "V3T-154": true,
+    "V3T-044": true,
+    "V3T-084": true,
+    "V3T-194": true,
+    "V3T-224": true,
+    "V3T-024": true,
+    "E150-102": true
+  },
+  "rows": [
+    {
+      "case_id": "V3T-064",
+      "label": "fraudulent",
+      "group": "internally_consistent_but_forged_clinic_file",
+      "category": "MEDICAL",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "NEEDS_MORE_INFORMATION",
+      "gemini_red_flags": 3,
+      "original_v3": "APPROVED",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "NEEDS_MORE_INFORMATION",
+      "improved_workflow_state": "NEEDS_MORE_INFORMATION",
+      "improved_triggers": [
+        "GEMINI_INFORMATION_REQUEST"
+      ],
+      "improved_reason": "Gemini asked for more information; its warnings are information gaps, not fraud findings.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [
+        "Retrieved document evidence contains a future date (07 September 2026) \u2014 No document issue date is after the reference date 2026-10-30."
+      ],
+      "document_dates": [
+        "Specialty service note: 07 September 2026 issue VALID",
+        "Treatment cost schedule: 07 September 2026 issue VALID"
+      ]
+    },
+    {
+      "case_id": "V3T-244",
+      "label": "fraudulent",
+      "group": "supplier_ledger_closed",
+      "category": "COMMUNITY",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "REJECTED",
+      "gemini_red_flags": 2,
+      "original_v3": "NEEDS_MORE_INFORMATION",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "FLAG_FOR_REVIEW",
+      "improved_workflow_state": "FLAG_FOR_REVIEW",
+      "improved_triggers": [
+        "GEMINI_EXPLICIT_FRAUD_WARNING"
+      ],
+      "improved_reason": "Gemini explicitly recommended review or rejection; grounded evidence: Campaign pitch claims the invoice is unpaid, contradicting retrieved records showing the balance is nil and paid in full",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Contractor payment record: 07 September 2026 issue VALID"
+      ]
+    },
+    {
+      "case_id": "V3T-154",
+      "label": "fraudulent",
+      "group": "equipment_dispatch_shortfall",
+      "category": "EDUCATION",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "FLAG_FOR_REVIEW",
+      "gemini_red_flags": 3,
+      "original_v3": "FLAG_FOR_REVIEW",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "FLAG_FOR_REVIEW",
+      "improved_workflow_state": "FLAG_FOR_REVIEW",
+      "improved_triggers": [
+        "V3_CONTRADICTION"
+      ],
+      "improved_reason": "The offline verifier found a material contradiction.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Learning lab asset register: 07 September 2026 issue VALID"
+      ]
+    },
+    {
+      "case_id": "V3T-044",
+      "label": "fraudulent",
+      "group": "patient_and_record_crossing",
+      "category": "MEDICAL",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "FLAG_FOR_REVIEW",
+      "gemini_red_flags": 3,
+      "original_v3": "FLAG_FOR_REVIEW",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "FLAG_FOR_REVIEW",
+      "improved_workflow_state": "FLAG_FOR_REVIEW",
+      "improved_triggers": [
+        "V3_CONTRADICTION"
+      ],
+      "improved_reason": "The offline verifier found a material contradiction.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Pharmacy ledger copy: 07 September 2026 issue VALID"
+      ]
+    },
+    {
+      "case_id": "V3T-084",
+      "label": "borderline",
+      "group": "family_cost_share_unclear",
+      "category": "MEDICAL",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "NEEDS_MORE_INFORMATION",
+      "gemini_red_flags": 3,
+      "original_v3": "APPROVED",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "NEEDS_MORE_INFORMATION",
+      "improved_workflow_state": "NEEDS_MORE_INFORMATION",
+      "improved_triggers": [
+        "GEMINI_INFORMATION_REQUEST"
+      ],
+      "improved_reason": "Gemini asked for more information; its warnings are information gaps, not fraud findings.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Preliminary treatment estimate: 07 September 2026 unlabelled MENTIONED"
+      ]
+    },
+    {
+      "case_id": "V3T-194",
+      "label": "borderline",
+      "group": "account_image_without_issue_date",
+      "category": "EDUCATION",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "NEEDS_MORE_INFORMATION",
+      "gemini_red_flags": 2,
+      "original_v3": "APPROVED",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "NEEDS_MORE_INFORMATION",
+      "improved_workflow_state": "NEEDS_MORE_INFORMATION",
+      "improved_triggers": [
+        "GEMINI_INFORMATION_REQUEST"
+      ],
+      "improved_reason": "Gemini asked for more information; its warnings are information gaps, not fraud findings.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": []
+    },
+    {
+      "case_id": "V3T-224",
+      "label": "legitimate",
+      "group": "compost_route_cold_store",
+      "category": "COMMUNITY",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "APPROVED",
+      "gemini_red_flags": 0,
+      "original_v3": "APPROVED",
+      "existing_hybrid": "APPROVED",
+      "improved_hybrid": "APPROVED",
+      "improved_workflow_state": "ELIGIBLE_PENDING_CONFIRMATION",
+      "improved_triggers": [
+        "BOTH_APPROVE"
+      ],
+      "improved_reason": "V3 and Gemini both approve; independent confirmation is still required before activation.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Cooperative works authorization: 07 September 2026 issue VALID",
+        "Supplier's itemized project quotation: 07 September 2026 issue VALID"
+      ]
+    },
+    {
+      "case_id": "V3T-104",
+      "label": "legitimate",
+      "group": "accessible_exam_studio",
+      "category": "EDUCATION",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "NOT_RUN (HTTP 503)",
+      "gemini_red_flags": 0,
+      "original_v3": "APPROVED",
+      "existing_hybrid": "VERIFICATION_ERROR",
+      "improved_hybrid": "VERIFICATION_ERROR",
+      "improved_workflow_state": "VERIFICATION_ERROR",
+      "improved_triggers": [
+        "GEMINI_FAILED:NOT_RUN"
+      ],
+      "improved_reason": "Gemini verification did not complete; the campaign cannot be approved until it is re-run.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Candidate access invoice: 07 September 2026 unlabelled MENTIONED"
+      ]
+    },
+    {
+      "case_id": "V3T-024",
+      "label": "legitimate",
+      "group": "island_burn_recovery",
+      "category": "MEDICAL",
+      "reference_date": "2026-10-30",
+      "gemini_rag": "NEEDS_MORE_INFORMATION",
+      "gemini_red_flags": 2,
+      "original_v3": "APPROVED",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "NEEDS_MORE_INFORMATION",
+      "improved_workflow_state": "NEEDS_MORE_INFORMATION",
+      "improved_triggers": [
+        "GEMINI_INFORMATION_REQUEST"
+      ],
+      "improved_reason": "Gemini asked for more information; its warnings are information gaps, not fraud findings.",
+      "unverified_concerns": [
+        "Geographical and institutional naming mismatch (Chitradurga is landlocked, yet pitch references a water crossing to Bay District Rehabilitation Service)"
+      ],
+      "vetoed_concerns": [],
+      "document_dates": [
+        "Rehabilitation attendance plan: 07 September 2026 unlabelled MENTIONED"
+      ]
+    },
+    {
+      "case_id": "E150-102",
+      "label": "legitimate",
+      "group": "hill_footpath_lighting",
+      "category": "COMMUNITY",
+      "reference_date": "2026-11-16",
+      "gemini_rag": "NEEDS_MORE_INFORMATION",
+      "gemini_red_flags": 2,
+      "original_v3": "NEEDS_MORE_INFORMATION",
+      "existing_hybrid": "FLAG_FOR_REVIEW",
+      "improved_hybrid": "NEEDS_MORE_INFORMATION",
+      "improved_workflow_state": "NEEDS_MORE_INFORMATION",
+      "improved_triggers": [
+        "GEMINI_INFORMATION_REQUEST"
+      ],
+      "improved_reason": "Gemini asked for more information; its warnings are information gaps, not fraud findings.",
+      "unverified_concerns": [],
+      "vetoed_concerns": [],
+      "document_dates": []
+    }
+  ],
+  "metrics": {
+    "original_v3": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 2,
+      "tn": 6,
+      "precision": 1.0,
+      "precision_ci": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.5,
+      "recall_ci": [
+        0.15,
+        0.85
+      ],
+      "f1": 0.6666666666666666,
+      "fpr": 0.0,
+      "fpr_ci": [
+        0.0,
+        0.3903
+      ],
+      "legit_escalated": 0,
+      "unsafe_approvals": [
+        "V3T-064",
+        "V3T-084",
+        "V3T-194"
+      ],
+      "manual_reviews": 2,
+      "rejections": 0,
+      "information_requests": 2,
+      "verification_errors": 0,
+      "approved_held_pending": 6
+    },
+    "existing_hybrid": {
+      "tp": 4,
+      "fp": 4,
+      "fn": 0,
+      "tn": 2,
+      "precision": 0.5,
+      "precision_ci": [
+        0.2152,
+        0.7848
+      ],
+      "recall": 1.0,
+      "recall_ci": [
+        0.5101,
+        1.0
+      ],
+      "f1": 0.6666666666666666,
+      "fpr": 0.6666666666666666,
+      "fpr_ci": [
+        0.3,
+        0.9032
+      ],
+      "legit_escalated": 2,
+      "unsafe_approvals": [],
+      "manual_reviews": 8,
+      "rejections": 0,
+      "information_requests": 0,
+      "verification_errors": 1,
+      "approved_held_pending": 1
+    },
+    "improved_hybrid": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 1,
+      "tn": 6,
+      "precision": 1.0,
+      "precision_ci": [
+        0.4385,
+        1.0
+      ],
+      "recall": 0.75,
+      "recall_ci": [
+        0.3006,
+        0.9544
+      ],
+      "f1": 0.8571428571428571,
+      "fpr": 0.0,
+      "fpr_ci": [
+        0.0,
+        0.3903
+      ],
+      "legit_escalated": 0,
+      "unsafe_approvals": [],
+      "manual_reviews": 3,
+      "rejections": 0,
+      "information_requests": 5,
+      "verification_errors": 1,
+      "approved_held_pending": 1
+    }
+  },
+  "api": {
+    "generation_attempted": 20,
+    "generation_succeeded": 19,
+    "failures": [
+      "SERVER_ERROR"
+    ],
+    "latency_s": {
+      "mean": 45.45466156563158,
+      "median": 45.12211291599999,
+      "p95_nearest_rank": 72.47794487500005
+    },
+    "note": "Both hybrids consume the same Gemini outputs; the improved policy adds no API calls or latency."
+  }
+}

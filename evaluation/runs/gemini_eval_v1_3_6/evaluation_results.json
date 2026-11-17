@@ -1,0 +1,1709 @@
+{
+  "created_utc": "2026-11-16T14:32:04.632228+00:00",
+  "experiment": "gemini_eval_v1_3_6",
+  "classification": "Diagnostic testing on previously available synthetic data; not independent validation.",
+  "selection": [
+    {
+      "case_id": "V3T-064",
+      "group": "internally_consistent_but_forged_clinic_file",
+      "category": "MEDICAL",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Fraud with internally consistent but fabricated paperwork (estimate and service note agree); no red-flag keywords; frozen V3 approves this group."
+    },
+    {
+      "case_id": "V3T-244",
+      "group": "supplier_ledger_closed",
+      "category": "COMMUNITY",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Fraud contradicted by an independent record (supplier ledger shows the invoice already paid and the account closed); frozen V3 misses this group."
+    },
+    {
+      "case_id": "V3T-154",
+      "group": "equipment_dispatch_shortfall",
+      "category": "EDUCATION",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Fraud via an inconsistent quantity/amount (request for 54 tablets vs 31 recorded in the asset register); no red-flag keywords."
+    },
+    {
+      "case_id": "V3T-044",
+      "group": "patient_and_record_crossing",
+      "category": "MEDICAL",
+      "label": "fraudulent",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Fraud via a contradiction between the campaign and its documents (pharmacy ledger is for a different patient and file)."
+    },
+    {
+      "case_id": "V3T-084",
+      "group": "family_cost_share_unclear",
+      "category": "MEDICAL",
+      "label": "borderline",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Borderline: preliminary estimate with family contribution and net balance unconfirmed; frozen V3 approves this group (unsafe-approval test)."
+    },
+    {
+      "case_id": "V3T-194",
+      "group": "account_image_without_issue_date",
+      "category": "EDUCATION",
+      "label": "borderline",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Borderline: cropped account screenshot without issue date or registrar seal; no red-flag keywords; frozen V3 approves this group."
+    },
+    {
+      "case_id": "V3T-224",
+      "group": "compost_route_cold_store",
+      "category": "COMMUNITY",
+      "label": "legitimate",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": true,
+      "selection_reason": "Legitimate community project whose wording matches known fraud lexicons (false-positive stress test)."
+    },
+    {
+      "case_id": "V3T-104",
+      "group": "accessible_exam_studio",
+      "category": "EDUCATION",
+      "label": "legitimate",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Legitimate education access costs with a matching invoice and registration record; no red-flag keywords."
+    },
+    {
+      "case_id": "V3T-024",
+      "group": "island_burn_recovery",
+      "category": "MEDICAL",
+      "label": "legitimate",
+      "source_corpus": "final_test_scenarios_v3.jsonl",
+      "source_sha256": "31f16ae955c4f85bf61f4fb69647f0997ada163341bb2a39ac725d2419b7b2a9",
+      "documents": 2,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Legitimate medical rehabilitation with unusual travel and lodging costs justified by a separate quote."
+    },
+    {
+      "case_id": "E150-102",
+      "group": "hill_footpath_lighting",
+      "category": "COMMUNITY",
+      "label": "legitimate",
+      "source_corpus": "independent_test_150.jsonl",
+      "source_sha256": "099016d5da873766fccbd199337a153de62da1ee2b6c1bb8f35b9c5b43b510e0",
+      "documents": 1,
+      "matches_known_red_flag_lexicon": false,
+      "selection_reason": "Legitimate community project with incomplete supporting evidence (preliminary record; final authorization stamp still being processed)."
+    }
+  ],
+  "integrity": {
+    "git_commit_before": "ac1e29bab3c86643e7dda7ff9f98bc3be1642617",
+    "working_tree_clean_before": true,
+    "files_hashed": 46,
+    "files_unchanged_after_run": false,
+    "changed_files": [
+      "evaluation/report_gemini_eval_v1.py"
+    ],
+    "execution_files_unchanged": true,
+    "production_default_model": "gemini-3.8-flash",
+    "evaluation_model": "gemini-3.6-flash"
+  },
+  "api": {
+    "cumulative_calls": {
+      "generation": 20,
+      "embedding": 10
+    },
+    "budget": {
+      "generation": 20,
+      "embedding": 10
+    },
+    "stopped_reason": null,
+    "failures": [
+      {
+        "config": "gemini_rag",
+        "case_id": "V3T-104",
+        "stage": "generation",
+        "category": "SERVER_ERROR",
+        "status_code": 503,
+        "exception_type": null,
+        "duration_seconds": 1.064,
+        "at": "2026-11-16T14:26:40.179430+00:00"
+      }
+    ]
+  },
+  "reliability": {
+    "generation_attempted": 20,
+    "generation_succeeded": 19,
+    "timeouts": 0,
+    "server_errors": 1,
+    "other_failures": {},
+    "success_ci": [
+      0.7639,
+      0.9911
+    ],
+    "latency_s": {
+      "n": 19,
+      "mean": 45.45466156563158,
+      "median": 45.12211291599999,
+      "p95_nearest_rank": 72.47794487500005,
+      "max": 72.47794487500005
+    },
+    "embedding_latency_s": [
+      0.97,
+      0.68,
+      0.64,
+      5.93,
+      0.49,
+      0.68,
+      0.88,
+      0.76,
+      0.75,
+      0.72
+    ]
+  },
+  "metrics": {
+    "heuristics_only": {
+      "evaluated": 10,
+      "tp": 4,
+      "fp": 6,
+      "fn": 0,
+      "tn": 0,
+      "precision": 0.4,
+      "precision_ci": [
+        0.1682,
+        0.6873
+      ],
+      "recall": 1.0,
+      "recall_ci": [
+        0.5101,
+        1.0
+      ],
+      "f1": 0.5714285714285715,
+      "fpr": 1.0,
+      "fpr_ci": [
+        0.6097,
+        1.0
+      ],
+      "legit_fpr": 1.0,
+      "fraud_review_flags": 4,
+      "fraud_rejections": 0,
+      "rejections_total": 0,
+      "info_requests": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "approved_held_pending": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "legit_escalated": 4,
+      "legit_info_requests": 0,
+      "fraud_missed": {
+        "approved_then_held": 0,
+        "information_request": 0,
+        "not_run_or_error": 0
+      },
+      "matrix": {
+        "legitimate": {
+          "FLAG_FOR_REVIEW": 4
+        },
+        "fraudulent": {
+          "FLAG_FOR_REVIEW": 4
+        },
+        "borderline": {
+          "FLAG_FOR_REVIEW": 2
+        }
+      },
+      "not_run_or_error_all": 0
+    },
+    "heuristics_lexical": {
+      "evaluated": 10,
+      "tp": 2,
+      "fp": 4,
+      "fn": 2,
+      "tn": 2,
+      "precision": 0.3333333333333333,
+      "precision_ci": [
+        0.0968,
+        0.7
+      ],
+      "recall": 0.5,
+      "recall_ci": [
+        0.15,
+        0.85
+      ],
+      "f1": 0.4,
+      "fpr": 0.6666666666666666,
+      "fpr_ci": [
+        0.3,
+        0.9032
+      ],
+      "legit_fpr": 0.5,
+      "fraud_review_flags": 2,
+      "fraud_rejections": 0,
+      "rejections_total": 0,
+      "info_requests": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "approved_held_pending": {
+        "legitimate": 2,
+        "fraudulent": 2,
+        "borderline": 0
+      },
+      "legit_escalated": 2,
+      "legit_info_requests": 0,
+      "fraud_missed": {
+        "approved_then_held": 2,
+        "information_request": 0,
+        "not_run_or_error": 0
+      },
+      "matrix": {
+        "legitimate": {
+          "FLAG_FOR_REVIEW": 2,
+          "APPROVED": 2
+        },
+        "fraudulent": {
+          "APPROVED": 2,
+          "FLAG_FOR_REVIEW": 2
+        },
+        "borderline": {
+          "FLAG_FOR_REVIEW": 2
+        }
+      },
+      "not_run_or_error_all": 0
+    },
+    "gemini_no_rag": {
+      "evaluated": 10,
+      "tp": 0,
+      "fp": 0,
+      "fn": 4,
+      "tn": 6,
+      "precision": null,
+      "precision_ci": null,
+      "recall": 0.0,
+      "recall_ci": [
+        0.0,
+        0.4899
+      ],
+      "f1": null,
+      "fpr": 0.0,
+      "fpr_ci": [
+        0.0,
+        0.3903
+      ],
+      "legit_fpr": 0.0,
+      "fraud_review_flags": 0,
+      "fraud_rejections": 0,
+      "rejections_total": 0,
+      "info_requests": {
+        "legitimate": 4,
+        "fraudulent": 4,
+        "borderline": 2
+      },
+      "approved_held_pending": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "legit_escalated": 0,
+      "legit_info_requests": 4,
+      "fraud_missed": {
+        "approved_then_held": 0,
+        "information_request": 4,
+        "not_run_or_error": 0
+      },
+      "matrix": {
+        "legitimate": {
+          "NEEDS_MORE_INFORMATION": 4
+        },
+        "fraudulent": {
+          "NEEDS_MORE_INFORMATION": 4
+        },
+        "borderline": {
+          "NEEDS_MORE_INFORMATION": 2
+        }
+      },
+      "not_run_or_error_all": 0
+    },
+    "gemini_rag": {
+      "evaluated": 9,
+      "tp": 3,
+      "fp": 0,
+      "fn": 1,
+      "tn": 6,
+      "precision": 1.0,
+      "precision_ci": [
+        0.4385,
+        1.0
+      ],
+      "recall": 0.75,
+      "recall_ci": [
+        0.3006,
+        0.9544
+      ],
+      "f1": 0.8571428571428571,
+      "fpr": 0.0,
+      "fpr_ci": [
+        0.0,
+        0.3903
+      ],
+      "legit_fpr": 0.0,
+      "fraud_review_flags": 2,
+      "fraud_rejections": 1,
+      "rejections_total": 1,
+      "info_requests": {
+        "legitimate": 2,
+        "fraudulent": 1,
+        "borderline": 2
+      },
+      "approved_held_pending": {
+        "legitimate": 1,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "legit_escalated": 0,
+      "legit_info_requests": 2,
+      "fraud_missed": {
+        "approved_then_held": 0,
+        "information_request": 1,
+        "not_run_or_error": 0
+      },
+      "matrix": {
+        "legitimate": {
+          "APPROVED": 1,
+          "NOT_RUN": 1,
+          "NEEDS_MORE_INFORMATION": 2
+        },
+        "fraudulent": {
+          "NEEDS_MORE_INFORMATION": 1,
+          "REJECTED": 1,
+          "FLAG_FOR_REVIEW": 2
+        },
+        "borderline": {
+          "NEEDS_MORE_INFORMATION": 2
+        }
+      },
+      "not_run_or_error_all": 1
+    },
+    "v3": {
+      "evaluated": 10,
+      "tp": 2,
+      "fp": 0,
+      "fn": 2,
+      "tn": 6,
+      "precision": 1.0,
+      "precision_ci": [
+        0.3424,
+        1.0
+      ],
+      "recall": 0.5,
+      "recall_ci": [
+        0.15,
+        0.85
+      ],
+      "f1": 0.6666666666666666,
+      "fpr": 0.0,
+      "fpr_ci": [
+        0.0,
+        0.3903
+      ],
+      "legit_fpr": 0.0,
+      "fraud_review_flags": 2,
+      "fraud_rejections": 0,
+      "rejections_total": 0,
+      "info_requests": {
+        "legitimate": 1,
+        "fraudulent": 1,
+        "borderline": 0
+      },
+      "approved_held_pending": {
+        "legitimate": 3,
+        "fraudulent": 1,
+        "borderline": 2
+      },
+      "legit_escalated": 0,
+      "legit_info_requests": 1,
+      "fraud_missed": {
+        "approved_then_held": 1,
+        "information_request": 1,
+        "not_run_or_error": 0
+      },
+      "matrix": {
+        "legitimate": {
+          "APPROVED": 3,
+          "NEEDS_MORE_INFORMATION": 1
+        },
+        "fraudulent": {
+          "APPROVED": 1,
+          "NEEDS_MORE_INFORMATION": 1,
+          "FLAG_FOR_REVIEW": 2
+        },
+        "borderline": {
+          "APPROVED": 2
+        }
+      },
+      "not_run_or_error_all": 0
+    },
+    "hybrid": {
+      "evaluated": 9,
+      "tp": 4,
+      "fp": 4,
+      "fn": 0,
+      "tn": 2,
+      "precision": 0.5,
+      "precision_ci": [
+        0.2152,
+        0.7848
+      ],
+      "recall": 1.0,
+      "recall_ci": [
+        0.5101,
+        1.0
+      ],
+      "f1": 0.6666666666666666,
+      "fpr": 0.6666666666666666,
+      "fpr_ci": [
+        0.3,
+        0.9032
+      ],
+      "legit_fpr": 0.5,
+      "fraud_review_flags": 4,
+      "fraud_rejections": 0,
+      "rejections_total": 0,
+      "info_requests": {
+        "legitimate": 0,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "approved_held_pending": {
+        "legitimate": 1,
+        "fraudulent": 0,
+        "borderline": 0
+      },
+      "legit_escalated": 2,
+      "legit_info_requests": 0,
+      "fraud_missed": {
+        "approved_then_held": 0,
+        "information_request": 0,
+        "not_run_or_error": 0
+      },
+      "matrix": {
+        "legitimate": {
+          "APPROVED": 1,
+          "NOT_RUN": 1,
+          "FLAG_FOR_REVIEW": 2
+        },
+        "fraudulent": {
+          "FLAG_FOR_REVIEW": 4
+        },
+        "borderline": {
+          "FLAG_FOR_REVIEW": 2
+        }
+      },
+      "not_run_or_error_all": 1
+    }
+  },
+  "v3_recomputed_matches_combined_record": {
+    "V3T-064": true,
+    "V3T-244": true,
+    "V3T-154": true,
+    "V3T-044": true,
+    "V3T-084": true,
+    "V3T-194": true,
+    "V3T-224": true,
+    "V3T-024": true,
+    "E150-102": true
+  },
+  "per_case": [
+    {
+      "case_id": "V3T-064",
+      "group": "internally_consistent_but_forged_clinic_file",
+      "category": "MEDICAL",
+      "label": "fraudulent",
+      "selection_reason": "Fraud with internally consistent but fabricated paperwork (estimate and service note agree); no red-flag keywords; frozen V3 approves this group.",
+      "keyword_free": true,
+      "retrieved": [
+        {
+          "title": "Treatment cost schedule",
+          "score": 0.7933
+        },
+        {
+          "title": "Specialty service note",
+          "score": 0.7508
+        }
+      ],
+      "lexical_titles": [
+        "Treatment cost schedule",
+        "Specialty service note"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "APPROVED",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+      "v3_decision": "APPROVED",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 3,
+      "gemini_rag_risk": "MEDIUM",
+      "gemini_rag_summary": "The campaign requests \u20b92,31,250 for a continuing care package supported by cost estimates and consultant notes referencing patient record QX-0034. However, the documents cite a future date of September 2026 and lack a specific medical diagnosis or attending physician details.",
+      "gemini_rag_red_flags": [
+        "Retrieved document evidence contains a future date (07 September 2026)",
+        "Lack of specific medical diagnosis beyond generic monitoring and supportive therapy",
+        "Hospital name lacks verifiable local context for Chitradurga area"
+      ],
+      "gemini_rag_missing": [
+        "Detailed clinical diagnosis and diagnostic test reports",
+        "Attending physician signature and medical registration details",
+        "Government-issued identification for beneficiary verification"
+      ],
+      "gemini_no_rag_summary": "The campaign seeks \u20b92,31,250 for a continuing care package but fails to provide a specific medical diagnosis, treating clinician details, or supporting documents. Verification of medical necessity and hospital estimates is required before proceeding.",
+      "gemini_no_rag_red_flags": [
+        "Zero supporting medical documents attached",
+        "Lack of specific diagnosis, medical history, or clinical details",
+        "Unverified hospital details for the stated location"
+      ],
+      "gemini_rag_latency_s": 39.98,
+      "gemini_no_rag_latency_s": 47.57,
+      "v3_reasons": [
+        "Critical claim and identity evidence are present and no material contradiction was found.",
+        "Optional supporting records are incomplete; this did not block approval."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": true,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-244",
+      "group": "supplier_ledger_closed",
+      "category": "COMMUNITY",
+      "label": "fraudulent",
+      "selection_reason": "Fraud contradicted by an independent record (supplier ledger shows the invoice already paid and the account closed); frozen V3 misses this group.",
+      "keyword_free": false,
+      "retrieved": [
+        {
+          "title": "Contractor payment record",
+          "score": 0.6852
+        }
+      ],
+      "lexical_titles": [
+        "Contractor payment record"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "FLAG_FOR_REVIEW",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "REJECTED",
+      "v3_decision": "NEEDS_MORE_INFORMATION",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 2,
+      "gemini_rag_risk": "HIGH",
+      "gemini_rag_summary": "The campaign seeks \u20b92,31,250 to settle an unpaid contractor invoice for flood steps in Chitradurga. However, retrieved financial evidence indicates that the invoice has already been fully paid by bank transfer and the account is closed, presenting a direct contradiction and significant fraud risk.",
+      "gemini_rag_red_flags": [
+        "Campaign pitch claims the invoice is unpaid, contradicting retrieved records showing the balance is nil and paid in full",
+        "Zero documents uploaded directly by the campaign organizer to substantiate an outstanding debt"
+      ],
+      "gemini_rag_missing": [
+        "Certified unpaid invoice or bill from the masonry contractor",
+        "Official financial statement showing pending liabilities from Chitradurga Shared Services Association",
+        "Contract or work order for the Chitradurga flood steps project"
+      ],
+      "gemini_no_rag_summary": "The campaign requests \u20b92,31,250 to settle an unpaid masonry invoice for flood steps on behalf of an organization. However, zero supporting documents such as contractor invoices, work orders, or organizational registration were provided to verify the claim.",
+      "gemini_no_rag_red_flags": [
+        "Zero supporting documentation provided to substantiate the claimed debt",
+        "Requesting public crowd funds to settle institutional vendor dues without proof of work or authorization"
+      ],
+      "gemini_rag_latency_s": 46.22,
+      "gemini_no_rag_latency_s": 37.19,
+      "v3_reasons": [
+        "Critical evidence missing: A record links the named beneficiary to the campaign."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": true,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-154",
+      "group": "equipment_dispatch_shortfall",
+      "category": "EDUCATION",
+      "label": "fraudulent",
+      "selection_reason": "Fraud via an inconsistent quantity/amount (request for 54 tablets vs 31 recorded in the asset register); no red-flag keywords.",
+      "keyword_free": true,
+      "retrieved": [
+        {
+          "title": "Learning lab asset register",
+          "score": 0.743
+        }
+      ],
+      "lexical_titles": [
+        "Learning lab asset register"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "FLAG_FOR_REVIEW",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "FLAG_FOR_REVIEW",
+      "v3_decision": "FLAG_FOR_REVIEW",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 3,
+      "gemini_rag_risk": "HIGH",
+      "gemini_rag_summary": "The campaign requests funds for 54 tablets for a shared learning lab in Chitradurga, but lists an individual as the beneficiary rather than the institution. Additionally, retrieved documentation only records 31 tablets received, creating a discrepancy with the requested total.",
+      "gemini_rag_red_flags": [
+        "Individual beneficiary account listed for institutional facility equipment",
+        "Discrepancy between campaign claim of 54 tablets and retrieved log showing 31 tablets",
+        "No verified institutional documents attached by the campaigner"
+      ],
+      "gemini_rag_missing": [
+        "Official authorization letter from Blue Courtyard Learning Lab",
+        "Vendor quotation or purchase order for 54 tablets",
+        "Institutional bank account or organizational registration proof"
+      ],
+      "gemini_no_rag_summary": "The requested budget of \u20b92,31,250 for 54 tablets (~\u20b94,282 per tablet) is financially plausible for basic educational devices. However, the campaign provides zero supporting documents, lacks official verification for the Blue Courtyard Learning Lab, and lists an individual beneficiary for a shared community initiative.",
+      "gemini_no_rag_red_flags": [
+        "No supporting documentation provided to verify the existence or registration of Blue Courtyard Learning Lab",
+        "Beneficiary type is listed as SELF despite funds being intended for a public community learning lab",
+        "Lack of detailed procurement timeline or hardware specifications"
+      ],
+      "gemini_rag_latency_s": 51.3,
+      "gemini_no_rag_latency_s": 36.83,
+      "v3_reasons": [
+        "A material inconsistency requires human review; this is not an automatic fraud finding.",
+        "The campaign requests 54 tablets, but 'Learning lab asset register' records 31 tablets."
+      ],
+      "v3_finding_codes": [
+        "CAMPAIGN_DOCUMENT_QUANTITY_CONFLICT"
+      ],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": false,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-044",
+      "group": "patient_and_record_crossing",
+      "category": "MEDICAL",
+      "label": "fraudulent",
+      "selection_reason": "Fraud via a contradiction between the campaign and its documents (pharmacy ledger is for a different patient and file).",
+      "keyword_free": false,
+      "retrieved": [
+        {
+          "title": "Specialist discharge record",
+          "score": 0.8091
+        },
+        {
+          "title": "Pharmacy ledger copy",
+          "score": 0.7755
+        }
+      ],
+      "lexical_titles": [
+        "Specialist discharge record",
+        "Pharmacy ledger copy"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "APPROVED",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "FLAG_FOR_REVIEW",
+      "v3_decision": "FLAG_FOR_REVIEW",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 3,
+      "gemini_rag_risk": "HIGH",
+      "gemini_rag_summary": "The campaign requests \u20b92,31,250 for medication release, but the attached pharmacy ledger providing this exact amount belongs to a different patient (Lina Mathew). Additionally, the campaign pitch lacks a specific diagnosis, line-item breakdown, and treating doctor details for Omar Jacob.",
+      "gemini_rag_red_flags": [
+        "Pharmacy debit note matching the requested amount belongs to a different patient (Lina Mathew, File HX-0094) instead of Omar Jacob",
+        "Campaign story lacks specific medical diagnosis and treating doctor details",
+        "No verified cost estimate provided for patient Omar Jacob"
+      ],
+      "gemini_rag_missing": [
+        "Official hospital cost estimate or pharmacy invoice issued specifically for Omar Jacob",
+        "Detailed medical prescription and diagnosis signed by a registered practitioner",
+        "Government-issued identification proof for the beneficiary"
+      ],
+      "gemini_no_rag_summary": "The campaign requests \u20b92,31,250 for a specialist medication package but provides zero supporting medical documentation. While a patient file reference and hospital name are stated, there is no diagnosis, treating doctor information, or itemized cost estimate.",
+      "gemini_no_rag_red_flags": [
+        "No medical documentation or proof of diagnosis provided",
+        "Vague request for a generic medication release package without clinical justification",
+        "Absence of physician details and verifiable hospital billing statements"
+      ],
+      "gemini_rag_latency_s": 34.57,
+      "gemini_no_rag_latency_s": 32.11,
+      "v3_reasons": [
+        "A material inconsistency requires human review; this is not an automatic fraud finding.",
+        "'Pharmacy ledger copy' is in a different person's name (no part of the name is shared)."
+      ],
+      "v3_finding_codes": [
+        "IDENTITY_MISMATCH"
+      ],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": false,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-084",
+      "group": "family_cost_share_unclear",
+      "category": "MEDICAL",
+      "label": "borderline",
+      "selection_reason": "Borderline: preliminary estimate with family contribution and net balance unconfirmed; frozen V3 approves this group (unsafe-approval test).",
+      "keyword_free": false,
+      "retrieved": [
+        {
+          "title": "Preliminary treatment estimate",
+          "score": 0.801
+        }
+      ],
+      "lexical_titles": [
+        "Preliminary treatment estimate"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "FLAG_FOR_REVIEW",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+      "v3_decision": "APPROVED",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 3,
+      "gemini_rag_risk": "MEDIUM",
+      "gemini_rag_summary": "The requested amount of \u20b92,31,250 is plausible for oncology care in India, and an estimate reference was retrieved. However, the campaign narrative is extremely minimal and lacks specific diagnostic details, a treating clinician, and confirmed net financial need.",
+      "gemini_rag_red_flags": [
+        "Vague campaign pitch with no detailed diagnosis or treatment plan",
+        "Net payable balance after insurance or family contribution is unconfirmed",
+        "No official government identity proof uploaded"
+      ],
+      "gemini_rag_missing": [
+        "Detailed diagnostic report and doctor treatment advice",
+        "Verified government ID proof of Omar Jacob",
+        "Confirmed net hospital bill or formal financial estimate statement from hospital billing"
+      ],
+      "gemini_no_rag_summary": "The campaign requests \u20b92,31,250 for oncology care but lacks basic clinical details such as a specific diagnosis, attending physician, and confirmed net treatment expenses. Without any attached medical records or hospital estimates, the request currently cannot be verified.",
+      "gemini_no_rag_red_flags": [
+        "Zero supporting medical records or verification documents attached",
+        "Unconfirmed net balance and unclear breakdown of family financial contributions",
+        "Vague story lacking specific medical diagnosis and treatment timeline"
+      ],
+      "gemini_rag_latency_s": 17.85,
+      "gemini_no_rag_latency_s": 45.12,
+      "v3_reasons": [
+        "Critical claim and identity evidence are present and no material contradiction was found.",
+        "Optional supporting records are incomplete; this did not block approval."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": true,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-194",
+      "group": "account_image_without_issue_date",
+      "category": "EDUCATION",
+      "label": "borderline",
+      "selection_reason": "Borderline: cropped account screenshot without issue date or registrar seal; no red-flag keywords; frozen V3 approves this group.",
+      "keyword_free": true,
+      "retrieved": [
+        {
+          "title": "Cropped workshop account screenshot",
+          "score": 0.8787
+        }
+      ],
+      "lexical_titles": [
+        "Cropped workshop account screenshot"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "FLAG_FOR_REVIEW",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+      "v3_decision": "APPROVED",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 2,
+      "gemini_rag_risk": "HIGH",
+      "gemini_rag_summary": "The campaign requests \u20b92,31,250 for workshop material charges at North Loop Technical College for student Omar Jacob. However, the supporting evidence consists only of a cropped screenshot that lacks essential validation elements like an issue date, official letterhead, and registrar endorsement. Verified fee documentation and proof of enrollment are required before proceeding.",
+      "gemini_rag_red_flags": [
+        "Cropped account screenshot lacks a visible issue date and official registrar endorsement",
+        "Substantial material fee requested without an itemized breakdown or formal institutional fee letter"
+      ],
+      "gemini_rag_missing": [
+        "Official fee demand notice or fee structure stamped and signed by the college registrar",
+        "Valid student ID card or official proof of enrollment from North Loop Technical College",
+        "Itemized breakdown of the workshop materials included in the charge"
+      ],
+      "gemini_no_rag_summary": "The campaign requests \u20b92,31,250 for technical college workshop materials but provides no verified documentation. The pitch relies on an unverified fee claim lacking an official seal or issue date, requiring verified institutional proof before proceeding.",
+      "gemini_no_rag_red_flags": [
+        "Zero supporting documents uploaded or retrieved",
+        "Fee claim references an undated statement lacking an official institutional registrar seal",
+        "High material cost without itemized fee structure or course syllabus"
+      ],
+      "gemini_rag_latency_s": 38.94,
+      "gemini_no_rag_latency_s": 34.88,
+      "v3_reasons": [
+        "Critical claim and identity evidence are present and no material contradiction was found.",
+        "Optional supporting records are incomplete; this did not block approval."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": true,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-224",
+      "group": "compost_route_cold_store",
+      "category": "COMMUNITY",
+      "label": "legitimate",
+      "selection_reason": "Legitimate community project whose wording matches known fraud lexicons (false-positive stress test).",
+      "keyword_free": false,
+      "retrieved": [
+        {
+          "title": "Supplier's itemized project quotation",
+          "score": 0.8072
+        },
+        {
+          "title": "Cooperative works authorization",
+          "score": 0.7705
+        }
+      ],
+      "lexical_titles": [
+        "Cooperative works authorization",
+        "Supplier's itemized project quotation"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "FLAG_FOR_REVIEW",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "APPROVED",
+      "v3_decision": "APPROVED",
+      "hybrid_decision": "APPROVED",
+      "gemini_rag_red_flag_count": 0,
+      "gemini_rag_risk": "LOW",
+      "gemini_rag_summary": "The campaign presents a clear, realistic community infrastructure request for a compost sorting canopy in Chitradurga. Retrieved supplier quotes and work authorization directly support the target amount of \u20b92,31,250 with consistent details.",
+      "gemini_rag_red_flags": [],
+      "gemini_rag_missing": [
+        "Organizational registration documents for Chitradurga Shared Services Association",
+        "Verified bank account details for organizational payout"
+      ],
+      "gemini_no_rag_summary": " The community project proposal for a waste-sorting canopy in Chitradurga is budget-plausible and geographically specific. However, no fabricator quotes or organizational registration documents were provided to verify the claim.",
+      "gemini_no_rag_red_flags": [
+        "Claims a fabricator bill of materials totals \u20b92,31,250 but attaches zero supporting documentation",
+        "Unverified organizational identity for Chitradurga Shared Services Association"
+      ],
+      "gemini_rag_latency_s": 72.48,
+      "gemini_no_rag_latency_s": 68.23,
+      "v3_reasons": [
+        "Critical claim and identity evidence are present and no material contradiction was found.",
+        "Optional supporting records are incomplete; this did not block approval."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "ELIGIBLE_PENDING_CONFIRMATION",
+      "escalated_by_gemini": false,
+      "api_errors": []
+    },
+    {
+      "case_id": "V3T-104",
+      "group": "accessible_exam_studio",
+      "category": "EDUCATION",
+      "label": "legitimate",
+      "selection_reason": "Legitimate education access costs with a matching invoice and registration record; no red-flag keywords.",
+      "keyword_free": true,
+      "retrieved": [
+        {
+          "title": "Candidate access invoice",
+          "score": 0.8681
+        },
+        {
+          "title": "Current registration record",
+          "score": 0.7918
+        }
+      ],
+      "lexical_titles": [
+        "Candidate access invoice",
+        "Current registration record"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "APPROVED",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "NOT_RUN",
+      "v3_decision": "APPROVED",
+      "hybrid_decision": "NOT_RUN",
+      "gemini_rag_red_flag_count": null,
+      "gemini_rag_risk": null,
+      "gemini_rag_summary": null,
+      "gemini_rag_red_flags": null,
+      "gemini_rag_missing": null,
+      "gemini_no_rag_summary": "The campaign requests \u20b92,31,250 for examination access tools and invigilator support under the Education category. However, zero supporting documents or official fee structures from the Mosaic Examination Board have been provided to verify these high costs.",
+      "gemini_no_rag_red_flags": [
+        "Zero supporting documents attached to substantiate the claimed \u20b92,31,250 cost",
+        "High requested amount for examination access tools without official quotes or fee breakdowns"
+      ],
+      "gemini_rag_latency_s": null,
+      "gemini_no_rag_latency_s": 61.1,
+      "v3_reasons": null,
+      "v3_finding_codes": null,
+      "hybrid_workflow_state": null,
+      "escalated_by_gemini": null,
+      "api_errors": [
+        "gemini_rag:generation:SERVER_ERROR"
+      ]
+    },
+    {
+      "case_id": "V3T-024",
+      "group": "island_burn_recovery",
+      "category": "MEDICAL",
+      "label": "legitimate",
+      "selection_reason": "Legitimate medical rehabilitation with unusual travel and lodging costs justified by a separate quote.",
+      "keyword_free": true,
+      "retrieved": [
+        {
+          "title": "Access route and lodging quote",
+          "score": 0.8014
+        },
+        {
+          "title": "Rehabilitation attendance plan",
+          "score": 0.7983
+        }
+      ],
+      "lexical_titles": [
+        "Rehabilitation attendance plan",
+        "Access route and lodging quote"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "APPROVED",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+      "v3_decision": "APPROVED",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 2,
+      "gemini_rag_risk": "MEDIUM",
+      "gemini_rag_summary": "The campaign requests \u20b92,31,250 for travel and lodging for burn scar recovery sessions. While retrieved quotes match the exact financial target and name the patient, the reference to a water crossing and 'Bay District Rehabilitation Service' for a resident of landlocked Chitradurga presents geographical inconsistencies, and primary medical diagnosis records are missing.",
+      "gemini_rag_red_flags": [
+        "Geographical and institutional naming mismatch (Chitradurga is landlocked, yet pitch references a water crossing to Bay District Rehabilitation Service)",
+        "Lack of formal medical diagnosis records or doctor-signed clinical certificates"
+      ],
+      "gemini_rag_missing": [
+        "Primary medical diagnosis report or burn treatment discharge summary",
+        "Official estimate on facility letterhead signed by a licensed treating clinician",
+        "Government-issued identification proof of the beneficiary"
+      ],
+      "gemini_no_rag_summary": "The campaign requests \u20b92,31,250 for travel and lodging to 'Bay District Rehabilitation Service' involving a water crossing, which appears geographically inconsistent with Chitradurga, Karnataka. Additionally, zero supporting medical documents or cost estimates were provided to verify the claim.",
+      "gemini_no_rag_red_flags": [
+        "Narrative mentions 'Bay District Rehabilitation Service' and a 'water crossing', which is geographically incongruous with Chitradurga, Karnataka",
+        "Zero medical records, doctor prescriptions, or treatment plans provided",
+        "No proof of travel expenses or hospital cost estimate attached"
+      ],
+      "gemini_rag_latency_s": 51.33,
+      "gemini_no_rag_latency_s": 57.75,
+      "v3_reasons": [
+        "Critical claim and identity evidence are present and no material contradiction was found.",
+        "Optional supporting records are incomplete; this did not block approval."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": true,
+      "api_errors": []
+    },
+    {
+      "case_id": "E150-102",
+      "group": "hill_footpath_lighting",
+      "category": "COMMUNITY",
+      "label": "legitimate",
+      "selection_reason": "Legitimate community project with incomplete supporting evidence (preliminary record; final authorization stamp still being processed).",
+      "keyword_free": true,
+      "retrieved": [
+        {
+          "title": "Preliminary record Q41-02",
+          "score": 0.7055
+        }
+      ],
+      "lexical_titles": [
+        "Preliminary record Q41-02"
+      ],
+      "heuristics_only_decision": "FLAG_FOR_REVIEW",
+      "heuristics_lexical_decision": "FLAG_FOR_REVIEW",
+      "gemini_no_rag_decision": "NEEDS_MORE_INFORMATION",
+      "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+      "v3_decision": "NEEDS_MORE_INFORMATION",
+      "hybrid_decision": "FLAG_FOR_REVIEW",
+      "gemini_rag_red_flag_count": 2,
+      "gemini_rag_risk": "MEDIUM",
+      "gemini_rag_summary": "The community lighting project in Udaipur has a plausible budget and matching preliminary records including village minutes and installer quotes. However, the final official authorization is still pending and funds are directed to an individual beneficiary for civic work.",
+      "gemini_rag_red_flags": [
+        "Individual beneficiary listed for public community infrastructure work",
+        "Final authorization stamp from municipal or cooperative authorities is still pending"
+      ],
+      "gemini_rag_missing": [
+        "Final signed authorization or NOC from local authorities/electricity cooperative",
+        "Community or institutional bank account details for civic works execution"
+      ],
+      "gemini_no_rag_summary": "The campaign seeks funding for public footpath lighting in Udaipur submitted under an individual beneficiary profile without municipal approval or vendor quotations. With zero supporting documents provided, the project lacks official authorization and verified cost estimates.",
+      "gemini_no_rag_red_flags": [
+        "Individual beneficiary collecting funds for public infrastructure without local municipal permissions or NOC",
+        "Zero supporting documentation attached to substantiate costs or project feasibility"
+      ],
+      "gemini_rag_latency_s": 53.65,
+      "gemini_no_rag_latency_s": 36.54,
+      "v3_reasons": [
+        "Critical evidence missing: A record links the named beneficiary to the campaign."
+      ],
+      "v3_finding_codes": [],
+      "hybrid_workflow_state": "FLAG_FOR_REVIEW",
+      "escalated_by_gemini": true,
+      "api_errors": []
+    }
+  ],
+  "pilots": {
+    "created_utc": "2026-11-16T13:37:18.513179+00:00",
+    "case_ids": [
+      "V3T-071",
+      "V3T-131",
+      "V3T-201"
+    ],
+    "freeze": {
+      "git_head": "00654b6eb609279db5bf114a6cea24234096913c",
+      "working_tree_clean_before": true,
+      "files_hashed": 26,
+      "identical": true,
+      "git_head_after": "00654b6eb609279db5bf114a6cea24234096913c"
+    },
+    "models": {
+      "gemini-3.8-flash": {
+        "experiment": "gemini_pilot_v3",
+        "calls": {
+          "generation": 6,
+          "embedding": 3
+        },
+        "generation": {
+          "gemini_no_rag": {
+            "attempted": 3,
+            "succeeded": 1,
+            "timeouts": 2,
+            "other_failures": {},
+            "success_latency_seconds": {
+              "n": 1,
+              "mean": 174.81,
+              "p95_nearest_rank": 174.81,
+              "values": [
+                174.81
+              ]
+            },
+            "seconds_spent_on_failed_requests": 360.2
+          },
+          "gemini_rag": {
+            "attempted": 3,
+            "succeeded": 0,
+            "timeouts": 1,
+            "other_failures": {
+              "SERVER_ERROR": 2
+            },
+            "success_latency_seconds": {
+              "n": 0,
+              "mean": null,
+              "p95_nearest_rank": null,
+              "values": []
+            },
+            "seconds_spent_on_failed_requests": 205.0
+          },
+          "embedding": {
+            "attempted": 3,
+            "succeeded": 3,
+            "latency_seconds": [
+              0.59,
+              0.64,
+              1.77
+            ]
+          }
+        },
+        "stopped_reason": null,
+        "all_success_latency": {
+          "n": 1,
+          "mean": 174.81,
+          "p95_nearest_rank": 174.81,
+          "values": [
+            174.81
+          ]
+        }
+      },
+      "gemini-3.6-flash": {
+        "experiment": "gemini_pilot_v3_model_3_6",
+        "calls": {
+          "generation": 6,
+          "embedding": 3
+        },
+        "generation": {
+          "gemini_no_rag": {
+            "attempted": 3,
+            "succeeded": 3,
+            "timeouts": 0,
+            "other_failures": {},
+            "success_latency_seconds": {
+              "n": 3,
+              "mean": 17.66,
+              "p95_nearest_rank": 25.35,
+              "values": [
+                8.58,
+                19.04,
+                25.35
+              ]
+            },
+            "seconds_spent_on_failed_requests": 0
+          },
+          "gemini_rag": {
+            "attempted": 3,
+            "succeeded": 3,
+            "timeouts": 0,
+            "other_failures": {},
+            "success_latency_seconds": {
+              "n": 3,
+              "mean": 26.23,
+              "p95_nearest_rank": 30.03,
+              "values": [
+                18.76,
+                29.89,
+                30.03
+              ]
+            },
+            "seconds_spent_on_failed_requests": 0
+          },
+          "embedding": {
+            "attempted": 3,
+            "succeeded": 3,
+            "latency_seconds": [
+              0.52,
+              0.72,
+              0.72
+            ]
+          }
+        },
+        "stopped_reason": null,
+        "all_success_latency": {
+          "n": 6,
+          "mean": 21.94,
+          "p95_nearest_rank": 30.03,
+          "values": [
+            8.58,
+            18.76,
+            19.04,
+            25.35,
+            29.89,
+            30.03
+          ]
+        }
+      }
+    },
+    "gemini_api_calls_made_by_this_script": 0,
+    "retrieval": {
+      "V3T-071": {
+        "documents": 1,
+        "lexical_titles": [
+          "Committee review copy"
+        ],
+        "run_a": {
+          "titles": [
+            "Committee review copy"
+          ],
+          "relevance": [
+            0.785
+          ],
+          "document_coverage": 1.0
+        },
+        "run_b": {
+          "titles": [
+            "Committee review copy"
+          ],
+          "relevance": [
+            0.785
+          ],
+          "document_coverage": 1.0
+        },
+        "identical_ranking_across_runs": true,
+        "max_relevance_difference": 0.0,
+        "embedding_vs_lexical_same_set": true
+      },
+      "V3T-131": {
+        "documents": 1,
+        "lexical_titles": [
+          "Course registrar calendar"
+        ],
+        "run_a": {
+          "titles": [
+            "Course registrar calendar"
+          ],
+          "relevance": [
+            0.7781
+          ],
+          "document_coverage": 1.0
+        },
+        "run_b": {
+          "titles": [
+            "Course registrar calendar"
+          ],
+          "relevance": [
+            0.7781
+          ],
+          "document_coverage": 1.0
+        },
+        "identical_ranking_across_runs": true,
+        "max_relevance_difference": 0.0,
+        "embedding_vs_lexical_same_set": true
+      },
+      "V3T-201": {
+        "documents": 2,
+        "lexical_titles": [
+          "Cooperative works authorization",
+          "Supplier's itemized project quotation"
+        ],
+        "run_a": {
+          "titles": [
+            "Supplier's itemized project quotation",
+            "Cooperative works authorization"
+          ],
+          "relevance": [
+            0.8174,
+            0.7573
+          ],
+          "document_coverage": 1.0
+        },
+        "run_b": {
+          "titles": [
+            "Supplier's itemized project quotation",
+            "Cooperative works authorization"
+          ],
+          "relevance": [
+            0.8174,
+            0.7573
+          ],
+          "document_coverage": 1.0
+        },
+        "identical_ranking_across_runs": true,
+        "max_relevance_difference": 0.0,
+        "embedding_vs_lexical_same_set": true
+      }
+    },
+    "decisions": {
+      "V3T-071": {
+        "label": "borderline",
+        "category": "MEDICAL",
+        "heuristics_only": "FLAG_FOR_REVIEW",
+        "heuristics_lexical": "FLAG_FOR_REVIEW",
+        "gemini_no_rag@gemini-3.8-flash": null,
+        "gemini_rag@gemini-3.8-flash": null,
+        "hybrid@gemini-3.8-flash": null,
+        "gemini_no_rag@gemini-3.6-flash": "NEEDS_MORE_INFORMATION",
+        "gemini_rag@gemini-3.6-flash": "NEEDS_MORE_INFORMATION",
+        "hybrid@gemini-3.6-flash": "FLAG_FOR_REVIEW",
+        "v3_decision": "NEEDS_MORE_INFORMATION"
+      },
+      "V3T-131": {
+        "label": "fraudulent",
+        "category": "EDUCATION",
+        "heuristics_only": "FLAG_FOR_REVIEW",
+        "heuristics_lexical": "FLAG_FOR_REVIEW",
+        "gemini_no_rag@gemini-3.8-flash": null,
+        "gemini_rag@gemini-3.8-flash": null,
+        "hybrid@gemini-3.8-flash": null,
+        "gemini_no_rag@gemini-3.6-flash": "NEEDS_MORE_INFORMATION",
+        "gemini_rag@gemini-3.6-flash": "REJECTED",
+        "hybrid@gemini-3.6-flash": "FLAG_FOR_REVIEW",
+        "v3_decision": "NEEDS_MORE_INFORMATION"
+      },
+      "V3T-201": {
+        "label": "legitimate",
+        "category": "COMMUNITY",
+        "heuristics_only": "FLAG_FOR_REVIEW",
+        "heuristics_lexical": "FLAG_FOR_REVIEW",
+        "gemini_no_rag@gemini-3.8-flash": "NEEDS_MORE_INFORMATION",
+        "gemini_rag@gemini-3.8-flash": null,
+        "hybrid@gemini-3.8-flash": null,
+        "gemini_no_rag@gemini-3.6-flash": "NEEDS_MORE_INFORMATION",
+        "gemini_rag@gemini-3.6-flash": "APPROVED",
+        "hybrid@gemini-3.6-flash": "APPROVED",
+        "v3_decision": "APPROVED"
+      }
+    },
+    "disagreements": [
+      {
+        "model": "gemini-3.8-flash",
+        "case_id": "V3T-201",
+        "label": "legitimate",
+        "gemini_config": "gemini_no_rag",
+        "gemini_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_flagged": true,
+        "gemini_red_flags": 2,
+        "fallback_config": "heuristics_only",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      },
+      {
+        "model": "gemini-3.6-flash",
+        "case_id": "V3T-071",
+        "label": "borderline",
+        "gemini_config": "gemini_no_rag",
+        "gemini_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_flagged": true,
+        "gemini_red_flags": 3,
+        "fallback_config": "heuristics_only",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      },
+      {
+        "model": "gemini-3.6-flash",
+        "case_id": "V3T-131",
+        "label": "fraudulent",
+        "gemini_config": "gemini_no_rag",
+        "gemini_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_flagged": true,
+        "gemini_red_flags": 2,
+        "fallback_config": "heuristics_only",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      },
+      {
+        "model": "gemini-3.6-flash",
+        "case_id": "V3T-201",
+        "label": "legitimate",
+        "gemini_config": "gemini_no_rag",
+        "gemini_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_flagged": true,
+        "gemini_red_flags": 2,
+        "fallback_config": "heuristics_only",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      },
+      {
+        "model": "gemini-3.6-flash",
+        "case_id": "V3T-071",
+        "label": "borderline",
+        "gemini_config": "gemini_rag",
+        "gemini_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_flagged": true,
+        "gemini_red_flags": 2,
+        "fallback_config": "heuristics_lexical",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      },
+      {
+        "model": "gemini-3.6-flash",
+        "case_id": "V3T-131",
+        "label": "fraudulent",
+        "gemini_config": "gemini_rag",
+        "gemini_decision": "REJECTED",
+        "gemini_flagged": true,
+        "gemini_red_flags": 3,
+        "fallback_config": "heuristics_lexical",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      },
+      {
+        "model": "gemini-3.6-flash",
+        "case_id": "V3T-201",
+        "label": "legitimate",
+        "gemini_config": "gemini_rag",
+        "gemini_decision": "APPROVED",
+        "gemini_flagged": false,
+        "gemini_red_flags": 0,
+        "fallback_config": "heuristics_lexical",
+        "fallback_decision": "FLAG_FOR_REVIEW",
+        "fallback_flagged": true
+      }
+    ],
+    "offline_reproducible": true
+  },
+  "contribution": {
+    "fraud_flagged_by_gemini_rag_but_not_v3": [
+      "V3T-244"
+    ],
+    "fraud_flagged_by_gemini_rag_but_not_fallback": [
+      "V3T-044"
+    ],
+    "rag_vs_no_rag_correct_direction": {
+      "rag_only": [
+        "V3T-244",
+        "V3T-154",
+        "V3T-044",
+        "V3T-224"
+      ],
+      "no_rag_only": [],
+      "both": [
+        "V3T-084",
+        "V3T-194"
+      ]
+    },
+    "legit_flagged_by_gemini_rag": [],
+    "consistent_fabrication_case": {
+      "V3T-064": "NEEDS_MORE_INFORMATION"
+    },
+    "unsafe_approvals_fraud_or_borderline": {
+      "v3": [
+        "V3T-064",
+        "V3T-084",
+        "V3T-194"
+      ],
+      "hybrid": [],
+      "gemini_rag": [],
+      "heuristics_lexical": [
+        "V3T-064",
+        "V3T-044"
+      ]
+    },
+    "manual_reviews": {
+      "heuristics_only": 10,
+      "heuristics_lexical": 6,
+      "gemini_no_rag": 0,
+      "gemini_rag": 2,
+      "v3": 2,
+      "hybrid": 8
+    },
+    "combined_escalations": [
+      {
+        "case_id": "V3T-064",
+        "label": "fraudulent",
+        "v3": "APPROVED",
+        "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_red_flags": 3,
+        "trigger": "red_flags_only"
+      },
+      {
+        "case_id": "V3T-244",
+        "label": "fraudulent",
+        "v3": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_decision": "REJECTED",
+        "gemini_rag_red_flags": 2,
+        "trigger": "gemini_decision"
+      },
+      {
+        "case_id": "V3T-084",
+        "label": "borderline",
+        "v3": "APPROVED",
+        "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_red_flags": 3,
+        "trigger": "red_flags_only"
+      },
+      {
+        "case_id": "V3T-194",
+        "label": "borderline",
+        "v3": "APPROVED",
+        "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_red_flags": 2,
+        "trigger": "red_flags_only"
+      },
+      {
+        "case_id": "V3T-024",
+        "label": "legitimate",
+        "v3": "APPROVED",
+        "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_red_flags": 2,
+        "trigger": "red_flags_only"
+      },
+      {
+        "case_id": "E150-102",
+        "label": "legitimate",
+        "v3": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_decision": "NEEDS_MORE_INFORMATION",
+        "gemini_rag_red_flags": 2,
+        "trigger": "red_flags_only"
+      }
+    ]
+  },
+  "disagreements": [
+    {
+      "case_id": "V3T-064",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-064",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs v3",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-064",
+      "label": "fraudulent",
+      "pair": "hybrid vs v3",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-244",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "REJECTED",
+      "b": "FLAG_FOR_REVIEW"
+    },
+    {
+      "case_id": "V3T-244",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs v3",
+      "a": "REJECTED",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-244",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs gemini_no_rag",
+      "a": "REJECTED",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-244",
+      "label": "fraudulent",
+      "pair": "hybrid vs v3",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-154",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs gemini_no_rag",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-044",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-044",
+      "label": "fraudulent",
+      "pair": "gemini_rag vs gemini_no_rag",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-084",
+      "label": "borderline",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "FLAG_FOR_REVIEW"
+    },
+    {
+      "case_id": "V3T-084",
+      "label": "borderline",
+      "pair": "gemini_rag vs v3",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-084",
+      "label": "borderline",
+      "pair": "hybrid vs v3",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-194",
+      "label": "borderline",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "FLAG_FOR_REVIEW"
+    },
+    {
+      "case_id": "V3T-194",
+      "label": "borderline",
+      "pair": "gemini_rag vs v3",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-194",
+      "label": "borderline",
+      "pair": "hybrid vs v3",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-224",
+      "label": "legitimate",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "APPROVED",
+      "b": "FLAG_FOR_REVIEW"
+    },
+    {
+      "case_id": "V3T-224",
+      "label": "legitimate",
+      "pair": "gemini_rag vs gemini_no_rag",
+      "a": "APPROVED",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-104",
+      "label": "legitimate",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "NOT_RUN",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-104",
+      "label": "legitimate",
+      "pair": "gemini_rag vs v3",
+      "a": "NOT_RUN",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-104",
+      "label": "legitimate",
+      "pair": "gemini_rag vs gemini_no_rag",
+      "a": "NOT_RUN",
+      "b": "NEEDS_MORE_INFORMATION"
+    },
+    {
+      "case_id": "V3T-104",
+      "label": "legitimate",
+      "pair": "hybrid vs v3",
+      "a": "NOT_RUN",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-024",
+      "label": "legitimate",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-024",
+      "label": "legitimate",
+      "pair": "gemini_rag vs v3",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "V3T-024",
+      "label": "legitimate",
+      "pair": "hybrid vs v3",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "APPROVED"
+    },
+    {
+      "case_id": "E150-102",
+      "label": "legitimate",
+      "pair": "gemini_rag vs heuristics_lexical",
+      "a": "NEEDS_MORE_INFORMATION",
+      "b": "FLAG_FOR_REVIEW"
+    },
+    {
+      "case_id": "E150-102",
+      "label": "legitimate",
+      "pair": "hybrid vs v3",
+      "a": "FLAG_FOR_REVIEW",
+      "b": "NEEDS_MORE_INFORMATION"
+    }
+  ]
+}

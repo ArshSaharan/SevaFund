@@ -12,7 +12,8 @@ from app.models.verification import VerificationAudit
 from app.schemas.campaign import CampaignCreate, CampaignUpdateSchema, CampaignResponse, CampaignListResponse
 from app.schemas.ai import VerificationResult
 from app.services.ai_verifier import ai_verifier
-from app.services.auth_dependencies import get_current_user, get_current_user_or_demo
+from app.services.auth_dependencies import get_current_user
+from app.services import dev_hybrid_v4_flag  # development-only hybrid v4 integration; OFF unless SEVAFUND_DEV_HYBRID_V4=1
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
 
@@ -121,7 +122,7 @@ def list_campaigns(
 @router.post("", response_model=CampaignResponse, status_code=status.HTTP_201_CREATED)
 async def create_campaign(
     campaign_in: CampaignCreate,
-    current_user: User = Depends(get_current_user_or_demo),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     # Convert proof documents to JSON
@@ -184,6 +185,10 @@ async def create_campaign(
     db.commit()
     db.refresh(campaign)
 
+    if dev_hybrid_v4_flag.enabled():  # development-only: status follows the hybrid v4 workflow, never the score
+        from app.services import dev_hybrid_v4_integration
+        await dev_hybrid_v4_integration.assess_and_record(db, campaign)
+
     # Save detailed AI Verification Audit record
     audit = VerificationAudit(
         campaign_id=campaign.id,
@@ -225,6 +230,11 @@ def update_campaign(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to edit this campaign")
 
     update_dict = update_in.model_dump(exclude_unset=True)
+    if dev_hybrid_v4_flag.enabled():  # development-only: the confirmed amount is tied to the goal
+        from app.services import dev_hybrid_v4_integration
+        blocked = dev_hybrid_v4_integration.goal_change_block_reason(db, campaign, update_dict.get("goal_amount"))
+        if blocked:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=blocked)
     for field, val in update_dict.items():
         setattr(campaign, field, val)
 
@@ -274,7 +284,10 @@ async def verify_campaign(
     campaign.ai_recommendation = ai_result.recommendation
     campaign.ai_verified_at = datetime.datetime.utcnow()
 
-    if ai_result.recommendation == "AUTO_APPROVE" and campaign.status in ("PENDING_VERIFICATION", "FLAGGED"):
+    if dev_hybrid_v4_flag.enabled():  # development-only: a score never publishes; only four confirmations activate
+        from app.services import dev_hybrid_v4_integration
+        await dev_hybrid_v4_integration.assess_and_record(db, campaign)
+    elif ai_result.recommendation == "AUTO_APPROVE" and campaign.status in ("PENDING_VERIFICATION", "FLAGGED"):
         campaign.status = "ACTIVE"
     elif ai_result.recommendation == "REJECT":
         campaign.status = "REJECTED"

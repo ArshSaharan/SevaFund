@@ -1,0 +1,128 @@
+{
+  "cases_planned": 3,
+  "paired_complete_cases": 0,
+  "coverage": {
+    "heuristics_only": 1.0,
+    "heuristics_lexical": 1.0,
+    "gemini_no_rag": 0.3333,
+    "gemini_rag": 0.0,
+    "hybrid": 0.0
+  },
+  "verification_on_paired_subset": {
+    "heuristics_only": {
+      "cases": 0,
+      "recall": null,
+      "precision": null,
+      "false_positive_rate": null,
+      "fraudulent_auto_approval_rate": null,
+      "legitimate_auto_approval_rate": null,
+      "decisions": {}
+    },
+    "heuristics_lexical": {
+      "cases": 0,
+      "recall": null,
+      "precision": null,
+      "false_positive_rate": null,
+      "fraudulent_auto_approval_rate": null,
+      "legitimate_auto_approval_rate": null,
+      "decisions": {}
+    },
+    "gemini_no_rag": {
+      "cases": 0,
+      "recall": null,
+      "precision": null,
+      "false_positive_rate": null,
+      "fraudulent_auto_approval_rate": null,
+      "legitimate_auto_approval_rate": null,
+      "decisions": {}
+    },
+    "gemini_rag": {
+      "cases": 0,
+      "recall": null,
+      "precision": null,
+      "false_positive_rate": null,
+      "fraudulent_auto_approval_rate": null,
+      "legitimate_auto_approval_rate": null,
+      "decisions": {}
+    },
+    "hybrid": {
+      "cases": 0,
+      "recall": null,
+      "precision": null,
+      "false_positive_rate": null,
+      "fraudulent_auto_approval_rate": null,
+      "legitimate_auto_approval_rate": null,
+      "decisions": {}
+    }
+  },
+  "retrieval": {
+    "heuristics_lexical": {
+      "cases": 3,
+      "mean_document_coverage": 1.0,
+      "empty_retrieval_rate": 0.0,
+      "mean_gold_recall_at_k": null,
+      "mean_gold_mrr": null
+    },
+    "gemini_rag": {
+      "cases": 3,
+      "mean_document_coverage": 1.0,
+      "empty_retrieval_rate": 0.0,
+      "mean_gold_recall_at_k": null,
+      "mean_gold_mrr": null
+    }
+  },
+  "reliability": {
+    "heuristics_only": {
+      "successes": 3,
+      "failures": 0,
+      "success_rate": 1.0,
+      "failure_categories": {},
+      "latency_ms": {
+        "mean": 5.3,
+        "p50": 5.8,
+        "p95": 5.8
+      }
+    },
+    "heuristics_lexical": {
+      "successes": 3,
+      "failures": 0,
+      "success_rate": 1.0,
+      "failure_categories": {},
+      "latency_ms": {
+        "mean": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      }
+    },
+    "gemini_no_rag": {
+      "successes": 1,
+      "failures": 2,
+      "success_rate": 0.3333,
+      "failure_categories": {
+        "READ_TIMEOUT": 2
+      },
+      "latency_ms": {
+        "mean": 174807.5,
+        "p50": 174807.5,
+        "p95": 174807.5
+      }
+    },
+    "gemini_rag": {
+      "successes": 0,
+      "failures": 3,
+      "success_rate": 0.0,
+      "failure_categories": {
+        "SERVER_ERROR": 2,
+        "READ_TIMEOUT": 1
+      },
+      "latency_ms": null
+    },
+    "hybrid": {
+      "successes": 0,
+      "failures": 0,
+      "success_rate": null,
+      "failure_categories": {},
+      "latency_ms": null
+    }
+  }
+}

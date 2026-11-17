@@ -46,6 +46,11 @@ RED_FLAG_PATTERNS = [
     (r"\b(fake bill|photoshop receipt|fake aiims stamp|edited hospital letter)\b", "Mention of fraudulent documentation or stamp forgery", 50),
     (r"\b(send money urgent right this second or die|no questions allowed)\b", "High-pressure coercive emotional blackmail without verifiable clinical records", 20),
     (r"\b(buy me iphone|luxury trip|party expenses)\b", "Frivolous luxury claims disguised as hardship", 30),
+    (r"\b(?:guaranteed?|100\s*%\s*guarantee)\b.{0,60}\b(?:cure|recovery|healing)\b|\b(?:cure|recovery|healing)\b.{0,60}\bguaranteed?\b", "Promises guaranteed cures or recovery without verifiable professional evidence", 35),
+    (r"\b(?:secret|miracle)\s+(?:cure|remedy|treatment)\b", "Promotes an unverified secret or miracle treatment", 35),
+    (r"\b(?:upfront|advance|processing|verification|release|reservation)\s+(?:fee|charge|payment)\b|\bpay\b.{0,50}\b(?:release|processing|verification)\s+(?:fee|charge|payment)\b", "Requests an advance payment to unlock a grant, prize, seat, or service", 40),
+    (r"\b(?:personal|private|unmonitored)\s+(?:account|transfer|wallet|number)\b|\b(?:outside|off)\s+(?:the\s+)?platform\b.{0,40}\b(?:transfer|payment|donation|contribution)\b", "Requests funds through a personal or unmonitored channel outside the platform", 35),
+    (r"\b(?:altered|edited|forged|fabricated|photoshopped)\b.{0,45}\b(?:estimate|invoice|receipt|bill|letter|record|document)\b|\b(?:estimate|invoice|receipt|bill|letter|record|document)\b.{0,45}\b(?:altered|edited|forged|fabricated|photoshopped)\b", "Acknowledges altered or fabricated supporting documents", 50),
 ]
 
 # Indian Specificity Indicators (Hospitals, Institutions, Doctors, Indian Locations)
@@ -57,6 +62,23 @@ INDIAN_SPECIFICITY_PATTERNS = [
     (r"\b(diagnosis|diagnosed|biopsy|mri|ct scan|dialysis|chemo|chemotherapy|radiation|ecg|blood test)\b", "Contains verified clinical diagnostic terminology"),
     (r"\b([₹Rs\.]+\s?[\d,]+(\s?lakh|\s?crore|\s?k)?)\b", "Provides itemized cost figures in Indian Rupee denomination"),
     (r"\b(Delhi|Mumbai|Bengaluru|Bangalore|Hyderabad|Chennai|Kolkata|Pune|Ahmedabad|Jaipur|Lucknow|Chandigarh|Kochi|Kerala|Punjab|Maharashtra|Karnataka|Tamil Nadu|Gujarat|UP|Bihar|Haryana|Rajasthan|West Bengal|Assam|Odisha)\b", "Specifies identifiable Indian city / state geography"),
+]
+
+EDUCATION_SPECIFICITY_PATTERNS = [
+    (r"\b(school|college|university|polytechnic|institute|hostel|education board)\b", "Names an education institution or program"),
+    (r"\b(fee notice|fee structure|tuition invoice|semester|enrol?ment|admission letter|student id|roll number)\b", "Includes education or enrollment documentation details"),
+    (r"\b(student|class|course|program|books|laboratory|hostel fees)\b", "Identifies the student, course, or requested education costs"),
+]
+
+COMMUNITY_SPECIFICITY_PATTERNS = [
+    (r"\b(residents? association|ward committee|village council|local association|relief camp|community group|self.help group)\b", "Names a community organization or response group"),
+    (r"\b(committee minutes|association record|recipient list|vendor estimate|supplier quote|incident report|repair estimate)\b", "Includes community project or incident documentation details"),
+    (r"\b(households|residents|families|recipients|supplies|temporary shelter|repair work|relief distribution)\b", "Identifies intended recipients or community work"),
+]
+
+GENERAL_SPECIFICITY_PATTERNS = [
+    (r"\b(reference|record|invoice|receipt|estimate|minutes|case id|application id)\s*(?:number|no\.?|:|#|-)?\s*[A-Z0-9][A-Z0-9/-]{2,}\b", "Provides a traceable document or application reference"),
+    (r"\b(itemi[sz]ed|line.item|cost breakdown|spending period|payment recipient)\b", "Describes how requested funds will be itemized or spent"),
 ]
 
 def format_inr(amount: float) -> str:
@@ -150,11 +172,6 @@ def detect_red_flags(text: str) -> Tuple[List[str], float]:
     if len(flags) >= 2:
         penalty += 20.0
             
-    # Check for short or empty text
-    if len(text.strip().split()) < 25:
-        flags.append("Story is unusually brief (under 25 words); lacks necessary medical context")
-        penalty += 25
-        
     # Check for excessive uppercase
     letters = [c for c in text if c.isalpha()]
     if letters and (sum(1 for c in letters if c.isupper()) / len(letters)) > 0.6:
@@ -163,14 +180,26 @@ def detect_red_flags(text: str) -> Tuple[List[str], float]:
 
     return flags, min(penalty, 100.0)
 
-def extract_specificity_signals(text: str, location: Optional[str] = None) -> Tuple[List[str], float]:
+def extract_specificity_signals(
+    text: str,
+    location: Optional[str] = None,
+    category: Optional[str] = "MEDICAL",
+) -> Tuple[List[str], float]:
     """
     Evaluates evidence density and factual specificity in Indian context.
     """
     signals = []
     raw_score = 20.0
     
-    for pattern, desc in INDIAN_SPECIFICITY_PATTERNS:
+    category_upper = (category or "").upper()
+    if "EDUC" in category_upper:
+        category_patterns = EDUCATION_SPECIFICITY_PATTERNS
+    elif any(label in category_upper for label in ("COMMUNITY", "SOCIAL", "EMERGENCY")):
+        category_patterns = COMMUNITY_SPECIFICITY_PATTERNS
+    else:
+        category_patterns = INDIAN_SPECIFICITY_PATTERNS
+
+    for pattern, desc in [*category_patterns, *GENERAL_SPECIFICITY_PATTERNS]:
         match = re.search(pattern, text, re.IGNORECASE)
         if match:
             signals.append(desc)

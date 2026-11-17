@@ -1,0 +1,11 @@
+{
+  "python": "3.9.6 (default, Oct 19 2026, 19:18:13) \n[Clang 21.0.0 (clang-2100.4.1.1)]",
+  "dataset_sha256": "6eb46685656dd7ceaeea6971451738a6fd2a841ca2f0d2a5e02301eb7db7eb88",
+  "baseline_evaluator_sha256": "28ae30768ef9177e31e86c96f1481ed633bde55e0c969130bb3f05698aefa74c",
+  "candidate_sha256": "fbac04f97ddbf6ffb882b24b8310087e716f59e8580112c12d0024b2c406df62",
+  "generator_sha256": "2d09c14bdad62e492ce7bd15e8e54e65c50724cb38ab118e2e5c4a4dc2bd70cb",
+  "generation_enabled": false,
+  "embeddings_enabled": false,
+  "production_scoring_modified": false,
+  "candidate_decision_policy": "supports=>AUTO_APPROVE; contradictions=>FLAG_FOR_REVIEW; incomplete or unavailable=>NEEDS_MORE_INFO; REJECT requires multiple conflicts plus explicit document-fabrication signal."
+}

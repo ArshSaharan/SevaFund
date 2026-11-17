@@ -1,0 +1,6 @@
+participant_id,role,independence_declared,involved_in_implementation,involved_in_prior_benchmarks_or_tuning,saw_verifier_code_or_lexicons,saw_prior_corpora,declared_on,notes
+ENG-A01,author,yes,no,no,no,no,2027-01-05,ENGINEERING FIXTURE - not a real person
+ENG-L01,labeller,yes,no,no,no,no,2027-01-05,ENGINEERING FIXTURE - not a real person
+ENG-L02,labeller,yes,no,no,no,no,2027-01-05,ENGINEERING FIXTURE - not a real person
+ENG-J01,adjudicator,yes,no,no,no,no,2027-01-05,ENGINEERING FIXTURE - not a real person
+ENG-C01,coordinator,yes,no,no,no,no,2027-01-05,ENGINEERING FIXTURE - not a real person

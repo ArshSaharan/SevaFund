@@ -14,6 +14,7 @@ from app.schemas.campaign import CampaignResponse, AdminDecisionRequest
 from app.schemas.donation import AdminDonationsResponse, AdminDonationItem, AdminDonationsSummary
 from app.routers.campaigns import format_campaign_response
 from app.services.auth_dependencies import require_admin, require_trust_reviewer_or_admin
+from app.services import dev_hybrid_v4_flag  # development-only hybrid v4 integration; OFF unless SEVAFUND_DEV_HYBRID_V4=1
 
 router = APIRouter(prefix="/admin", tags=["Trust & Safety Admin"])
 
@@ -58,7 +59,14 @@ def submit_admin_decision(
     decision = decision_in.decision.upper().strip()
     previous_status = campaign.status
 
-    if decision in ["APPROVE", "APPROVED"]:
+    handled_by_hybrid_v4 = False
+    if dev_hybrid_v4_flag.enabled():  # development-only: an admin can never activate; only four confirmations can
+        from app.services import dev_hybrid_v4_integration
+        handled_by_hybrid_v4 = dev_hybrid_v4_integration.admin_decision(db, campaign, decision, current_user,
+                                                                        decision_in.notes)
+    if handled_by_hybrid_v4:
+        pass
+    elif decision in ["APPROVE", "APPROVED"]:
         campaign.status = "ACTIVE"
     elif decision in ["REJECT", "REJECTED"]:
         campaign.status = "REJECTED"

@@ -1,0 +1,126 @@
+{
+  "run_id": "independent_benchmark_100_offline_20261115T153504Z",
+  "created_at_utc": "2026-11-15T15:35:04.995265+00:00",
+  "dataset": "independent_benchmark_100.jsonl",
+  "synthetic": true,
+  "configuration": "Python heuristics + lexical retrieval; Gemini generation and embeddings disabled",
+  "gemini_calls_made": 0,
+  "labels": {
+    "fraudulent": "positive",
+    "legitimate_and_borderline": "negative"
+  },
+  "decision_rule": "Any flag when recommendation is FLAG_FOR_REVIEW or REJECT, or red_flags is non-empty; exact review and reject actions are reported separately.",
+  "overall": {
+    "cases": 100,
+    "confusion_matrix": {
+      "true_positive": 38,
+      "false_positive": 57,
+      "false_negative": 2,
+      "true_negative": 3
+    },
+    "precision": 0.4,
+    "recall": 0.95,
+    "f1": 0.563,
+    "false_positive_rate": 0.95,
+    "latency_ms": {
+      "mean": 0.31,
+      "median": 0.26,
+      "p95": 0.34
+    }
+  },
+  "class_wise_rates": {
+    "legitimate": {
+      "cases": 40,
+      "any_flagged": 39,
+      "any_flag_rate": 0.975,
+      "review_recommendations": 39,
+      "review_recommendation_rate": 0.975,
+      "rejections": 0,
+      "rejection_rate": 0.0,
+      "red_flag_matches": 0
+    },
+    "fraudulent": {
+      "cases": 40,
+      "any_flagged": 38,
+      "any_flag_rate": 0.95,
+      "review_recommendations": 38,
+      "review_recommendation_rate": 0.95,
+      "rejections": 0,
+      "rejection_rate": 0.0,
+      "red_flag_matches": 0
+    },
+    "borderline": {
+      "cases": 20,
+      "any_flagged": 18,
+      "any_flag_rate": 0.9,
+      "review_recommendations": 18,
+      "review_recommendation_rate": 0.9,
+      "rejections": 0,
+      "rejection_rate": 0.0,
+      "red_flag_matches": 0
+    }
+  },
+  "by_category": {
+    "COMMUNITY": {
+      "cases": 25,
+      "confusion_matrix": {
+        "true_positive": 10,
+        "false_positive": 15,
+        "false_negative": 0,
+        "true_negative": 0
+      },
+      "precision": 0.4,
+      "recall": 1.0,
+      "f1": 0.5714,
+      "false_positive_rate": 1.0,
+      "latency_ms": {
+        "mean": 0.24,
+        "median": 0.24,
+        "p95": 0.3
+      }
+    },
+    "EDUCATION": {
+      "cases": 25,
+      "confusion_matrix": {
+        "true_positive": 8,
+        "false_positive": 13,
+        "false_negative": 2,
+        "true_negative": 2
+      },
+      "precision": 0.381,
+      "recall": 0.8,
+      "f1": 0.5161,
+      "false_positive_rate": 0.8667,
+      "latency_ms": {
+        "mean": 0.24,
+        "median": 0.24,
+        "p95": 0.27
+      }
+    },
+    "MEDICAL": {
+      "cases": 50,
+      "confusion_matrix": {
+        "true_positive": 20,
+        "false_positive": 29,
+        "false_negative": 0,
+        "true_negative": 1
+      },
+      "precision": 0.4082,
+      "recall": 1.0,
+      "f1": 0.5797,
+      "false_positive_rate": 0.9667,
+      "latency_ms": {
+        "mean": 0.38,
+        "median": 0.29,
+        "p95": 0.36
+      }
+    }
+  },
+  "novelty_checks": {
+    "exact_old_story_duplicates": 0,
+    "existing_red_flag_regex_matching_cases": [],
+    "case_ids_unique": true,
+    "narratives_unique": true
+  },
+  "interpretation": "Offline-only synthetic benchmark result; not Gemini or semantic-embedding RAG performance."
+}
