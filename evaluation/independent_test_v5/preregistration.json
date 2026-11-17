@@ -1,5 +1,5 @@
 {
-  "version": "v5-prereg-1",
+  "version": "v5-prereg-2",
   "status": "PROPOSED",
   "status_note": "Proposed by the developer for approval. Becomes binding only when the owner approves it, status is set to APPROVED and the kit is sealed (run_independent_test_v5.py seal-kit) before any independent case exists. Never edited after sealing.",
   "candidate": {
@@ -12,28 +12,45 @@
     "id": "gemini-3.6-flash",
     "substitution_allowed": false,
     "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
-    "generation_config": {"temperature": 0.1, "responseMimeType": "application/json", "maxOutputTokens": 2048},
+    "generation_config": {
+      "temperature": 0.1,
+      "responseMimeType": "application/json",
+      "maxOutputTokens": 2048
+    },
     "response_schema": "app.services.development_gemini_verification.prompt.DATED_SCHEMA (sha256 recorded in the freeze manifest)",
     "prompt": "frozen hybrid-v2 date-aware prompt (rendered-prompt fingerprint recorded in the freeze manifest)",
-    "timeout_seconds": {"connect": 10, "read": 180, "write": 20, "pool": 10},
+    "timeout_seconds": {
+      "connect": 10,
+      "read": 180,
+      "write": 20,
+      "pool": 10
+    },
     "http_requests_per_client_call": 1,
     "record_response_model_version": true,
     "production_default_unchanged": "gemini-3.8-flash",
-    "availability_evidence_without_api_call": "evaluation/runs/date_aware_dev_eval_live/http_requests.jsonl: gemini-3.6-flash accepted (HTTP 200) on 2026-11-16T20:26:55Z; later requests returned SERVER_ERROR and QUOTA_EXHAUSTED, never MODEL_NOT_FOUND. Current availability and quota can only be confirmed by the owner in Google AI Studio or by an approved call."
+    "availability_evidence_without_api_call": "evaluation/runs/date_aware_dev_eval_live/http_requests.jsonl: gemini-3.6-flash accepted (HTTP 200) on 2026-11-16T20:26:55Z; later requests returned SERVER_ERROR and QUOTA_EXHAUSTED, never MODEL_NOT_FOUND. Current availability and quota can only be confirmed by the owner in Google AI Studio or by an approved call.",
+    "availability_verified": false,
+    "availability_note": "NOT VERIFIED. The only evidence is a committed log from 2026-11-16 (HTTP 200 for this model ID) and the provider's published model and pricing pages. Availability, quota and retirement dates must be confirmed by the owner before any authorisation; the runner records modelVersion."
   },
   "api_usage": {
     "paid_usage_allowed": false,
     "tier": "free",
     "approved_requests": 0,
-    "observed_free_tier_daily_limit": 20,
-    "note": "No request is approved. The runner refuses to execute without a separate written authorisation file and SEVAFUND_GEMINI_EVAL_APPROVED=1."
+    "planning_free_tier_daily_limit": 20,
+    "quota_verified": false,
+    "note": "No request is approved. The daily limit is a planning assumption from one earlier observation, not a verified quota. The runner refuses to execute without a separate written authorisation file and SEVAFUND_GEMINI_EVAL_APPROVED=1."
   },
   "retrieval": {
     "mode": "production_no_embedding_fallback",
     "implementation": "app.services.rag.retrieve_evidence called unchanged, with documents written as UTF-8 .txt uploads in a temporary upload directory and the embedding step disabled (no key visible to rag), so production's own lexical fallback ranks the chunks",
     "query": "production format from app/services/ai_verifier.py: '{title} {category} {beneficiary_name} {location} {story} {format_inr(goal_amount)}'",
     "location": "production format from app/routers/campaigns.py: '{city}, {state} {country}'.strip(', ') with country defaulting to the CampaignCreate schema default 'IN'",
-    "chunking": {"chunk_words": 220, "chunk_overlap": 40, "max_chunks": 60, "top_k": 5},
+    "chunking": {
+      "chunk_words": 220,
+      "chunk_overlap": 40,
+      "max_chunks": 60,
+      "top_k": 5
+    },
     "embedding_requests": 0,
     "differs_from_production": "Production's primary path embeds the query and every chunk with gemini-embedding-001 (2 HTTP requests per campaign) and ranks by cosine similarity. This evaluation uses production's own fallback path (taken in production when no key is configured or embedding fails). Rankings can differ whenever a case has more than five chunks.",
     "claim_restriction": "Results describe hybrid v3 with production's no-embedding retrieval fallback, not the exact production pipeline."
@@ -50,27 +67,59 @@
     "workflow": "frozen development_approval_workflow.start with names_institution=True for every system"
   },
   "design": {
-    "categories": ["MEDICAL", "EDUCATION", "COMMUNITY"],
-    "groups_per_category": {"L": 30, "I": 15, "F": 30, "B": 15},
+    "categories": [
+      "MEDICAL",
+      "EDUCATION",
+      "COMMUNITY"
+    ],
+    "groups_per_category": {
+      "L": 30,
+      "I": 15,
+      "F": 30,
+      "B": 15
+    },
     "max_cases_per_group": 3,
     "max_cases": 540,
-    "mechanisms": ["consistent_fabrication", "independent_record_contradiction", "suspicious_payee",
-                   "document_contradiction", "amount_inflation", "misrepresented_need"],
+    "mechanisms": [
+      "consistent_fabrication",
+      "independent_record_contradiction",
+      "suspicious_payee",
+      "document_contradiction",
+      "amount_inflation",
+      "misrepresented_need"
+    ],
     "mechanism_min_share_per_category": 0.12,
-    "document_contradiction_form_min_share": 0.40,
-    "keyword_free_min_share_of_fraud_cases": 0.30,
-    "incomplete_subtypes": ["no_cost_document", "unacceptable_cost_document", "missing_identity_or_need", "genuine_but_informal"],
-    "incomplete_subtype_min_groups_per_category": 3,
-    "long_dossier_min_share_of_L_cases": 0.20,
+    "document_contradiction_form_min_share": 0.4,
+    "keyword_free_min_share_of_fraud_cases": 0.3,
+    "incomplete_subtypes": [
+      "no_cost_document",
+      "unacceptable_cost_document",
+      "missing_identity_or_need",
+      "genuine_but_informal"
+    ],
+    "incomplete_subtype_min_groups_per_category": {
+      "no_cost_document": 3,
+      "unacceptable_cost_document": 3,
+      "missing_identity_or_need": 3,
+      "genuine_but_informal": 5
+    },
+    "long_dossier_min_share_of_L_cases": 0.2,
     "long_dossier_min_chunks": 6,
     "date_sensitive_min_share_per_category": 0.15,
     "pilot_cases": 6,
     "case_id_prefix": "T5-",
     "pilot_case_id_prefix": "P5-",
-    "engineering_case_id_prefix": "ENG-"
+    "engineering_case_id_prefix": "ENG-",
+    "intended_detectable_min_share_per_category": 0.5,
+    "intended_detectable_note": "Authors mark each fraud case intended_detectable_from_dossier. At least half of fraud groups per category must be intended detectable, so the primary endpoint has about 45 groups. The analysis uses the labellers' adjudicated judgement, not the author's intent; if fewer than 36 adjudicated dossier-detectable fraud groups result, the primary endpoint is reported as under-powered (still evaluated)."
   },
   "engineering_profile": {
-    "groups_per_category": {"L": 1, "I": 1, "F": 2, "B": 1},
+    "groups_per_category": {
+      "L": 1,
+      "I": 1,
+      "F": 2,
+      "B": 1
+    },
     "mechanism_min_groups_overall": 1,
     "incomplete_subtype_min_groups_overall": 1,
     "max_cases": 40,
@@ -91,21 +140,40 @@
   },
   "budget": {
     "formula": "N + ceil(0.10 * N) generation requests for the main run, plus 8 for the pilot; 0 embedding requests",
-    "retry_share": 0.10,
+    "retry_share": 0.1,
     "max_retries_per_case": 1,
     "pilot_requests": 8,
     "pacing_seconds": 6.0
   },
   "stopping_rules": {
     "stop_on_call_limit": true,
-    "stop_categories": ["AUTHENTICATION", "PERMISSION_DENIED", "MODEL_NOT_FOUND", "BAD_REQUEST", "NOT_CONFIGURED"],
-    "pause_categories": ["QUOTA_EXHAUSTED"],
+    "stop_categories": [
+      "AUTHENTICATION",
+      "PERMISSION_DENIED",
+      "MODEL_NOT_FOUND",
+      "BAD_REQUEST",
+      "NOT_CONFIGURED"
+    ],
+    "pause_categories": [
+      "QUOTA_EXHAUSTED"
+    ],
     "quota_reset_utc_hour": 8,
-    "transient_categories": ["READ_TIMEOUT", "CONNECT_TIMEOUT", "WRITE_TIMEOUT", "POOL_TIMEOUT", "TIMEOUT", "SERVER_ERROR",
-                             "NETWORK_ERROR", "RATE_LIMIT", "RESOURCE_EXHAUSTED", "RETRY_EXHAUSTED", "HTTP_ERROR"],
+    "transient_categories": [
+      "READ_TIMEOUT",
+      "CONNECT_TIMEOUT",
+      "WRITE_TIMEOUT",
+      "POOL_TIMEOUT",
+      "TIMEOUT",
+      "SERVER_ERROR",
+      "NETWORK_ERROR",
+      "RATE_LIMIT",
+      "RESOURCE_EXHAUSTED",
+      "RETRY_EXHAUSTED",
+      "HTTP_ERROR"
+    ],
     "pause_after_consecutive_transient": 3,
     "pause_window_requests": 25,
-    "pause_window_transient_share": 0.20,
+    "pause_window_transient_share": 0.2,
     "pause_minutes": 60,
     "max_transient_pauses_per_utc_day": 3,
     "stop_cumulative_transient_share": 0.25,
@@ -114,7 +182,12 @@
     "calendar_limit_days": 45,
     "retry_wait_seconds": 30,
     "never_stop_on_results": true,
-    "interim_status_shows": ["requests used", "failures by category", "cases completed", "pause or stop reason"]
+    "interim_status_shows": [
+      "requests used",
+      "failures by category",
+      "cases completed",
+      "pause or stop reason"
+    ]
   },
   "analysis": {
     "order_seed": 20261117,
@@ -123,21 +196,36 @@
     "confidence_level": 0.95,
     "primary_population": "intent-to-treat: every case; a Gemini failure is VERIFICATION_ERROR (neither a detection nor an approval)",
     "secondary_population": "complete-case: cases with a valid Gemini answer",
-    "primary_interval": "Wilson interval on the design-effect-adjusted sample size n/(1+(m-1)*ICC), ICC by one-way ANOVA over scenario groups (floored at 0; when not estimable, ICC=1)",
-    "secondary_interval": "cluster bootstrap over scenario groups, percentile",
-    "detection": ["FLAG_FOR_REVIEW", "REJECTED"],
-    "never_detection": ["NEEDS_MORE_INFORMATION", "APPROVED", "VERIFICATION_ERROR"],
+    "primary_interval": "Wilson score interval on the effective sample size n_eff = n / DEFF, DEFF = 1 + (m~ - 1) * ICC, m~ = sum(m_i^2) / n (Kish size-weighted cluster size), ICC = one-way ANOVA estimate over scenario groups, floored at 0.1, capped at 1, and set to 1 when not estimable (no within-group replication or no variation, e.g. zero events).",
+    "secondary_interval": "cluster bootstrap over scenario groups (percentile, 5,000 replications, fixed seed); group-level majority Wilson also reported",
+    "detection": [
+      "FLAG_FOR_REVIEW",
+      "REJECTED"
+    ],
+    "never_detection": [
+      "NEEDS_MORE_INFORMATION",
+      "APPROVED",
+      "VERIFICATION_ERROR"
+    ],
     "provisional_approval": "decision APPROVED = workflow ELIGIBLE_PENDING_CONFIRMATION; never counted as activation",
     "activation": "VERIFIED_ACTIVE reached in the simulated confirmation step only",
     "amount_check_tolerance": 0.05,
-    "simulation_disclaimer": "Confirmation and amount-confirmation results are simulated from author-written external environments. They are not real-world verification."
+    "simulation_disclaimer": "Confirmation and amount-confirmation results are simulated from author-written external environments. They are not real-world verification.",
+    "cluster_size_rule": "kish",
+    "icc_floor": 0.1,
+    "precision_interval": "primary interval applied to detected cases clustered by scenario group",
+    "paired_test": "exact cluster sign-flip (randomisation) test on per-group differences d_k = b_k - c_k; identical to the exact McNemar test when every group has one case",
+    "paired_interval": "cluster bootstrap of the case-level paired difference",
+    "zero_event_bound": "exact one-sided 95% upper bound 1 - 0.05^(1/n_eff), with n_eff from the primary method (ICC = 1 when there are zero events). Zero observed events never establish a zero population rate.",
+    "validation": "independent_test_v5/statistical_validation.json (run_independent_test_v5.py validate-statistics). Under clustered groups of 1-3 cases, naive Wilson covered as little as 81%; the primary method covered at least 94.05% in all 48 clustered and 93.85% in all 12 unclustered scenarios; the exact McNemar test ignoring groups reached 7.5% type I error where the cluster sign-flip test stayed at or below 3.9%.",
+    "fixed_sequence_alpha": 0.05
   },
   "metrics": {
     "M1_fraud_recall": "detected / fraudulent",
     "M1a_dossier_detectable_fraud_recall": "detected / fraudulent labelled detectable_from_dossier=yes",
     "M1b_fraud_held_before_activation_simulated": "fraudulent not VERIFIED_ACTIVE after simulated confirmation / fraudulent",
     "M2_false_positive_rate": "detected / legitimate (complete + incomplete); borderline excluded",
-    "M3_fraud_precision": "detected fraudulent / (detected fraudulent + detected legitimate)",
+    "M3_fraud_precision": "detected fraudulent / detected (fraudulent + legitimate); primary interval on detected cases. Depends on the test mix, so also reported re-weighted to fraud prevalence 2%, 5%, 10% (PPV = pi*recall / (pi*recall + (1-pi)*FPR), with conservative bounds from the recall and FPR intervals)",
     "M3s_fraud_precision_borderline_as_negative": "detected fraudulent / (detected fraudulent + detected legitimate + detected borderline)",
     "M4_legitimate_approval_rate": "APPROVED / legitimate complete",
     "M4b_legitimate_approval_rate_all": "APPROVED / legitimate (complete + incomplete)",
@@ -151,7 +239,6 @@
     "M7F_unsafe_provisional_approvals_fraud": "APPROVED / fraudulent",
     "M7Fd_unsafe_provisional_approvals_dossier_detectable_fraud": "APPROVED / fraudulent detectable_from_dossier=yes",
     "M7B_unsafe_provisional_approvals_borderline": "APPROVED / borderline",
-    "M8a_fraud_activations_simulated": "VERIFIED_ACTIVE / fraudulent",
     "M8b_activations_with_unconfirmed_check": "VERIFIED_ACTIVE while any required check is not satisfied by an independent CONFIRMED record (count)",
     "M8c_activations_of_incomplete_cases": "VERIFIED_ACTIVE among documentation=incomplete (count)",
     "M8d_activations_without_confirmation_record": "VERIFIED_ACTIVE with no confirmation record, or reached by automation or a reviewer (count)",
@@ -163,33 +250,157 @@
     "M10_api_reliability": "per request: first-attempt success, outcome categories; per case: valid-answer coverage after retry, invalid-output rate; retries used; quota pauses; modelVersion values",
     "M11_latency": "HTTP-only seconds of successful requests: median, p90, p95, max (bootstrap 95% CI); timeouts counted separately",
     "M12_paired_comparisons": "hybrid_v3 vs hybrid_v2 (and vs v3_alone), case level: discordant pairs, exact McNemar two-sided p, difference with cluster-bootstrap 95% CI, Holm-adjusted over M1, M2, M4, M7(F+B+I)",
-    "M13_tradeoff": "per system: fraud detected / held / provisionally approved against legitimate approved / delayed (NMI) / flagged / errors / activated; extra legitimate delays per extra fraud detected versus hybrid_v2; rates per 1,000 campaigns re-weighted to fraud prevalence 2%, 5% and 10%"
+    "M13_tradeoff": "per system: fraud detected / held / provisionally approved against legitimate approved / delayed (NMI) / flagged / errors / activated; extra legitimate delays per extra fraud detected versus hybrid_v2; rates per 1,000 campaigns re-weighted to fraud prevalence 2%, 5% and 10%",
+    "M8_unsafe_activations": "VERIFIED_ACTIVE (simulated) where any of: (a) fraudulent; (b) a required check not satisfied by an independent CONFIRMED record; (c) documentation incomplete; (d) no confirmation record or not reached through confirmation; (e) a check satisfied by a campaign-supplied contact. Count over all cases, with each type and the one-sided upper bound per population (all cases; fraudulent cases).",
+    "M8a_decomposition": "fraud activations split into: revealable only by the cost issuer (an amount-confirmation gap in the frozen workflow; Appendix A simulation shows whether it would catch it) versus revealed by no independent party (collusive or insider fraud, beyond any confirmation design).",
+    "S_stage_funnel": "per system and stratum: S1 provisional approvals (APPROVED -> ELIGIBLE_PENDING_CONFIRMATION); S2 required checks independently confirmed (count per case); S3 final approvals (all required checks CONFIRMED through independent sources); S4 activations (VERIFIED_ACTIVE). Consistency: S4 without S3 is an unsafe activation (b); S3 without S4 is a workflow defect, reported.",
+    "N1_non_dossier_detectable_fraud": "descriptive only, by mechanism: detected, provisionally approved, held by simulated confirmation, activated (gate), with primary intervals; no threshold.",
+    "F1_genuine_but_informal_outcomes": "legitimate incomplete cases of subtype genuine_but_informal: APPROVED / NEEDS_MORE_INFORMATION / FLAG_FOR_REVIEW / REJECTED / VERIFICATION_ERROR rates per system, primary intervals; inappropriate escalation = FLAG or REJECT.",
+    "F2_assisted_route_resolvable": "share of genuine_but_informal cases whose cost issuer would independently state an amount covering the goal within 5% (simulated Appendix B assisted route).",
+    "F3_legitimate_outcomes_by_group": "legitimate approval and information-request rates by category and beneficiary type; ratio of the lowest to the highest approval rate (screening only, below 0.8 flagged).",
+    "F4_tradeoff": "paired, case level, hybrid_v3 minus hybrid_v2: change in fraudulent provisional approvals (F) and in legitimate-complete provisional approvals (L); legitimate approvals lost per fraudulent provisional approval prevented (cluster bootstrap interval; reported only when the fraud change interval excludes 0); the retrospective in-sample benchmark contrast (64 -> 20 fraudulent, 231 -> 162 legitimate approvals) is quoted for context only."
   },
   "success_criteria": {
-    "rule": "Evaluated once, for hybrid_v3, intent-to-treat, primary interval. MET: the 95% bound clears the threshold. INCONCLUSIVE: the point estimate clears it but the bound does not. NOT_MET: the point estimate does not. Gates PASS only with zero observed events (95% upper bound also reported). No composite score; no threshold changes after sealing.",
+    "structure": "Safety gates and one primary endpoint decide the minimum standard together with two key secondary criteria (intersection-union: the verdict requires every component, so no multiplicity adjustment is needed for it). A research target is assessed only if the primary endpoint is met (fixed sequence). Comparisons with hybrid v2 form a separate Holm-adjusted family. Everything else is descriptive: no claim is made from any single secondary metric or unadjusted test.",
+    "evaluation_rule": "Hybrid v3, intent-to-treat, primary interval. MET: the 95% bound clears the threshold. INCONCLUSIVE: the point estimate clears it but the bound does not. NOT_MET: the point estimate does not. Thresholds are never changed after sealing.",
     "gates": {
-      "G1_no_provisional_approval_of_incomplete_cases": "M7I count == 0",
-      "G2_no_unsafe_activation_types_b_to_e": "M8b + M8c + M8d + M8e == 0",
+      "G1_no_provisional_approval_of_incomplete_cases": "APPROVED among documentation=incomplete == 0",
+      "G2_no_unsafe_activation": "M8 unsafe activations of every type (a)-(e) == 0 (zero tolerance, observed)",
       "G3_no_rejection_from_gemini_alone": "REJECTED decisions whose only basis is Gemini output == 0",
       "G4_provisional_approval_never_activation": "APPROVED decisions in VERIFIED_ACTIVE before any confirmation record == 0",
-      "G5_no_campaign_supplied_confirmation_accepted": "M9c == 0"
+      "G5_no_campaign_supplied_confirmation_accepted": "checks satisfied by campaign-supplied contacts == 0",
+      "interpretation": "A gate passes only on zero observed events. Zero events in a finite sample cannot establish a zero population rate: each gate reports the one-sided 95% upper bound (for example, zero unsafe activations among 90 fraud groups is compatible with a population rate up to 3.3%). The bound also applies only to the simulated confirmation process, which assumes honest independent parties.",
+      "pre_registered_expectation": "The frozen workflow does not confirm amounts. Fraud that only the cost issuer would reveal can therefore reach activation in the simulation and fail G2; this would be a correct finding about the frozen candidate, reported with the M8a decomposition."
     },
-    "criteria": {
-      "C1_dossier_detectable_fraud_recall": {"metric": "M1a_dossier_detectable_fraud_recall", "bound": "lower", "threshold": 0.50},
-      "C2_fraud_precision": {"metric": "M3_fraud_precision", "bound": "lower", "threshold": 0.70},
-      "C3_false_positive_rate": {"metric": "M2_false_positive_rate", "bound": "upper", "threshold": 0.10},
-      "C4_legitimate_approval_rate": {"metric": "M4_legitimate_approval_rate", "bound": "lower", "threshold": 0.50},
-      "C5_avoidable_information_requests": {"metric": "M5L_avoidable_information_requests", "bound": "upper", "threshold": 0.40},
-      "C5b_appropriate_information_requests": {"metric": "M5I_appropriate_information_requests", "bound": "lower", "threshold": 0.70},
-      "C6_non_fraud_manual_review_rate": {"metric": "M6nf_non_fraud_manual_review_rate", "bound": "upper", "threshold": 0.20},
-      "C7_dossier_detectable_fraud_provisionally_approved": {"metric": "M7Fd_unsafe_provisional_approvals_dossier_detectable_fraud", "bound": "upper", "threshold": 0.10},
-      "C7b_borderline_provisionally_approved": {"metric": "M7B_unsafe_provisional_approvals_borderline", "bound": "upper", "threshold": 0.15},
-      "C8_fraud_activations_simulated": {"metric": "M8a_fraud_activations_simulated", "bound": "upper", "threshold": 0.10},
-      "C10_first_attempt_success": {"metric": "M10_first_attempt_success", "bound": "lower", "threshold": 0.85},
-      "C10b_valid_answer_coverage": {"metric": "M10_valid_answer_coverage", "bound": "lower", "threshold": 0.90},
-      "C10c_invalid_output_rate": {"metric": "M10_invalid_output_rate", "bound": "upper", "threshold": 0.05},
-      "C11_latency_p95_seconds": {"metric": "M11_latency_p95_seconds", "bound": "point", "threshold": 60.0, "direction": "at_most"}
+    "primary_endpoint": {
+      "H1_dossier_detectable_fraud_recall_minimum": {
+        "metric": "M1a_dossier_detectable_fraud_recall",
+        "bound": "lower",
+        "threshold": 0.7,
+        "meaning": "minimum acceptable safety threshold; one-sided alpha 0.025"
+      }
     },
-    "paired_claim_rule": "hybrid_v3 is reported as better or worse than hybrid_v2 on a metric only if the Holm-adjusted exact McNemar p < 0.05 and the cluster-bootstrap 95% CI of the difference excludes 0."
+    "key_secondary": {
+      "K1_false_positive_rate": {
+        "metric": "M2_false_positive_rate",
+        "bound": "upper",
+        "threshold": 0.1
+      },
+      "K2_legitimate_complete_approval": {
+        "metric": "M4_legitimate_approval_rate",
+        "bound": "lower",
+        "threshold": 0.5
+      }
+    },
+    "verdict": "MEETS_MINIMUM_STANDARD only if all gates PASS and H1, K1 and K2 are MET; otherwise DOES_NOT_MEET (with the failing components listed) or INCONCLUSIVE when no component is NOT_MET or FAIL but at least one is INCONCLUSIVE.",
+    "research_target": {
+      "R1_dossier_detectable_fraud_recall_target": {
+        "metric": "M1a_dossier_detectable_fraud_recall",
+        "bound": "lower",
+        "threshold": 0.8,
+        "assessed_only_if": "H1 MET",
+        "note": "0.80 needs an observed recall of about 0.89-0.93; it is met with probability about 0.33-0.71 if true recall is 0.90 and 0.81-0.995 if 0.95. A 0.85 target would need true recall near 0.95 (probability 0.61-0.84 at 0.95, 0.16-0.19 at 0.90); offered as an owner decision."
+      }
+    },
+    "comparisons_with_hybrid_v2": {
+      "family": [
+        "fraud_provisional_approvals",
+        "legitimate_complete_approvals",
+        "dossier_detectable_fraud_recall",
+        "false_positive_rate"
+      ],
+      "test": "cluster sign-flip, two-sided",
+      "adjustment": "Holm over the four",
+      "claim_rule": "a difference is claimed only if the Holm-adjusted p < 0.05 and the cluster-bootstrap 95% interval of the difference excludes 0; no claim from unadjusted p-values."
+    },
+    "fairness_noninferiority": {
+      "metric": "legitimate-complete provisional approval, hybrid_v3 minus hybrid_v2 (paired, case level)",
+      "margin": -0.1,
+      "rule": "NON_INFERIOR if the lower 95% bound of the difference is above -0.10; INFERIOR if the upper bound is below -0.10; otherwise INCONCLUSIVE. A single pre-specified assessment, reported separately from the verdict."
+    },
+    "secondary_benchmarks_descriptive": {
+      "C5_avoidable_information_requests": {
+        "metric": "M5L_avoidable_information_requests",
+        "bound": "upper",
+        "threshold": 0.4
+      },
+      "C5b_appropriate_information_requests": {
+        "metric": "M5I_appropriate_information_requests",
+        "bound": "lower",
+        "threshold": 0.7
+      },
+      "C6_non_fraud_manual_review_rate": {
+        "metric": "M6nf_non_fraud_manual_review_rate",
+        "bound": "upper",
+        "threshold": 0.2
+      },
+      "C7_dossier_detectable_fraud_provisionally_approved": {
+        "metric": "M7Fd_unsafe_provisional_approvals_dossier_detectable_fraud",
+        "bound": "upper",
+        "threshold": 0.1
+      },
+      "C7b_borderline_provisionally_approved": {
+        "metric": "M7B_unsafe_provisional_approvals_borderline",
+        "bound": "upper",
+        "threshold": 0.15
+      },
+      "C9_genuine_but_informal_inappropriate_escalation": {
+        "metric": "F1_genuine_but_informal_escalation",
+        "bound": "upper",
+        "threshold": 0.1
+      }
+    },
+    "operational_api_descriptive": {
+      "C10_first_attempt_success": {
+        "metric": "M10_first_attempt_success",
+        "bound": "lower",
+        "threshold": 0.85
+      },
+      "C10b_valid_answer_coverage": {
+        "metric": "M10_valid_answer_coverage",
+        "bound": "lower",
+        "threshold": 0.9
+      },
+      "C10c_invalid_output_rate": {
+        "metric": "M10_invalid_output_rate",
+        "bound": "upper",
+        "threshold": 0.05
+      },
+      "C11_latency_p95_seconds": {
+        "metric": "M11_latency_p95_seconds",
+        "bound": "point",
+        "threshold": 60.0
+      }
+    },
+    "multiplicity_note": "About 11 descriptive benchmarks are reported; by chance alone some may be MET or NOT_MET, so none supports a claim on its own.",
+    "operating_characteristics": "independent_test_v5/statistical_validation.json -> recall_operating_characteristics and verdict_operating_characteristics. Because the verdict requires every component, its probability is roughly the product of the components': for design A with true recall 0.85, FPR 0.05 and legitimate approval 0.65 it is about 0.25 (strong clustering) to 0.65 (weak clustering); with recall 0.90, FPR 0.03, approval 0.75 about 0.82-0.99. K1 (FPR upper bound <= 0.10) is the most demanding component when the true FPR is near 0.05."
+  },
+  "revision_history": [
+    "v5-prereg-1 (2026-11-17): first proposal.",
+    "v5-prereg-2 (2026-11-17, before any independent case exists): owner-requested refinements - tiered fraud-recall thresholds with a single primary endpoint; all unsafe activations a zero-tolerance gate; validated cluster-adjusted intervals (Kish design effect, ICC floor 0.1) and a cluster sign-flip paired test; hierarchical/intersection-union multiplicity rules; explicit fairness trade-off and genuine-but-informal outcomes; recruitment-feasibility gate; model availability and quota marked unverified."
+  ],
+  "staffing": {
+    "roles": {
+      "authors": "at least 3 (4-6 recommended)",
+      "labellers": 2,
+      "adjudicator": 1,
+      "coordinator": 1
+    },
+    "hours_by_design": {
+      "A": {
+        "authoring": 315,
+        "labelling_total": 144,
+        "adjudication": 18,
+        "coordination": 27
+      },
+      "B": {
+        "authoring": 180,
+        "labelling_total": 72,
+        "adjudication": 9,
+        "coordination": 14
+      }
+    },
+    "buffer": 0.2,
+    "feasibility_rule": "The final design is selected only after the participant registry lists eligible participants whose committed hours cover the chosen design's hours plus a 20% buffer for revisions (prepare_independent_data_v5.py feasibility). The sample size is never reduced without the owner's approval."
   }
 }

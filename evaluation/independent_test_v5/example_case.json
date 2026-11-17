@@ -11,6 +11,7 @@
   "mechanism": "amount_inflation",
   "form": null,
   "keyword_free": true,
+  "intended_detectable_from_dossier": false,
   "incomplete_subtype": null,
   "date_sensitive": true,
   "date_facts": [

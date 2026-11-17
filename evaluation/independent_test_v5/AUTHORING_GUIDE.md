@@ -29,7 +29,7 @@ Write one JSON object per line in a `.jsonl` file. The example shows every field
   - `no_cost_document`;
   - `unacceptable_cost_document`: expired, issuer not identifiable, or below the amount requested;
   - `missing_identity_or_need`;
-  - `genuine_but_informal`: the family genuinely cannot get a formal quotation, for example from a government hospital or informal tutoring.
+  - `genuine_but_informal`: the family genuinely cannot get a formal quotation, for example from a government hospital or informal tutoring. Write at least 5 such groups per category: real families whose costs are genuine but who have no formal quotation.
 - **How the fraud works (`mechanism`, fraud cases only):**
   - `consistent_fabrication`: every document agrees with every other one; the lie only shows when someone contacts the real institution.
   - `independent_record_contradiction`: the uploads agree, but an independent record says otherwise (already paid, seat withdrawn, registration lapsed).
@@ -40,6 +40,9 @@ Write one JSON object per line in a `.jsonl` file. The example shows every field
   - `amount_inflation`: the need is genuine but the goal overstates it. For example, the quote is altered, insurance already pays, or the same bill appears twice.
   - `misrepresented_need`: the documents show the treatment or purpose is not needed or not happening.
 - **`keyword_free`.** Set this to `true` for a fraud case written in calm, ordinary language with no stereotypical scam wording. Aim for about a third of your fraud cases.
+- **`intended_detectable_from_dossier`** (fraud cases only). Set this to `true` if a careful reader could spot the problem from the uploaded documents alone, for example a contradiction, an inflated figure visible in the documents, or a document showing the need is not real. Set it to `false` if only contacting someone outside would reveal it.
+  - About half of your fraud cases should be `true` and half `false`.
+  - Labellers do not see this field.
 - **IDs.** The coordinator gives you a pseudonymous `author_id` (for example `A03`) and a block of group numbers.
   - Each `scenario_group` looks like `T5-MED-0412`.
   - The cases in it are `T5-MED-0412-A`, `-B` and `-C`.

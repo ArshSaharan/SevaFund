@@ -7,11 +7,13 @@
 | Tooling | Built and tested offline |
 | Protocol, pre-registration and kit | Not sealed |
 | Independent cases | None exist yet |
-| Independent participants | **Not yet confirmed** |
+| Independent participants | **Not yet confirmed**; recruitment feasibility must be shown before the design is chosen |
+| Model availability and free-tier quota | **Not verified** |
 | API calls | 0 made. 0 approved for this evaluation |
 
-- The owner's decisions D1–D11 are recorded in §2.
-- The machine-readable pre-registration is `independent_test_v5/preregistration.json`, status `PROPOSED`. It holds every definition, threshold and parameter used by the tools.
+- The owner's decisions D1–D11 and the second-review refinements R1–R10 are recorded in §2.
+- The machine-readable pre-registration is `independent_test_v5/preregistration.json`, version `v5-prereg-2`, status `PROPOSED`. It holds every definition, threshold and parameter used by the tools.
+- The statistical methods and their validation are in `docs/independent_v5_statistical_methodology.md`.
 - Nothing runs live until the owner approves the open items in §13 and gives a separate written API authorisation.
 - This protocol supersedes `independent_test_protocol_v4.md` for hybrid v3. v4 was prepared for hybrid v2 and never executed.
 
@@ -27,7 +29,7 @@
 | Prompt | frozen hybrid-v2 date-aware prompt (rendered-prompt fingerprint in the freeze manifest) |
 | Production | unchanged. The default stays `gemini-3.8-flash`, and nothing in production imports the evaluation code |
 
-**Model availability (D1), checked without an API call.**
+**Model availability (D1, R9): not verified.** The evidence available without an API call:
 - The committed request log shows that `gemini-3.6-flash` was accepted with HTTP 200 on 2026-11-16 at 20:26 UTC.
 - Later requests failed with SERVER_ERROR and QUOTA_EXHAUSTED, never MODEL_NOT_FOUND.
 - The model page and pricing table are published at ai.google.dev.
@@ -40,7 +42,7 @@
 | D1 | Gemini 3.6 Flash, verified without API calls; production stays on 3.8 Flash; no silent substitution | §1. Model fixed in the pre-registration; transport and pre-flight refuse other models |
 | D2 | 602 calls **not** approved; no paid usage; the earlier 10-call approval does not carry over; prepare offline | No authorisation file exists. `api_usage.approved_requests = 0`, `paid_usage_allowed = false`. Estimates in §9 |
 | D3 | Reproduce production retrieval where possible without API calls; record any difference | §6. Production `retrieve_evidence` is called unchanged on its no-embedding path. The difference from the embedding path is recorded, and claims are restricted |
-| D4 | Compare frozen hybrid v2 and hybrid v3 on the same Gemini responses; paired, case level | §7 M12. One answer per case is scored by both, plus V3 alone. Exact McNemar test with cluster-bootstrap intervals and Holm adjustment |
+| D4 | Compare frozen hybrid v2 and hybrid v3 on the same Gemini responses; paired, case level | §7. One answer per case is scored by both, plus V3 alone. Exact cluster sign-flip test (equal to exact McNemar for one case per group), cluster-bootstrap intervals, Holm adjustment |
 | D5 | Amount confirmation stays a pre-registered simulation, measured separately, never claimed as real | §6 step 7 and M9d. Every output is labelled "SIMULATED … not real-world verification" |
 | D6 | Independent authorship and blind labelling approved; confirm participants exist; exclude anyone involved | §3. Participant registry, signed declarations and automated eligibility checks. **Availability not yet confirmed** |
 | D7 | Keep the 270-group design as preferred; do not execute; give usage, time and cost; propose an explicitly weaker alternative if needed | §9. Four designs with intervals and power |
@@ -48,6 +50,21 @@
 | D9 | Pre-register definitions and success criteria with intervals; report the fraud-versus-delay trade-off; provisional ≠ activation | §7. Numeric thresholds are **proposed** and need approval before sealing |
 | D10 | Any post-freeze change creates a separately versioned candidate | Freeze rule. Appendix procedures A and B are not in this candidate |
 | D11 | Operational stopping rules; never stop on accuracy; no label inspection during execution | §10. The runner never parses labels (hash check only); interim status shows counters only |
+
+**Second-review refinements (owner, 2026-11-17)**
+
+| ID | Refinement | How it is implemented |
+|---|---|---|
+| R1 | The 0.50 recall bound is too permissive; give a minimum, a research target and descriptive reporting for undetectable fraud | Primary endpoint H1: lower bound ≥ 0.70. Research target R1: ≥ 0.80, only after H1. Non-dossier-detectable fraud reported descriptively. Operating characteristics in the methodology document, §4 |
+| R2 | Unsafe activations are a zero-tolerance gate; separate the four stages; zero ≠ zero rate | Gate G2 covers types (a)–(e), including any fraud activation. Stages S1–S4 measured separately (§8). One-sided upper bounds are reported for every gate |
+| R3 | Validate the intervals; account for clustering; document the method and effective sample size | Kish design-effect Wilson with ICC floor 0.1, validated by Monte Carlo (worst coverage 0.941 against 0.810 for naive Wilson). n_eff is reported for every rate |
+| R4 | Multiple testing and power | One primary endpoint. Intersection-union verdict; fixed-sequence research target; Holm family for comparisons; simulated power with stated assumptions |
+| R5 | Measure the fairness trade-off, including genuine beneficiaries without quotations | Paired trade-off and ratio; non-inferiority margin −0.10; at least 5 genuine-but-informal groups per category, with escalation and assisted-route outcomes |
+| R6 | Keep independence rules; show recruitment is feasible before choosing the size | `prepare_independent_data_v5.py feasibility` on the registry (committed hours, plus a 20% buffer). The design is chosen afterwards |
+| R7 | Keep design A; assess design B realistically; never reduce silently | §9 |
+| R8 | Keep documenting the retrieval difference | §6 and every report disclaimer |
+| R9 | Model availability and quota are not verified | Marked unverified in the pre-registration, the plan and the reports |
+| R10 | Keep the login-test issue separate | `docs/known_issue_campaign_verification_test.md`; nothing changed |
 
 ## 3. Unseen data and independence
 
@@ -86,6 +103,11 @@ The checks:
 
 **LLM-assisted cases** are marked by their authors, counted separately and reported as a subgroup.
 
+**Recruitment feasibility before sizing (R6).**
+- Participants are registered with `committed_hours`.
+- `prepare_independent_data_v5.py feasibility` checks each design. It needs at least 3 eligible authors, 2 eligible labellers, an eligible adjudicator and a coordinator, whose committed hours cover the design's hours plus 20%.
+- The owner chooses the design only after this check passes. The sample size is never reduced without the owner's approval.
+
 ## 4. Case design
 
 **Strata** come from the adjudicated labels:
@@ -101,9 +123,10 @@ The checks:
 
 **Quotas checked by the validator:**
 - Every fraud mechanism makes up at least 12% of fraud groups in each category. The mechanisms are consistent fabrication, independent-record contradiction, suspicious payee, document contradiction, amount inflation and misrepresented need.
+- At least 50% of fraud groups in each category are *intended* to be detectable from the documents (author field `intended_detectable_from_dossier`, hidden from labellers). This gives the primary endpoint about 45 groups. The analysis uses the labellers' adjudicated judgement.
 - Within document contradiction, each form (structured, prose) is at least 40%.
 - At least 30% of fraud cases are keyword-free, with at least one keyword-free group per mechanism. Keyword-free cases are checked against every lexicon.
-- Each incomplete subtype has at least 3 groups per category. The subtypes are no cost document, unacceptable cost document, missing identity or need, and genuine but informal.
+- Incomplete subtypes per category: at least 3 groups each of no cost document, unacceptable cost document, and missing identity or need, and **at least 5 groups of genuine but informal** (R5).
 - At least 20% of L cases have six or more production chunks.
 - At least 15% of cases in each category are date-sensitive.
 
@@ -143,94 +166,103 @@ The checks:
 
 Outputs contain case IDs, groups and system outputs. They contain no labels and no author-intent fields.
 
-## 7. Measurements and success criteria (D9)
+## 7. Measurements, statistical method and success criteria (D9, R1–R5)
 
-Exact definitions are in `preregistration.json` → `metrics`; `independent_v5/scorer.py` implements them.
+Exact definitions are in `preregistration.json` → `metrics` and `success_criteria`; `independent_v5/scorer.py` implements them. The validation evidence is in `docs/independent_v5_statistical_methodology.md`.
 
 **Conventions:**
-- **Detection:** FLAG_FOR_REVIEW or REJECTED. NEEDS_MORE_INFORMATION, APPROVED and VERIFICATION_ERROR are never detections.
-- **Provisional approval** (APPROVED → ELIGIBLE_PENDING_CONFIRMATION) is never counted as activation; activation is only VERIFIED_ACTIVE reached in the simulation.
-- **Primary population:** intent-to-treat (all cases; a Gemini failure is VERIFICATION_ERROR). Secondary: complete-case.
-- **Intervals:**
-  - **Primary:** Wilson on the design-effect-adjusted sample size, n / (1 + (m − 1)·ICC). ICC comes from a one-way ANOVA over scenario groups, floored at 0; it is set to 1 when it cannot be estimated, which is conservative for zero-event metrics.
-  - **Secondary:** cluster bootstrap over groups (5,000 replications, fixed seed), plus group-level majority Wilson.
-  - **Precision:** cluster bootstrap, because its denominator is itself an outcome.
+- **Detection:** FLAG_FOR_REVIEW or REJECTED only.
+- **Populations:** intent-to-treat is primary (a Gemini failure is VERIFICATION_ERROR); complete-case is secondary.
+- **Primary interval:** Wilson on n_eff = n / DEFF, DEFF = 1 + (m̃ − 1) · ICC.
+  - m̃ = Σ m_i² / n (Kish).
+  - ICC by one-way ANOVA over scenario groups, floored at 0.10, capped at 1, and set to 1 when not estimable.
+  - n, groups, m̃, ICC, DEFF and n_eff are reported for every rate.
+- **Secondary intervals:** cluster bootstrap; group-level majority Wilson.
+- **Paired test:** exact cluster sign-flip.
+- **Zero events:** exact one-sided 95% upper bound 1 − 0.05^(1/n_eff).
 
 **Measurements:**
 
 | Area | Measurements |
 |---|---|
 | Fraud detection | Fraud recall (M1); recall on dossier-detectable fraud (M1a); fraud held before activation (M1b, simulated) |
-| Errors | False-positive rate (M2) |
-| Precision | Fraud precision (M3); sensitivity version counting borderline as negative (M3s) |
-| Approvals | Legitimate approval rate: L (M4), L + I (M4b), activation (M4c, simulated) |
-| Information requests | Overall (M5); avoidable, on L (M5L); appropriate, on I (M5I) |
-| Manual review | Overall (M6), by review basis; non-fraud (M6nf) |
-| Unsafe provisional approvals | Incomplete (M7I); fraud (M7F); dossier-detectable fraud (M7Fd); borderline (M7B) |
-| Unsafe activations | Fraud (M8a, simulated); with an unconfirmed check (M8b); of incomplete cases (M8c); without a confirmation record (M8d); via a campaign-supplied contact (M8e) |
-| Independent-confirmation failures (simulated) | Fraud passing confirmation (M9a); legitimate cases blocked at confirmation (M9b); campaign-supplied confirmations accepted (M9c); amount check (M9d) |
-| API | First-attempt success, valid-answer coverage, invalid-output rate, outcome categories, retries, quota pauses, `modelVersion` values and token counts (M10); HTTP-only latency median, p90, p95 and max with bootstrap intervals, plus timeouts (M11) |
-| Comparisons and trade-off | Paired case-level comparisons (M12); trade-off (M13) |
+| Errors and precision | False-positive rate (M2); fraud precision (M3), also re-weighted to 2%, 5% and 10% prevalence with conservative bounds |
+| Approvals | Legitimate approval: complete (M4), all (M4b), activated (M4c, simulated) |
+| Information requests and review | M5, M5L, M5I; M6, M6nf, and review basis |
+| Unsafe provisional approvals | M7I, M7F, M7Fd, M7B |
+| Unsafe activations | M8 types (a)–(e), with the decomposition of fraud activations |
+| Stage funnel | S1–S4 (§8) |
+| Independent-confirmation failures (simulated) | M9a–M9d |
+| Undetectable fraud | N1, by mechanism |
+| Fairness | F1 genuine-but-informal outcomes and escalation; F2 assisted-route resolvability; F3 outcomes by category and beneficiary type; F4 trade-off |
+| API | Reliability (M10) and latency (M11) |
 
-**Safety gates for hybrid v3.** A gate passes only with zero observed events; the 95% upper bound is also reported.
+**What decides the result:**
 
-| Gate | Requirement |
-|---|---|
-| G1 | No provisional approval of an incomplete case |
-| G2 | No unsafe activation of types b–e |
-| G3 | No rejection based on Gemini alone |
-| G4 | Provisional approval never treated as activation |
-| G5 | No campaign-supplied confirmation accepted |
-
-**Proposed performance criteria (need approval).** These apply to hybrid v3, intent-to-treat, primary interval.
-- **MET** means the 95% bound clears the threshold.
-- **INCONCLUSIVE** means the point estimate clears it but the bound does not.
-- **NOT_MET** means the point estimate does not.
-
-| Criterion | Metric | Threshold |
+| Layer | Content | Error control |
 |---|---|---|
-| C1 | Recall on dossier-detectable fraud | lower bound ≥ 0.50 |
-| C2 | Fraud precision | lower bound ≥ 0.70 |
-| C3 | False-positive rate | upper bound ≤ 0.10 |
-| C4 | Legitimate (complete) approval rate | lower bound ≥ 0.50 |
-| C5 | Avoidable information requests (L) | upper bound ≤ 0.40 |
-| C5b | Appropriate information requests (I) | lower bound ≥ 0.70 |
-| C6 | Non-fraud manual-review rate | upper bound ≤ 0.20 |
-| C7 | Dossier-detectable fraud provisionally approved | upper bound ≤ 0.10 |
-| C7b | Borderline provisionally approved | upper bound ≤ 0.15 |
-| C8 | Fraud activations (simulated) | upper bound ≤ 0.10 |
-| C10 | First-attempt API success | lower bound ≥ 0.85 |
-| C10b | Valid-answer coverage | lower bound ≥ 0.90 |
-| C10c | Invalid-output rate | upper bound ≤ 0.05 |
-| C11 | Latency p95 | ≤ 60 s (point estimate) |
+| Gates G1–G5 | No provisional approval of an incomplete case; **no unsafe activation of any type, including any fraud activation**; no Gemini-only rejection; provisional approval never treated as activation; no campaign-supplied confirmation accepted | Zero observed events; one-sided upper bounds reported |
+| Primary endpoint H1 | Recall on dossier-detectable fraud, 95% lower bound ≥ **0.70** (minimum safety threshold) | One-sided α = 0.025 |
+| Key secondary K1, K2 | FPR upper bound ≤ 0.10; legitimate-complete approval lower bound ≥ 0.50 | Part of the verdict |
+| Verdict | MEETS_MINIMUM_STANDARD only if every gate passes and H1, K1 and K2 are MET | Intersection-union |
+| Research target R1 | Dossier-detectable recall lower bound ≥ **0.80** | Fixed sequence after H1 |
+| Comparisons with hybrid v2 | Fraudulent provisional approvals; legitimate-complete approvals; dossier-detectable recall; FPR | Holm over 4; claim only if Holm p < 0.05 and the bootstrap interval excludes 0 |
+| Fairness non-inferiority | Legitimate-complete approval, v3 − v2: lower bound > −0.10 | Single pre-specified assessment |
+| Descriptive benchmarks | Avoidable and appropriate information requests; non-fraud review; dossier-detectable fraud approved; borderline approved; genuine-but-informal escalation; API reliability and latency | No claim from any single item |
 
-**How the thresholds were chosen.**
-- They are policy judgements set before any independent data exists. They are not calibrated to an external benchmark.
-- Recall is judged on dossier-detectable fraud, because fraud invisible in the documents is, by design, left to external confirmation; it is covered by C8 and M1b.
-- There is no composite pass mark.
+**Judgement rule.**
+- **MET:** the bound clears the threshold.
+- **INCONCLUSIVE:** the point estimate clears it, the bound does not.
+- **NOT_MET:** the point estimate does not.
 
-**Paired claims (D4).** Hybrid v3 is reported as better or worse than hybrid v2 on M1, M2, M4 or M7 only if both hold:
-- the Holm-adjusted exact McNemar p is below 0.05;
-- the cluster-bootstrap 95% interval of the case-level difference excludes 0.
+Thresholds never change after sealing.
 
-**Trade-off (M13).** For each system the report shows two sides:
-- **Fraud:** detected, held before activation, provisionally approved, activated.
-- **Legitimate applicants:** provisionally approved, delayed by an information request, flagged, errored, activated.
+**Statistical consequences** (methodology document §4 and §6):
 
-It also reports:
-- the extra legitimate delays per extra fraud case detected, against hybrid v2;
-- rates per 1,000 campaigns re-weighted to fraud prevalence of 2%, 5% and 10% (the test mix of about one-third fraud is not real-world prevalence).
+*H1 (minimum).*
+- With about 45 dossier-detectable fraud groups, H1 needs an observed recall of about 0.81–0.84.
+- If true recall is 0.70, it passes about 2% of the time. If true recall is 0.85, it passes 64–86% of the time; if 0.90, 92–99.5%.
 
-## 8. Provisional approval, final approval and activation
+*R1 (research target).*
+- Needs an observed recall of about 0.90–0.93.
+- It is met with probability 0.33–0.59 if true recall is 0.90.
 
-| Stage | State | How it is reached | What it allows |
+*The verdict.*
+- It needs every component, so its power is roughly the product of theirs.
+- For true recall 0.85, FPR 0.05 and approval 0.65, that is about 0.25–0.65 in design A. For recall 0.90, FPR 0.03 and approval 0.75, it is 0.82–0.99.
+
+*Paired power* (cluster sign-flip, Holm worst case to unadjusted).
+- **10-point one-directional difference:** 0.91–0.98 in A, 0.58–0.78 in B.
+- **Mixed 10-point difference:** 0.55–0.74 in A, 0.29–0.52 in B.
+- Small differences in recall or FPR are not detectable at this size. "No supported difference" is not evidence of equivalence.
+
+**Undetectable fraud (R1).** Fraud the labellers judge not detectable from the documents has no recall threshold. It is reported by mechanism (detected, provisionally approved, held, activated), and its safety requirement is gate G2.
+
+**Pre-registered expectation for G2.**
+- The frozen workflow does not confirm amounts. Fraud that only the cost issuer reveals, and collusive fraud that no independent party reveals, can reach activation in the simulation and fail G2.
+- The report attributes each such activation to one of these causes, and shows whether the simulated amount check would have caught it.
+
+**Fairness (R5).**
+- Trade-off between fraud prevented (detected, held, provisionally approved, finally approved, activated) and legitimate applicants delayed (approved, information request, flagged, error, activated), per system.
+- Paired change from v2 to v3 in fraudulent provisional approvals and in legitimate-complete approvals.
+- Legitimate approvals lost per fraudulent approval prevented, with an interval when estimable.
+- Rates per 1,000 campaigns at 2%, 5% and 10% fraud prevalence.
+- Genuine-but-informal outcomes and assisted-route resolvability.
+- Approval rates by category and beneficiary type.
+- The retrospective in-sample contrast (64 → 20 fraudulent, 231 → 162 legitimate approvals) is quoted only as context.
+
+## 8. Provisional approval, independent confirmation, final approval and activation (R2)
+
+| Stage | Definition | What it allows | Measured as |
 |---|---|---|---|
-| Automated decision | APPROVED → ELIGIBLE_PENDING_CONFIRMATION | Hybrid v3 finds no contradiction, no open item, supported financial evidence and a clean Gemini answer | Nothing public. Authenticity UNCONFIRMED; no fundraising; no disbursement. This is **provisional approval** |
-| Confirmation | stays ELIGIBLE_PENDING_CONFIRMATION | Each check is recorded. A contradiction sends the campaign to FLAG_FOR_REVIEW; an unreachable or inconclusive contact leaves it open; a campaign-supplied contact never satisfies a check | — |
-| Final approval and activation | VERIFIED_ACTIVE | Only `record_confirmation`, when the last required check is CONFIRMED through an independent source. Automation and reviewers cannot set it (`IllegalTransition`) | Live, with disbursement allowed |
-| Review | FLAG_FOR_REVIEW | A contradiction, a model warning, or a suspension | A reviewer can return the campaign to pending, which resets every check; a reviewer can never activate it |
+| Provisional approval | Automated APPROVED → ELIGIBLE_PENDING_CONFIRMATION | Nothing public; authenticity UNCONFIRMED; no fundraising; no disbursement | S1 |
+| Independent confirmation | Each required check (beneficiary, institution, payment destination) recorded as CONFIRMED through an independently sourced contact. A contradiction sends the campaign to FLAG_FOR_REVIEW; unreachable or inconclusive leaves it open; a campaign-supplied contact never counts | Nothing yet | S2 (checks confirmed per case) |
+| Final approval | All three required checks independently CONFIRMED, none pending | The decision that the campaign may go live | S3 |
+| Campaign activation | VERIFIED_ACTIVE, reached only by `record_confirmation` when the last check is confirmed. Never by automation or a reviewer (`IllegalTransition`) | Live; disbursement allowed | S4 |
 
-In the frozen workflow, final approval and activation are a single event. Separating activation from tranche-wise disbursement (Appendix A) would be a new candidate (D10).
+- In the frozen workflow, final approval and activation happen in the same transition.
+- The scorer still computes them separately. Activation without final approval is an unsafe activation (type b); final approval without activation is reported as a workflow defect.
+- Separating disbursement into invoice-backed tranches (Appendix A) would be a new candidate (D10).
 
 ## 9. API usage, elapsed time and cost (estimates; nothing approved)
 
@@ -240,20 +272,34 @@ These figures come from `run_independent_test_v5.py plan`, which makes no calls.
 - Requests = N cases + ⌈0.10 N⌉ retries + 8 pilot requests. There are no embedding requests.
 - Free tier: about 20 requests a day were observed for this model.
 - Prompt size: the engineering fixtures average 3,667 characters; the bound for 5 full chunks and a long story is 23,664 characters. Tokens are estimated at about 4 characters each.
+- Free tier: about 20 requests a day were observed once for this model. **This quota, and the model's current availability, are not verified.**
 - Interval half-widths assume recall 0.60, FPR 0.05 and legitimate approval 0.70.
-- Power assumes a 10-point paired difference with 20% discordance (approximate).
+- Paired power is simulated, with the assumptions in the methodology document §3. It replaces the earlier formula figures, which ignored clustering and multiplicity.
 
-| Design | Groups | Cases | Max requests | Free-tier days (min) | Recall ± | FPR ± | Legit. approval ± | Zero-event upper bound (I) | Paired power, fraud / legit |
-|---|---|---|---|---|---|---|---|---|---|
-| A: preferred, 270 groups × ~2 | 270 | ≤ 540 | 602 | 31 | 0.07–0.10 | 0.03–0.04 | 0.07–0.09 | 4.1–7.9% | 0.86 / 0.96 |
-| B: 270 groups × 1 | 270 | 270 | 305 | 16 | 0.10 | 0.04 | 0.09 | 7.9% | 0.57 / 0.74 |
-| C: reduced, 150 groups × 1 | 150 | 150 | 173 | 9 | 0.14 | 0.05 | 0.13 | 11.4% | 0.32 / 0.49 |
-| D: minimal, 90 groups × 1 | 90 | 90 | 107 | 6 | 0.17 | 0.07 | 0.16 | 20.4% | 0.23 / 0.32 |
+| Design | Groups | Cases | Max requests | Free-tier days (min, unverified quota) | Verdict probability* | Paired power, 10-pt one-dir. (Holm worst – unadjusted) |
+|---|---|---|---|---|---|---|
+| A: preferred, 270 groups × ~2 | 270 | ≤ 540 | 602 | 31 | 0.25–0.65 / 0.82–0.99 | 0.91–0.98 |
+| B: 270 groups × 1 | 270 | 270 | 305 | 16 | 0.25 / 0.82 | 0.58–0.78 |
+| C: reduced, 150 groups × 1 | 150 | 150 | 173 | 9 | 0.04 / 0.35 | 0.08–0.29 |
+| D: minimal, 90 groups × 1 | 90 | 90 | 107 | 6 | 0.01 / 0.11 | 0.02–0.09 |
 
-**Precision versus power.**
-- Design B keeps nearly all of A's group-level precision for half the calls and half the authoring, because cases within a group are correlated.
-- B does lose power for paired case-level comparisons (0.86 → 0.57 for fraud).
-- C and D explicitly reduce both precision and power. They are offered only if staffing is insufficient, and never as a silent reduction.
+\* Probability that a system with true recall 0.85, FPR 0.05 and approval 0.65 (first figure), or 0.90 / 0.03 / 0.75 (second), meets the minimum-standard verdict.
+
+**Realistic assessment of design B (R7).** Design A remains preferred. B needs about 275 base hours (330 with buffer) instead of about 504 (605 with buffer).
+
+*What B keeps:*
+- all 270 scenario groups and every quota (mechanisms, subtypes, dates, keyword-free, detectability);
+- the same verdict probability as A when correlation within groups is strong, because A's extra cases then add little information.
+
+*What B loses:*
+- **Robustness to re-presentation.** There is no second presentation of the same situation, so this cannot be studied.
+- **Power for small paired differences:** 0.58–0.78 for a 10-point one-directional difference, 0.29–0.52 if mixed.
+- **Zero-event bounds** become group-based only: 3.3% among fraud, against as low as 1.7% in A.
+- **Genuine-but-informal cases:** 15 instead of about 30, so the escalation bound with zero events is 18%.
+
+*Conclusion.* B is a credible fallback for the verdict-level questions. It is weaker for comparing hybrid v3 with hybrid v2 on small differences.
+
+*C and D* would only be pilot-scale studies, unable to support a safety verdict (verdict probability 0.01–0.35). They are offered only with your explicit approval.
 
 **Tokens (design A).**
 - Input: about 0.55 million tokens typical, at most about 3.6 million.
@@ -308,8 +354,8 @@ The runner never parses labels; it only compares the label file's hash with its 
 **Tests.** `tests/test_independent_v5.py` exercises everything offline on the ENG- engineering fixtures, using a scripted fake Gemini and a guard that fails any network attempt.
 
 **Order of work:**
-1. The owner approves the §13 items. The pre-registration status is set to APPROVED, and `seal-kit` is run.
-2. Confirm and register participants (D6).
+1. Register candidate participants with committed hours, and run `feasibility` (R6).
+2. The owner chooses the design (A preferred) and approves the §13 items. The pre-registration status is set to APPROVED, and `seal-kit` is run.
 3. Authors write the pilot and test cases. The coordinator validates them under the full profile and seals them.
 4. Blind labelling, then agreement, then adjudication, then sealing the labels.
 5. The owner writes the API authorisation file for the pilot (at most 8 requests). Run the pilot, which is never scored, and review the pipeline only.

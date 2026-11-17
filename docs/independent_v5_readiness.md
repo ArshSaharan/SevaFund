@@ -1,185 +1,175 @@
-# Independent evaluation v5 (hybrid v3): offline readiness report
+# Independent evaluation v5 (hybrid v3): offline readiness report (revision 2)
 
-**Date:** 2026-11-17
+**Date:** 2026-11-17.
 
 **Constraints observed:**
-- No API calls, no paid usage and no cloud resources.
+- No API calls, no paid services and no cloud resources.
+- No independent data collection.
+- Nothing sealed.
 - Production, frozen V3, hybrid v2 and the hybrid v3 freeze are unchanged.
 - Nothing pushed, merged or deployed.
 
-The protocol is `evaluation/independent_test_protocol_v5.md`; the machine-readable pre-registration is `evaluation/independent_test_v5/preregistration.json` (status `PROPOSED`).
+**Documents.**
+- Protocol: `evaluation/independent_test_protocol_v5.md`.
+- Pre-registration: `evaluation/independent_test_v5/preregistration.json` (`v5-prereg-2`, PROPOSED).
+- Statistical methods and validation: `docs/independent_v5_statistical_methodology.md`.
 
 ## A. Readiness checklist
 
 | # | Item | Status |
 |---|---|---|
-| 1 | Hybrid v3 frozen as an evaluation candidate (`e7b3688`); freeze verifies, including the 750-case behavioural fingerprint | Done |
-| 2 | Frozen V3 and hybrid v2 unchanged; frozen benchmarks reproduce | Done (re-verified) |
-| 3 | Production untouched (`main` and `origin/main` at `d649f56`; branch never pushed; default model `gemini-3.8-flash`) | Done |
-| 4 | Model fixed to `gemini-3.6-flash` with settings recorded; substitution refused by transport and pre-flight | Done |
-| 5 | Model availability and quota confirmed *without* an API call | Partial: the committed log shows HTTP 200 for this model on 2026-11-16, and its model and pricing pages are published. The current quota can only be confirmed by you in AI Studio |
-| 6 | Production retrieval reproduced offline (unchanged `retrieve_evidence`, no-embedding path); difference recorded; claims restricted | Done |
-| 7 | Exclusion registry: 41 sources and 3,832 earlier texts (all 750 benchmark cases, development sets, historical, date-aware, test literals, examples, fixtures) | Done |
-| 8 | Exact, near-duplicate and short-text duplicate protection; digit-normalised; across groups, within groups and against the pilot | Done, tested |
-| 9 | Validator: schema, quotas, mechanisms, keyword-free lexicon check, independent date validation, participant eligibility, sealing | Done, tested |
-| 10 | Labelling tools: blind copy, sheet checks, κ, adjudication with log, unresolved → borderline, sealing | Done, tested |
-| 11 | Runner: offline plan, engineering dry run, budgeted audited transport, stopping rules, pause and resume without repeats, live path guarded | Done, tested offline. The live path has never been exercised, by design |
-| 12 | Scorer: pre-registered metrics, intervals, gates, criteria, paired comparisons, trade-off; cannot import `app`; writes once | Done, tested |
-| 13 | Engineering fixtures (ENG-), separate from and excluded from the independent test | Done |
-| 14 | API-call, elapsed-time and cost estimate (section D) | Done |
-| 15 | Login-test failure documented separately (`docs/known_issue_campaign_verification_test.md`) | Done; code not changed |
-| 16 | **Success criteria approved** | **Waiting for you (G1)** |
-| 17 | **Pre-registration set to APPROVED and kit sealed** (`run_independent_test_v5.py seal-kit`) | **Blocked on G1** |
-| 18 | **Independent participants confirmed and registered** | **Not met: needs you (G2)** |
-| 19 | Pilot and test cases authored, validated and sealed | Not started (needs 18) |
-| 20 | Blind labels, adjudication and label seal | Not started (needs 19) |
-| 21 | Written API authorisation for the pilot (≤ 8 requests) | Not given (G4) |
-| 22 | Written API authorisation for the main run | Not given (G5) |
+| 1 | Hybrid v3 frozen as an evaluation candidate; freeze, frozen V3, hybrid v2 and benchmark reproducibility verify | Done |
+| 2 | Offline tooling (validator, exclusion registry, labelling, runner, scorer) approved by you | Done |
+| 3 | Revised criteria: tiered recall (H1 0.70, R1 0.80); undetectable fraud descriptive; zero-tolerance G2 covering every unsafe activation, with upper bounds | Implemented; **needs your approval** |
+| 4 | Interval method validated under clustering (Kish design effect, ICC floor 0.1; worst coverage 0.941); n_eff reported for every rate | Done |
+| 5 | Multiplicity: one primary endpoint, intersection-union verdict, fixed-sequence research target, Holm family, clustered paired test (type I ≤ 0.039) | Done |
+| 6 | Power documented with assumptions (simulated; replaces the earlier formula) | Done |
+| 7 | Fairness: paired trade-off and ratio, non-inferiority margin, genuine-but-informal outcomes (quota raised to ≥ 5 groups per category) | Implemented; **margin and quota need approval** |
+| 8 | Four stages (provisional → independent confirmation → final approval → activation) measured separately | Done |
+| 9 | Retrieval difference from production's embedding path documented in the protocol, the pre-registration and every report | Done |
+| 10 | Model availability and free-tier quota | **Not verified** (recorded as such everywhere) |
+| 11 | Login-test failure kept separate | Done (documented only) |
+| 12 | Recruitment feasibility shown (registry with committed hours) | **Not done: needs you** |
+| 13 | Design chosen (A preferred) | Blocked on 12 |
+| 14 | Pre-registration APPROVED and kit sealed | Blocked on 3, 7, 12, 13 and your approval |
+| 15 | Independent cases, labels, and API authorisations | Not started; not authorised |
 
-## B. Dataset recruitment requirements
+**Tests.**
+- 45 offline tests of the evaluation tooling pass. They include reference values for every interval and test, the zero-tolerance gate failing on a collusive fraud, verdict logic, and feasibility.
+- The full suite has the same single pre-existing login failure.
 
-**Roles.** No author or labeller may come from implementation or benchmark tuning.
+## B. Staffing requirements
 
-| Role | Number | Notes |
+**Roles and eligibility** (unchanged, D6):
+- at least 3 authors (4–6 recommended), 2 labellers, 1 adjudicator and 1 coordinator;
+- each signs the independence declaration;
+- one role per person;
+- no one involved in implementation or earlier benchmark tuning;
+- you and the AI assistant are excluded.
+
+**Hours.** Base figures are assumption-based; the "with buffer" figures add 20% for validator-driven revisions.
+
+| | Design A (preferred) | Design B (fallback) |
 |---|---|---|
-| Authors | at least 3 (4–6 recommended) | Mix of backgrounds, for example a medical social worker or hospital billing staff, a school or college administrator, NGO or community-project staff |
-| Labellers | 2 | Similar background to the authors; none of them authors |
-| Adjudicator | 1 | A senior person in one of those fields |
-| Coordinator | 1 | Ideally not the developer. If it is the developer, they validate, seal and run only, and read no case before scoring |
+| Authoring | 315 h (378 h) | 180 h (216 h) |
+| Labelling | 144 h, i.e. 72 h per labeller (86 h each) | 72 h, i.e. 36 h per labeller (43 h each) |
+| Adjudication | 18 h (22 h) | 9 h (11 h) |
+| Coordination | 27 h (32 h) | 14 h (17 h) |
+| Total | ≈ 504 h (≈ 605 h) | ≈ 275 h (≈ 330 h) |
+| Example calendar: 4 authors at 4 h/week | ≈ 24 weeks of authoring | ≈ 14 weeks |
+| Example calendar: 2 labellers at 4 h/week | ≈ 22 weeks | ≈ 11 weeks |
 
-**Eligibility.** Each author, labeller and adjudicator signs `INDEPENDENCE_DECLARATION.md`. They must answer "no" to:
-- involvement in implementation;
-- involvement in prior benchmarks or tuning;
-- having seen the verifier code or lexicons;
-- having seen prior corpora.
+**Feasibility gate.**
+1. Register candidates (pseudonymous codes) with `committed_hours`.
+2. Run `python evaluation/prepare_independent_data_v5.py feasibility <registry.csv>`. It reports, for A and B, any shortfall in authors, labellers, the adjudicator or the coordinator.
+3. You choose the design only after this passes.
 
-They hold one role only. The validator enforces this from the pseudonymous registry; real identities stay outside the repository. The developer and the AI assistant are excluded by rule.
+**If the ~459 hours (authoring plus labelling) for A are unavailable: a realistic assessment of B.**
 
-**Materials given to participants.**
-- **Authors:** `AUTHORING_GUIDE.md`, `REQUIRED_EVIDENCE_POLICY.md` and `example_case.json`. Nothing else: no code, no protocol and no earlier data.
-- **Labellers:** the blinded copy, `LABELLING_GUIDE.md` and the policy.
+*What B keeps:*
+- all 270 groups and every content quota;
+- the same verdict probability as A when cases in a group are strongly correlated (0.25 or 0.82 in the two reference scenarios).
 
-**Skills.**
-- Familiarity with Indian medical, education or community fundraising documents.
-- At least one author able to write regional-language headings.
+*What B costs:*
+- paired power for a 10-point one-directional difference falls to 0.58–0.78, from 0.91–0.98 in A;
+- no repeated presentations, so robustness cannot be studied;
+- fraud zero-event bound of 3.3% rather than as low as 1.7%;
+- genuine-but-informal cases fall from about 30 to 15.
 
-**Workload.** Effort is assumption-based (30 min per case and 10 min per group to author, 8 min per case per labeller):
+*Attrition and rework.* Allow about 20% attrition: with 3 authors, losing one leaves B short. Recruiting 4–5 authors is the realistic minimum even for B.
 
-| Design | Authoring | Labelling | Adjudication | Coordination |
-|---|---|---|---|---|
-| A | ~315 h | ~144 h | ~18 h | ~27 h |
-| B | ~180 h | ~72 h | ~9 h | ~14 h |
+*Below B.* C and D could not support a safety verdict (verdict probability 0.01–0.35). They need your explicit approval.
 
-**Content each author set must cover.** The validator rejects a set that misses any of these:
-- every fraud mechanism;
-- the incomplete subtypes, including "genuine but informal";
-- date-sensitive cases;
-- long dossiers;
-- keyword-free fraud;
-- 1–3 genuinely different cases per group.
+## C. Revised success criteria
 
-**Ethics.** If participants are recruited through a university, check whether the institution requires ethics or consent paperwork for participant contributions.
-
-## C. Final metrics and success criteria (pre-registered; thresholds need approval)
-
-**Population and intervals.** Intent-to-treat is primary. 95% intervals use a design-effect-adjusted Wilson interval, with a cluster bootstrap over scenario groups as secondary.
-
-**Detection.** FLAG_FOR_REVIEW or REJECTED only. Provisional approval is never counted as activation.
-
-| Metric | Definition (hybrid v3) | Success criterion |
+| Layer | Criterion | Threshold (95% interval, design-effect Wilson) |
 |---|---|---|
-| Fraud recall | Detected ÷ fraudulent; also on dossier-detectable fraud | C1: dossier-detectable recall, lower bound ≥ 0.50 |
-| Fraud precision | Detected fraud ÷ (detected fraud + detected legitimate) | C2: lower bound ≥ 0.70 |
-| False-positive rate | Detected ÷ legitimate (complete + incomplete) | C3: upper bound ≤ 0.10 |
-| Legitimate approval rate | APPROVED ÷ legitimate-complete | C4: lower bound ≥ 0.50 |
-| Information-request rate | NMI ÷ cases; avoidable (L) and appropriate (I) | C5: L upper bound ≤ 0.40; C5b: I lower bound ≥ 0.70 |
-| Manual-review rate | FLAG ÷ cases; by review basis; non-fraud | C6: non-fraud upper bound ≤ 0.20 |
-| Unsafe provisional approvals | APPROVED among incomplete, fraud, dossier-detectable fraud and borderline | Gate G1: incomplete = 0. C7: dossier-detectable fraud upper bound ≤ 0.10. C7b: borderline upper bound ≤ 0.15 |
-| Unsafe activations | VERIFIED_ACTIVE (simulated) for fraud (a); with an unconfirmed check (b); incomplete (c); without a confirmation record (d); via a campaign-supplied contact (e) | Gate G2: b–e = 0. C8: fraud activation upper bound ≤ 0.10 |
-| Independent-confirmation failures (simulated) | Fraud passing confirmation; legitimate cases blocked at confirmation; campaign-supplied confirmations accepted; amount-check outcomes | Gate G5: accepted = 0. The others are reported with intervals |
-| API reliability | First-attempt success; valid-answer coverage; invalid outputs; failure categories; retries; quota pauses; model versions; tokens | C10: lower bound ≥ 0.85. C10b: lower bound ≥ 0.90. C10c: upper bound ≤ 0.05 |
-| Latency | HTTP-only median, p90, p95 and max (bootstrap intervals); timeouts | C11: p95 ≤ 60 s |
-| Other gates | G3: no rejection from Gemini alone. G4: provisional approval never treated as activation | Must be 0 |
+| **Gates** (zero observed events) | G1 no provisional approval of an incomplete case | count = 0 |
+| | **G2 no unsafe activation of any type**: (a) fraud, (b) without final approval, (c) incomplete, (d) without a confirmation record, (e) via a campaign-supplied contact | count = 0 |
+| | G3 no rejection from Gemini alone | count = 0 |
+| | G4 provisional approval never treated as activation | count = 0 |
+| | G5 no campaign-supplied confirmation accepted | count = 0 |
+| **Primary endpoint** | H1: recall on dossier-detectable fraud (minimum safety threshold) | lower bound ≥ **0.70** |
+| **Key secondary** | K1: false-positive rate | upper bound ≤ 0.10 |
+| | K2: legitimate-complete approval | lower bound ≥ 0.50 |
+| **Verdict** | MEETS_MINIMUM_STANDARD only if every gate passes and H1, K1 and K2 are MET | — |
+| **Research target** | R1: dossier-detectable recall (only if H1 is met) | lower bound ≥ **0.80** |
+| **Comparisons with hybrid v2** | Fraudulent provisional approvals; legitimate-complete approvals; dossier-detectable recall; FPR | Holm-adjusted cluster sign-flip p < 0.05 **and** interval excludes 0 |
+| **Fairness** | Legitimate-complete approval, v3 − v2 (non-inferiority) | lower bound > −0.10 |
+| **Descriptive only** | Information requests (avoidable ≤ 0.40, appropriate ≥ 0.70); non-fraud review ≤ 0.20; dossier-detectable fraud approved ≤ 0.10; borderline approved ≤ 0.15; genuine-but-informal escalation ≤ 0.10; API first-attempt ≥ 0.85, coverage ≥ 0.90, invalid ≤ 0.05, p95 latency ≤ 60 s | Reported; no claim from any single item |
+| **Undetectable fraud** | Detected, provisionally approved, held and activated, by mechanism | Descriptive; its safety requirement is G2 |
 
-**Judgement rule.**
-- **MET:** the bound clears the threshold.
-- **INCONCLUSIVE:** the point estimate clears it, the bound does not.
-- **NOT_MET:** the point estimate does not.
+**Zero ≠ zero.** Every gate reports a one-sided 95% upper bound, because zero observed events cannot establish a zero population rate. For example, zero unsafe activations among 90 fraud groups is compatible with a population rate of up to 3.3%. The bounds also apply only to the simulated confirmation process.
 
-Gates pass only with zero events. There is no composite score.
+## D. Statistical methodology (summary)
 
-**Paired comparison (hybrid v3 against hybrid v2, same Gemini answers, case level).** Covers recall, FPR, legitimate approval and unsafe provisional approval, using an exact McNemar test with Holm adjustment and a cluster-bootstrap interval of the difference. A difference is claimed only if both are significant.
+The full detail and validation evidence are in `docs/independent_v5_statistical_methodology.md`.
 
-**Trade-off.** For each system: fraud detected, held, provisionally approved and activated, against legitimate applicants approved, delayed, flagged and activated. It also reports extra legitimate delays per extra fraud detected, and rates per 1,000 campaigns at 2%, 5% and 10% fraud prevalence.
+**Correlation within groups.**
+- Rates use a Wilson interval on n_eff = n / [1 + (m̃ − 1) · ICC]. The Kish cluster size m̃ is 2.25 for design A and 1 for B. ICC is floored at 0.1, and set to 1 when it cannot be estimated.
+- In 48 clustered simulation scenarios, coverage was at least 0.941; naive Wilson fell to 0.81.
 
-## D. Estimated API calls, elapsed time and cost
+**Paired comparisons.**
+- Exact cluster sign-flip test, equal to exact McNemar for one case per group.
+- Type I error at most 0.039, where McNemar that ignores groups reached 0.075.
+- Cluster-bootstrap intervals for differences, with coverage 0.938–0.948.
 
-**Requests** = N + ⌈0.10 N⌉ retries + 8 pilot, with 0 embedding requests. On the free tier, about 20 requests a day were observed.
+**Recall thresholds.**
+- **0.70 minimum:** passes about 2% of the time if true recall is 0.70. A good system with true recall 0.85 passes 64–86% of the time; at 0.90, 92–99.5%.
+- **0.80 research target:** needs true recall of about 0.90 or more (0.33–0.59 at 0.90; 0.81–0.98 at 0.95).
+- **0.85:** would need true recall near 0.95.
+- **The old 0.50:** passes 93% of the time even at true recall 0.75.
 
-| Design | Cases | Max requests | Free-tier days (min) | Paid estimate at 2027 list price (reference only; not approved) |
-|---|---|---|---|---|
-| A: preferred (270 groups, ≤ 540 cases) | ≤ 540 | 602 | 31 | ~$1–5 input + ≤ $9.25 visible output + ~$4.50 per 1,000 thinking tokens per request |
-| B: 270 groups × 1 case | 270 | 305 | 16 | about half of A |
-| C: 150 groups × 1 (reduced) | 150 | 173 | 9 | — |
-| D: 90 groups × 1 (minimal) | 90 | 107 | 6 | — |
+**Verdict power.** The verdict requires every component, so its power is roughly the product of theirs. For true recall 0.85, FPR 0.05 and approval 0.65, it is 0.25–0.65 in A. For 0.90, 0.03 and 0.75, it is 0.82–0.99. K1 is the binding component when the true FPR is near 5%.
 
-**Free tier.** The API cost is $0. Time is the cost, and only synthetic data may be sent.
+**Paired power** (simulated; 90 groups per stratum; maximal clustering in A; two-sided; Holm worst case to unadjusted). For 10-point differences:
 
-**Prices.** The published standard price from 2027-01-01 is $1.50 per million input tokens and $7.50 per million output tokens, with thinking counted as output. The introductory price until 2026-12-31 is $0.75 / $3.75. Source: <https://ai.google.dev/gemini-api/docs/pricing>.
+| Design | One-directional | Mixed |
+|---|---|---|
+| A | 0.91–0.98 | 0.55–0.74 |
+| B | 0.58–0.78 | 0.29–0.52 |
 
-**Tokens.**
-- Input is estimated at about 4 characters per token: a fixture mean of about 920 tokens per prompt, and a bound of about 5,900.
-- Thinking tokens are unknown until measured, and are logged per request.
+The retrospective v2-to-v3 contrasts were larger (−16 and −25 points), but small recall or FPR differences are not detectable at this size.
 
-**Precision and power by design** (protocol §9):
+## E. Estimated API calls, time and cost
 
-| Design | Recall ± (points) | Zero-event upper bound | Paired power for a 10-point difference |
-|---|---|---|---|
-| A | 7–10 | 4–8% | 0.86 (fraud) |
-| B | 10 | 7.9% | 0.57 |
-| C | 14 | 11.4% | 0.32 |
-| D | 17 | 20.4% | 0.23 |
+These are unchanged, and **not approved**:
+- Design A: at most 602 generation requests, 0 embedding requests.
+- Design B: at most 305.
+- Free tier: $0, at 20 requests a day (**unverified**), giving at least 31 days for A and 16 for B.
+- Paid usage is not approved. For reference, design A would cost about $1–15 at the 2027 list price, plus thinking tokens.
 
-C and D are explicitly weaker designs.
+## F. Operational risks and remaining limitations
 
-## E. Operational risks
+**New or emphasised this round:**
+1. **Verdict power.** A genuinely good system can still fail the conjunction verdict by chance, about 35–75% of the time in the lower reference scenario. This is the price of requiring every safety and fairness component at once.
+2. **G2 is expected to be informative, not necessarily passed.** The frozen workflow does not confirm amounts, so fraud that only the cost issuer reveals, and collusive fraud, can activate in the simulation and fail G2. This is a correct finding about the candidate; the decomposition makes it visible.
+3. **Under-powered subgroups.** Genuine-but-informal results are indicative only (18% upper bound with zero events at 15 groups). Small paired differences are undetectable.
+4. **Labeller-dependent primary denominator.** If adjudicated dossier-detectable fraud falls below 36 groups, H1 is flagged as under-powered.
+5. **Unverified provider facts.** Model availability, quota and possible retirement are unverified, and no substitution is allowed.
 
-1. **Free-tier quota and duration.** About 20 requests a day means at least 31 days for design A, and longer with pauses. The quota is shared with any other use of the same key.
-2. **Free-tier reliability.** The last live run returned 1 valid answer in 4 requests. The approved transient-failure rules (25% cumulative, or the retry allowance used up) could end the run early. The partial results would be reported, and the sealed test set would be spent.
-3. **Model lifecycle.** The provider now lists newer Flash models, so `gemini-3.6-flash` could change or be retired during a month-long run.
-   - Mitigations: `modelVersion` logging, segmented reporting, and the 45-day calendar limit.
-   - No substitution is allowed, so a retirement ends the run.
-4. **Free-tier data terms.** Prompts may be used by the provider, so only synthetic cases may be sent; the runner enforces this.
-5. **Recruitment and authoring time.** About 500 person-hours for design A. Validator rejections (quotas, duplicates, dates) will need revision rounds.
-6. **Label quality.** Low κ on borderline and documentation judgements. Unresolved cases become borderline, which weakens the primary metrics.
-7. **Coordinator exposure.** If the developer coordinates, there is a risk of seeing cases or labels before scoring. Mitigations: blind workflow, hash-only label checks in the runner, and counters-only status.
-8. **Single use.** A defect found mid-run in the *system* cannot be fixed under this freeze. A defect in the *runner* is caught by the pilot first.
-9. **Kit brittleness.** The kit seal hashes the tooling, tests and fixtures. Any later edit invalidates live runs until re-sealed, which is allowed only before test cases exist.
-10. **Environment drift.** A Python or package upgrade could change frozen behaviour. The freeze check recomputes the 750-case behavioural fingerprint at every start and refuses on any change.
-11. **Long-running local process.** Runs are resumable, and pauses persist on disk. Resumption is manual, with no background scheduling.
-
-## F. Remaining limitations
-
-- **Synthetic dossiers.** The cases are author-written; real documents (scans, OCR, regional languages, insider fraud) may behave differently.
-- **Simulated confirmation and amount checks.** They assume an honest verifier and honest independent sources. They are never real-world verification.
-- **Retrieval.** Production's no-embedding fallback, not its embedding path. Results do not represent the exact production pipeline.
-- **Model.** Results apply to `gemini-3.6-flash` on the free tier only, not to production's `gemini-3.8-flash`, which was unreliable in earlier probes. Free-tier latency and reliability do not represent a paid tier.
-- **Thresholds.** The success thresholds and the system's own thresholds are reasoned judgements, not calibrated.
-- **Power.** Paired comparisons have limited power below design A. Group clustering widens every interval.
-- **Prevalence re-weighting** assumes per-stratum rates transfer to real prevalence.
-- **Validator limits.** It checks structure, quotas, duplicates and dates, not realism. Duplicate thresholds may force some legitimate rephrasing.
-- **Engineering fixtures.** Written by the assistant, they demonstrate that the tooling works and are not evidence about the system. The live API path has never run.
-- **Known hybrid v3 limitations.** 13 are recorded in the freeze manifest, for example insider fraud, the palatoplasty lexicon gap and the information-request burden.
+**Carried forward:**
+- synthetic dossiers;
+- simulated confirmations;
+- retrieval that differs from production's embedding path;
+- free-tier-only results;
+- thresholds that are judgement calls;
+- recruitment and authoring effort;
+- coordinator exposure;
+- single use of the test set;
+- environment drift (guarded by the behavioural fingerprint).
 
 ## G. Decisions requiring your approval
 
-1. **G1 – Success criteria.** Approve or edit thresholds C1–C11 and gates G1–G5 (section C). After that I set the pre-registration to APPROVED and seal the kit (offline, no API).
-2. **G2 – Participants and design.** Confirm that at least 3 independent authors, 2 labellers and 1 adjudicator are actually available, and say who coordinates. Choose a design:
-   - A is preferred;
-   - B gives the same group-level precision for half the effort but less paired power;
-   - C and D are explicitly weaker.
-3. **G3 – Model quota.** Check the current `gemini-3.6-flash` free-tier quota in Google AI Studio yourself, or tell me to treat 20 a day as the planning figure. No call is needed from me.
-4. **G4 – Pilot.** Later, when pilot cases exist: a written authorisation for ≤ 8 free-tier requests.
-5. **G5 – Main run.** Later, after the pilot review: a separate written authorisation for the main run (for example ≤ 594 requests for design A, free tier only).
-6. **G6 – Ethics paperwork.** Whether any is required for the participants.
-7. **G7 – Login test.** Optional: fix the failing test as a separate, approved change. It is documented, not fixed.
+1. **Fraud-recall tiers:** H1 minimum 0.70 and R1 research target 0.80. Alternatively an R1 of 0.85, which needs true recall near 0.95.
+2. **Zero-tolerance G2 over all unsafe activations, including any fraud activation.**
+   - Expect it to expose the frozen workflow's lack of amount confirmation.
+   - Should authors be allowed to write collusive and cost-issuer-only fraud? I recommend yes, for realism.
+3. **K1 at 0.10** (strict; about a 50% chance of MET when the true FPR is 5% under strong clustering) or 0.12. **K2 at 0.50.**
+4. **Fairness non-inferiority margin of −10 points**, and the genuine-but-informal quota of at least 5 groups per category.
+5. **Statistical methods:** Kish design-effect Wilson with ICC floor 0.1; cluster sign-flip test; Holm family of four; intersection-union verdict; fixed-sequence research target.
+6. **Validator quota:** at least 50% of fraud groups per category intended to be detectable from the documents.
+7. **Recruitment:** register candidates with committed hours and run the feasibility check. Then choose the design (A preferred; B only if A is infeasible; C or D only with explicit approval). Name the coordinator.
+8. **Provider facts:** confirm model availability and free-tier quota yourself, or accept them as unverified planning assumptions.
+9. After items 1–8: authorise me to set the pre-registration to APPROVED and seal the kit (offline).
+10. Later and separately: written API authorisation for the pilot (≤ 8 requests), then for the main run.
