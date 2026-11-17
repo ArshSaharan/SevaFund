@@ -7,7 +7,12 @@ You label cases written by other people. You never see any system's output, and 
 - `REQUIRED_EVIDENCE_POLICY.md`;
 - this guide.
 
-You do not read the authors' intended labels or their notes; the coordinator removes those fields before giving you the cases.
+You do not read the authors' intended labels, mechanisms, gold titles, declared date facts or notes. The coordinator gives you a blinded copy without them (`prepare_independent_data_v5.py blind`).
+
+**Adjudication.**
+- The adjudicator sees both sheets for the disagreeing fields only, and records a value and a reason for each (`adjudication_template.csv`).
+- A truth or documentation disagreement that cannot be resolved makes the case `borderline`.
+- Agreement (Cohen's κ) is reported for truth, documentation and date checks before adjudication. Every disagreement and decision is kept in the adjudication log.
 
 **One row per case** in `labeling_sheet_template.csv`:
 
@@ -21,6 +26,7 @@ You do not read the authors' intended labels or their notes; the coordinator rem
 | `decisive_evidence_titles` | Titles of the documents that settle your judgement, separated by `;` |
 | `justified_amount_inr` | The amount the documents actually support, after other payers; blank if they support none |
 | `acceptable_end_states` | Which outcomes are acceptable, separated by `;`: `APPROVED`, `NEEDS_MORE_INFORMATION`, `FLAG_FOR_REVIEW`. A case with missing items, a fraudulent case or a borderline case never lists `APPROVED` |
+| `date_check` | `consistent`, `inconsistent` or `n/a`. Judge whether the case's dates fit each other and its `submitted_on` date (expired documents, scheduled events, impossible sequences). Use `n/a` when no date matters |
 | `notes` | Anything the adjudicator should know |
 
 **Labels are final once sealed.** They are hashed before any system runs and never changed after results are seen.

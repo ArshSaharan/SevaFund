@@ -12,6 +12,21 @@
   "form": null,
   "keyword_free": true,
   "incomplete_subtype": null,
+  "date_sensitive": true,
+  "date_facts": [
+    {
+      "document_title": "Estimate for bilateral cochlear implant",
+      "as_written": "28/01/2027",
+      "date": "2027-01-28",
+      "role": "issue"
+    },
+    {
+      "document_title": "Estimate for bilateral cochlear implant",
+      "as_written": "04/03/2027",
+      "date": "2027-03-04",
+      "role": "scheduled_event"
+    }
+  ],
   "input": {
     "title": "Help Anvi hear again",
     "category": "MEDICAL",

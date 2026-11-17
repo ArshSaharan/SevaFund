@@ -1,423 +1,399 @@
-# Independent evaluation protocol v5: hybrid v3 (DRAFT, not sealed, not executed)
+# Independent evaluation protocol v5: hybrid v3
 
-**Status.**
+**Status (2026-11-17)**
 
-- **Draft, awaiting approval.** No test cases exist yet, no labels exist, nothing has been run, and no API calls have been made.
-- **Sealing.** Once the decisions in §12 are approved, the protocol is finalised, hashed and sealed. The v5 tooling (§10, step 2) is then built and frozen. Only after that are authors briefed.
-- **Relation to v4.** This protocol supersedes `independent_test_protocol_v4.md` for hybrid v3. v4 was written for hybrid v2 and never executed. v5 keeps every v4 independence rule and adds:
-  - an incomplete-documentation stratum;
-  - ground truth for the requested amount;
-  - separate measurement of provisional approval and activation;
-  - API reliability measurement;
-  - a call budget and stopping rules.
+| Item | State |
+|---|---|
+| Tooling | Built and tested offline |
+| Protocol, pre-registration and kit | Not sealed |
+| Independent cases | None exist yet |
+| Independent participants | **Not yet confirmed** |
+| API calls | 0 made. 0 approved for this evaluation |
+
+- The owner's decisions D1–D11 are recorded in §2.
+- The machine-readable pre-registration is `independent_test_v5/preregistration.json`, status `PROPOSED`. It holds every definition, threshold and parameter used by the tools.
+- Nothing runs live until the owner approves the open items in §13 and gives a separate written API authorisation.
+- This protocol supersedes `independent_test_protocol_v4.md` for hybrid v3. v4 was prepared for hybrid v2 and never executed.
 
 ## 1. System under test
 
 | Item | Value |
 |---|---|
-| Candidate | hybrid v3, policy `hybrid-v3-dev-1`, settings digest `a01273d9e3c89b0e` |
-| Freeze manifest | `evaluation/hybrid_v3_freeze.json` (verify with `python evaluation/freeze_hybrid_v3.py verify`) |
-| Behavioural fingerprint | `2d117adb47d30d5c0eaef571845f2c784d9a2f1c623b0074c3147e52b5e840f8` |
-| Code commits | `9152090` (package, tests, offline run), `d0479ab` (report) |
-| Frozen dependencies | frozen V3 (`1c7e739`), hybrid v2 (`b9f7514`); both freezes verify |
-| Gemini prompt | frozen date-aware prompt of hybrid v2 (`development_gemini_verification/prompt.py`), temperature 0.1, JSON schema output, 2,048 max output tokens |
-| Model | not fixed by the code; chosen in decision D1 and recorded in the run manifest |
+| Candidate | hybrid v3, policy `hybrid-v3-dev-1`, settings digest `a01273d9e3c89b0e`. Frozen as a development evaluation candidate only |
+| Freeze | `evaluation/hybrid_v3_freeze.json`, commit `e7b3688`, behavioural fingerprint `2d117adb…40f8`. Check with `python evaluation/freeze_hybrid_v3.py verify` |
+| Frozen dependencies | frozen V3 (`1c7e739`) and hybrid v2 (`b9f7514`), both verified at every run start |
+| Model | `gemini-3.6-flash` exactly. The runner passes this ID explicitly, refuses any other model in the request URL, and refuses to start if `GEMINI_MODEL` names another model. No substitution is allowed |
+| Generation settings | temperature 0.1; JSON output with the frozen schema; 2,048 max output tokens; timeouts 10/180/20/10 s; one HTTP request per client call |
+| Prompt | frozen hybrid-v2 date-aware prompt (rendered-prompt fingerprint in the freeze manifest) |
+| Production | unchanged. The default stays `gemini-3.8-flash`, and nothing in production imports the evaluation code |
 
-Hybrid v3 makes no model call of its own. It consumes the Gemini answer produced by the frozen hybrid-v2 client. One Gemini answer per case can therefore be scored by hybrid v3, hybrid v2 and frozen V3 alone, paired, with no extra API calls.
+**Model availability (D1), checked without an API call.**
+- The committed request log shows that `gemini-3.6-flash` was accepted with HTTP 200 on 2026-11-16 at 20:26 UTC.
+- Later requests failed with SERVER_ERROR and QUOTA_EXHAUSTED, never MODEL_NOT_FOUND.
+- The model page and pricing table are published at ai.google.dev.
+- Current availability and quota can only be confirmed by the owner in Google AI Studio, or by an approved call. The runner records the provider's `modelVersion` for every request, and reports a change mid-run as two segments.
 
-**Comparators (paired, same cases, same Gemini answer):**
-- hybrid v2 (`hybrid-v2-dev-1`);
-- frozen V3 alone plus the approval workflow (deterministic, no API).
+## 2. Decisions recorded
 
-The production-prompt system is excluded by default because it would need a second call per case (decision D4).
-
-**Freeze rule.** If any recorded file changes, the result no longer describes this candidate. Defects found during the test are reported, not fixed; a fix becomes a new version that needs a new freeze and a new, unseen test set.
-
-## 2. What counts as unseen data
-
-**Never used as independent test data, and never reused, modified or relabelled for that purpose:**
-
-| Excluded material | Reason |
-|---|---|
-| The 750 benchmark cases (`final_test_scenarios_v3.jsonl` 300, `fundraising_scenarios.jsonl` 200, `independent_test_150.jsonl`, `independent_benchmark_100.jsonl`) | Written by the developer from templates and inspected during development; the hybrid v3 financial classifier was adjusted after looking at them |
-| The 10 historical Gemini cases (`gemini_eval_v1/cases.jsonl`) | Hybrid v2's policy was designed on their outputs |
-| The 8 date-aware cases (`date_aware_dev_eval/scenarios.json`) | Hybrid v3 was designed to fix their failures |
-| Development sets v1–v3 (all variants) | Development data |
-| Test fixtures in `tests/test_hybrid_v2.py` and `tests/test_hybrid_v3.py` | Written to exercise the rules |
-
-**Novelty check.** The v5 validator rejects any case whose story is a near-duplicate of anything in this list (token Jaccard ≥ 0.8), or whose document text is (Jaccard ≥ 0.8 against any prior document). This extends v4's check, which did not cover the date-aware cases, the contradiction-only and initial V3 sets, or the fixtures.
-
-**People.**
-- Authors and labellers must never have seen:
-  - the verifier code or its lexicons;
-  - this protocol's description of the rules (§1, §7, appendices);
-  - any excluded corpus.
-- They receive only:
-  - `independent_test_v5/AUTHORING_GUIDE.md` (authors) or the labelling instructions (labellers);
-  - `independent_test_v5/REQUIRED_EVIDENCE_POLICY.md`, the platform's published documentation policy (both groups);
-  - the example case.
-- Neither the developer nor Claude, which helped build the system, may author or label cases.
-- The coordinator should ideally not be the developer. If they must be, they may only:
-  - validate and seal submissions;
-  - run the sealed runner;
-
-  and must not read any case before every metric has been written (§10).
-
-**LLM-assisted cases.** A case drafted with any language model is marked `llm_assisted: true`. LLM-assisted cases are reported as a separate stratum and are never pooled into the primary independent result (decision D6).
-
-## 3. Case design
-
-**Unit of analysis:** the scenario group, holding 1–3 cases written by one author that differ meaningfully (amounts, documents, people, wording).
-
-**Strata.** Ground truth has two axes, assigned by the labellers (§4):
-
-- **truth:** `legitimate`, `fraudulent` or `borderline`;
-- **documentation:** `complete` or `incomplete`, judged against the published Required Evidence Policy, not against the code.
-
-| Stratum | Definition | Groups per category | Groups in total |
-|---|---|---|---|
-| L: legitimate, complete | Genuine need; every required item present | 30 | 90 |
-| I: incomplete | Genuine need, at least one required item missing or not acceptable | 15 | 45 |
-| F: fraudulent | Material misrepresentation (complete or incomplete) | 30 | 90 |
-| B: borderline | A careful reviewer genuinely needs more information to decide | 15 | 45 |
-| Total | 3 categories: MEDICAL, EDUCATION, COMMUNITY | 90 | 270 groups (≤ 540 cases) |
-
-**Precision at this size** (Wilson 95%, group level):
-
-| Quantity | Example result | 95% interval |
+| ID | Owner's decision | How it is implemented |
 |---|---|---|
-| Fraud recall | 54/90 groups | 49.7–69.5% |
-| False-positive rate | 7/135 legitimate groups | 2.5–10.3% |
-| Zero unsafe approvals | 0/45 incomplete groups | upper bound 7.9% |
-| Zero unsafe approvals | 0/90 incomplete cases | upper bound 4.1% (case level) |
+| D1 | Gemini 3.6 Flash, verified without API calls; production stays on 3.8 Flash; no silent substitution | §1. Model fixed in the pre-registration; transport and pre-flight refuse other models |
+| D2 | 602 calls **not** approved; no paid usage; the earlier 10-call approval does not carry over; prepare offline | No authorisation file exists. `api_usage.approved_requests = 0`, `paid_usage_allowed = false`. Estimates in §9 |
+| D3 | Reproduce production retrieval where possible without API calls; record any difference | §6. Production `retrieve_evidence` is called unchanged on its no-embedding path. The difference from the embedding path is recorded, and claims are restricted |
+| D4 | Compare frozen hybrid v2 and hybrid v3 on the same Gemini responses; paired, case level | §7 M12. One answer per case is scored by both, plus V3 alone. Exact McNemar test with cluster-bootstrap intervals and Holm adjustment |
+| D5 | Amount confirmation stays a pre-registered simulation, measured separately, never claimed as real | §6 step 7 and M9d. Every output is labelled "SIMULATED … not real-world verification" |
+| D6 | Independent authorship and blind labelling approved; confirm participants exist; exclude anyone involved | §3. Participant registry, signed declarations and automated eligibility checks. **Availability not yet confirmed** |
+| D7 | Keep the 270-group design as preferred; do not execute; give usage, time and cost; propose an explicitly weaker alternative if needed | §9. Four designs with intervals and power |
+| D8 | Use each scenario's submission date; validate date-sensitive scenarios independently | §4. `submitted_on` is "today". Authors declare `date_facts`; an independent parser checks them; labellers record `date_check` |
+| D9 | Pre-register definitions and success criteria with intervals; report the fraud-versus-delay trade-off; provisional ≠ activation | §7. Numeric thresholds are **proposed** and need approval before sealing |
+| D10 | Any post-freeze change creates a separately versioned candidate | Freeze rule. Appendix procedures A and B are not in this candidate |
+| D11 | Operational stopping rules; never stop on accuracy; no label inspection during execution | §10. The runner never parses labels (hash check only); interim status shows counters only |
 
-A reduced design (15/10/15/10 groups per category, 150 in total) widens the recall interval to about ±14 points (decision D7).
+## 3. Unseen data and independence
 
-**Fraud mechanisms.** Each must make up at least 12% of fraud groups in every category:
+**Excluded material.** This material is never used, modified or relabelled as test data:
+- the 750 benchmark cases;
+- the 10 historical Gemini cases;
+- the 8 date-aware templates and rendered cases;
+- development sets v1–v3 (all variants);
+- every long string literal in the test suite;
+- the v4 and v5 example cases;
+- the v5 engineering fixtures.
 
-1. `consistent_fabrication`: fabricated institution, beneficiary or need, with every document agreeing with every other. Only the external environment reveals it.
-2. `independent_record_contradiction`: the documents agree, but an independent record contradicts them (already paid, seat withdrawn, registration lapsed).
-3. `suspicious_payee`: the payout goes to someone who should not receive it.
-4. `document_contradiction`: identity, date, treatment or amount conflicts between documents or between story and documents. Each case records a `form` attribute:
-   - `structured`: in fields such as dates, IDs or amounts;
-   - `prose`: in free text, such as "died at home" against "died in the ICU".
+**How exclusion is enforced.**
+- `independent_v5/exclusion_registry.json` lists 41 sources with SHA-256 hashes, covering 3,832 texts.
+- If a dataset corpus is missing or changed, validation fails.
+- Test files may change; their registered texts stay excluded by hash.
 
-   Each form makes up at least 40% of this mechanism. This tests both the deterministic checks and the Gemini-dependent list.
-5. `amount_inflation`: genuine need, but the goal overstates it. Examples:
-   - inflated or doctored quote;
-   - cost already covered by insurance, PMJAY or a scholarship;
-   - the same bill used twice.
-6. `misrepresented_need`: the documents show the claimed treatment or purpose is not needed or not happening, for example "no surgery indicated" or "not enrolled".
+**Duplicate protection.** Every story and document is checked:
+- against all excluded material;
+- against the pilot set;
+- against every other scenario group in the submission.
 
-**Cross-cutting requirements:**
-- At least 30% of fraud cases, with at least one group in every mechanism, are `keyword_free`: they contain none of the red-flag or semantic-lexicon terms. A script checks this; authors never see the word list.
-- In v4, `keyword_free` was a mechanism of its own. v5 makes it a style constraint across all mechanisms, so it cannot be satisfied only by one easy type.
+The checks:
+- **Normalisation:** digits become `#`, so changing amounts, dates or IDs does not evade a match.
+- **Exact matches** on texts of at least 8 words.
+- **Near matches:** 3-word-shingle Jaccard of at least 0.5, or containment of at least 0.7.
+- **Short-text reuse:** at least 90% containment for texts under 20 shingles.
+- **v4's story token rule.**
+- **Near-copies within a group:** story Jaccard of at least 0.8 is an error.
 
-**Required content in the other strata:**
+**People.** The participant registry (`independent_test_v5/participants_template.csv`) holds pseudonymous codes only; the coordinator keeps real identities outside the repository.
+- **Who may participate.** Authors, labellers and adjudicators must sign `INDEPENDENCE_DECLARATION.md`, answer "no" to all four involvement questions, and hold one role only. The validator rejects anyone else.
+- **Excluded by rule:** the developer and the AI assistant. Reserved IDs such as `DEVELOPER` and `CLAUDE` are rejected.
+- **Labellers** must not have authored cases. **Adjudicators** must not be one of the case's labellers.
+- **Coordinator.** May be the developer, but then only validates, seals and runs the sealed tools, and does not read cases before scoring.
 
-- **L (legitimate, complete):**
-  - high but justified costs;
-  - scheduled future events (surgery, exam and admission dates);
-  - documents with explicit validity periods;
-  - partial insurance or scholarship cover with a correctly stated balance;
-  - regional-language headings;
-  - OCR noise;
-  - campaigns written by a third party;
-  - at least 20% of cases with more than five document chunks, so retrieval coverage is exercised.
-- **I (incomplete):** at least 3 groups per category of each sub-type:
-  - (a) no cost document at all;
-  - (b) a cost document that is unacceptable (expired, issuer not identifiable, below the goal);
-  - (c) missing proof of identity, enrolment or diagnosis;
-  - (d) **genuine but informal**: the family cannot obtain a formal quotation, for example from a government hospital or for informal tutoring. These cases test the fair-review procedure (Appendix B).
-- **B (borderline):** the adjudicated acceptable outcomes are NEEDS_MORE_INFORMATION or FLAG_FOR_REVIEW, never approval.
+**LLM-assisted cases** are marked by their authors, counted separately and reported as a subgroup.
 
-**Case format.** Same as v4, plus:
-- `submitted_on`, required;
-- `llm_assisted`;
-- `mechanism` and `form`;
-- an `incomplete_subtype`;
-- a fourth external party, `COST_ISSUER`.
+## 4. Case design
 
-`COST_ISSUER` records what the issuer of the cost document would state when asked independently through its own official channel:
+**Strata** come from the adjudicated labels:
 
-- `independent_response`;
-- `amount_stated_inr`: a number, or null if the issuer cannot or will not disclose it;
-- `other_payers_inr`: insurance, scheme, scholarship or advance already paid;
-- `note`;
-- optionally `campaign_supplied_contact`.
+| Stratum | Definition |
+|---|---|
+| L | Legitimate, complete |
+| I | Legitimate, incomplete |
+| F | Fraudulent |
+| B | Borderline |
 
-See `independent_test_v5/example_case.json`.
+**Preferred design (D7):** per category (MEDICAL, EDUCATION, COMMUNITY), L 30, I 15, F 30 and B 15 groups. That is 270 groups and at most 540 cases.
 
-## 4. Labelling
+**Quotas checked by the validator:**
+- Every fraud mechanism makes up at least 12% of fraud groups in each category. The mechanisms are consistent fabrication, independent-record contradiction, suspicious payee, document contradiction, amount inflation and misrepresented need.
+- Within document contradiction, each form (structured, prose) is at least 40%.
+- At least 30% of fraud cases are keyword-free, with at least one keyword-free group per mechanism. Keyword-free cases are checked against every lexicon.
+- Each incomplete subtype has at least 3 groups per category. The subtypes are no cost document, unacceptable cost document, missing identity or need, and genuine but informal.
+- At least 20% of L cases have six or more production chunks.
+- At least 15% of cases in each category are date-sensitive.
 
-**Who.**
-- Two labellers per case, working independently and blind to every system's output, assign the label sheet fields (`independent_test_v5/labeling_sheet_template.csv`).
-- A third person adjudicates disagreements.
+**Dates (D8).**
+- `submitted_on` is each case's reference date, for the prompt and for every check.
+- Authors declare `date_facts`, each with the text exactly as written, the ISO date and a role.
+- `independent_v5/datecheck.py` is a parser that imports nothing from the system under test. It checks that each written date appears verbatim and reads as the declared date. It also checks that past roles (issue, completed event, death) are not after submission unless marked as an intentional anomaly. It warns about scheduled events in the past and expired documents in cases declared complete.
+- Labellers independently record `date_check`.
 
-**Label sheet fields:**
-- truth label;
-- documentation completeness, with the missing items named from the policy;
-- whether the fraud is detectable from the dossier or only externally;
-- the decisive evidence titles;
-- the justified amount: what the documents support, in INR, or blank;
-- the set of acceptable end states.
+**Case format:** `independent_test_v5/example_case.json` and `AUTHORING_GUIDE.md`. Each case includes the four-party external environment: beneficiary, payment destination, institution, and the cost issuer with the amount it states.
 
-**Agreement and sealing.**
-- Cohen's κ is reported before adjudication, separately for truth and for completeness.
-- Labels are hashed and sealed before any system runs, and never changed afterwards.
-- A case with κ-disagreement that the adjudicator cannot resolve is labelled `borderline`. Such cases are listed in the report.
+## 5. Labelling
 
-**Acceptable outcomes by stratum:**
+1. **Blind copy.** The coordinator produces a copy without author intent, mechanism, gold titles or date facts: `prepare_independent_data_v5.py blind`.
+2. **Independent sheets.** Two labellers each fill a sheet: truth, documentation and missing items, detectability, decisive titles, justified amount, acceptable end states, date check.
+3. **Sheet checks.** `labels-check` verifies coverage, allowed values and labeller eligibility. APPROVED is acceptable only for legitimate, complete cases.
+4. **Agreement.** `labels-agreement` reports Cohen's κ for truth, documentation and date check, and lists every disagreement.
+5. **Adjudication.** A third person records a value and reason for each disagreement (`labels-adjudication-template`, then `labels-merge`). An unresolved truth or documentation disagreement makes the case `borderline`, marked unresolved. Every decision goes into the adjudication log.
+6. **Sealing.** `labels-seal` hashes the adjudicated file before any run. The scorer refuses labels that differ from their seal, and labels never change after results exist.
 
-| Stratum | Counted as correct | Counted as error | Reported separately |
-|---|---|---|---|
-| L | APPROVED | FLAG/REJECTED (false positive) | NEEDS_MORE_INFORMATION (avoidable request) |
-| I | NEEDS_MORE_INFORMATION | APPROVED (unsafe provisional approval); FLAG/REJECTED (false positive) | — |
-| F | FLAG/REJECTED (detection) | APPROVED (unsafe provisional approval) | NEEDS_MORE_INFORMATION (held, not detected) |
-| B | NEEDS_MORE_INFORMATION or FLAG | APPROVED (unsafe provisional approval) | — |
-| Any | — | — | VERIFICATION_ERROR (system unavailable; never an approval) |
+## 6. Execution pipeline (per case, in a seeded random order)
 
-## 5. Execution pipeline (per case, in a pre-registered random order)
+1. **Frozen V3**, offline.
+2. **Retrieval (D3).**
+   - `app.services.rag.retrieve_evidence` is called **unchanged**. Documents are written as `.txt` uploads in a temporary directory. Rag sees no key, so production takes its own lexical fallback. Its HTTP helper is replaced by a guard that refuses and records any request.
+   - The query and location use the production formats.
+   - Production chunking (220 words, 40 overlap, at most 60 chunks), top 5.
+   - **Difference from production:** production's primary path embeds the query and chunks with `gemini-embedding-001` (2 HTTP requests per campaign) and ranks by cosine similarity. Rankings can differ whenever a case has more than five chunks.
+   - **Claim restriction:** results describe hybrid v3 with production's no-embedding fallback, not the exact production pipeline. Coverage (all chunks retrieved or not) is recorded per case.
+3. **One Gemini call** through the frozen hybrid-v2 client and the budgeted transport. At most one retry for a transient failure.
+4. **Scoring.** Hybrid v3, hybrid v2 and V3 alone all score the same answer (D4).
+5. **Workflow.** Each decision starts a record in the frozen workflow, with the same rules for all systems.
+6. **Simulated confirmation** from the sealed environment:
+   - campaign-supplied contacts are offered first, and must never satisfy a check;
+   - then independently sourced contacts are used.
+7. **Simulated amount check (D5),** for activated campaigns only: the cost issuer's stated amount minus other payers, compared with the goal at 5% tolerance. This is a secondary analysis, not part of the frozen system.
 
-1. **Frozen V3** (offline).
-2. **Retrieval:** frozen lexical top-5 by default, with no embedding calls (decision D3). Chunk coverage is recorded for every case.
-3. **One Gemini call** through the frozen hybrid-v2 client, using a budgeted transport:
-   - each call is one HTTP request, with no hidden retries;
-   - every request counts against the cap;
-   - the log records stage, model, `modelVersion` when the provider returns it, outcome and HTTP-only latency;
-   - the log never records content or the key.
-4. **Scoring:** hybrid v3, hybrid v2 and V3 alone, all scored on the same answer.
-5. **Workflow start.** `start_record` creates the initial state: an APPROVED decision becomes ELIGIBLE_PENDING_CONFIRMATION, with three required checks.
-6. **Confirmation simulation** from the sealed external environment:
-   - the simulated verifier contacts only independently sourced parties;
-   - a second pass offers the campaign-supplied contacts, to test that they are never accepted;
-   - the end state and the number of contacts are recorded;
-   - sensitivity runs use `simulate_external_confirmation.py` with a pre-registered grid of verifier error and compromised-directory rates.
-7. **Amount-confirmation analysis** (secondary, simulated; Appendix A):
-   - compares `COST_ISSUER.amount_stated_inr − other_payers_inr` with the goal, at 5% tolerance;
-   - is not part of the frozen system;
-   - is labelled as an add-on.
+Outputs contain case IDs, groups and system outputs. They contain no labels and no author-intent fields.
 
-**Reference date.** Each case's own `submitted_on` serves as "today" in the prompt and in the date checks (decision D8). Results therefore do not depend on the day the run happens. The DA run used the Asia/Kolkata date at run time; that is unnecessary here because the authored dates are absolute.
+## 7. Measurements and success criteria (D9)
 
-## 6. Measurements (pre-registered definitions)
+Exact definitions are in `preregistration.json` → `metrics`; `independent_v5/scorer.py` implements them.
 
 **Conventions:**
+- **Detection:** FLAG_FOR_REVIEW or REJECTED. NEEDS_MORE_INFORMATION, APPROVED and VERIFICATION_ERROR are never detections.
+- **Provisional approval** (APPROVED → ELIGIBLE_PENDING_CONFIRMATION) is never counted as activation; activation is only VERIFIED_ACTIVE reached in the simulation.
+- **Primary population:** intent-to-treat (all cases; a Gemini failure is VERIFICATION_ERROR). Secondary: complete-case.
+- **Intervals:**
+  - **Primary:** Wilson on the design-effect-adjusted sample size, n / (1 + (m − 1)·ICC). ICC comes from a one-way ANOVA over scenario groups, floored at 0; it is set to 1 when it cannot be estimated, which is conservative for zero-event metrics.
+  - **Secondary:** cluster bootstrap over groups (5,000 replications, fixed seed), plus group-level majority Wilson.
+  - **Precision:** cluster bootstrap, because its denominator is itself an outcome.
 
-- **Detection:** FLAG_FOR_REVIEW or REJECTED. NEEDS_MORE_INFORMATION and ELIGIBLE_PENDING_CONFIRMATION are never detections.
-- **Group-level rates (primary):** each label cluster contributes its majority outcome, with Wilson 95% intervals (`group_uncertainty.py`).
-- **Case-level rates:** cluster-bootstrap intervals (5,000 replications, seed 20261116); ICC and effective sample size are also reported.
-- **Primary analysis:** intent-to-treat. Every case is included, and a Gemini failure becomes VERIFICATION_ERROR, which is neither a detection nor an approval.
-- **Secondary analysis:** the complete-case subset, where Gemini returned a valid answer.
+**Measurements:**
 
-| # | Measurement | Definition | Role |
-|---|---|---|---|
-| M1 | Fraud recall | F cases detected ÷ F cases | Primary |
-| M1b | Fraud held before activation | F cases not reaching VERIFIED_ACTIVE after simulated confirmation ÷ F cases | Secondary (end to end) |
-| M2 | False-positive rate | Legitimate (L + I) cases detected ÷ legitimate cases; borderline excluded | Primary |
-| M3 | Precision | Detected F ÷ (detected F + detected L/I) | Secondary. Sensitivity version adds detected B to the denominator |
-| M4 | Legitimate approval rate | L cases APPROVED (i.e. ELIGIBLE_PENDING_CONFIRMATION) ÷ L cases | Secondary. Also over L + I, and after simulated confirmation (activation rate) |
-| M5 | Information-request rate | NEEDS_MORE_INFORMATION ÷ cases, per stratum and overall | Secondary. L share = avoidable requests; I share = appropriate requests |
-| M6 | Manual-review rate | FLAG_FOR_REVIEW ÷ cases, per stratum and overall | Secondary. Split by review basis: deterministic finding / document-supported model finding / unverified model suspicion |
-| M7 | Unsafe provisional approvals | APPROVED where the case is F, B or I | Primary gate for I: must be 0. F and B reported by mechanism |
-| M8 | Unsafe activations | Reaches VERIFIED_ACTIVE and any of: (a) F; (b) a required check not CONFIRMED by an independent source; (c) I; (d) activated without a confirmation record; (e) accepted on a campaign-supplied contact | Gates: (b)–(e) must be 0. (a) reported, with the environment caveat |
-| M9 | API reliability | Per request: OK, SERVER_ERROR, TIMEOUT, RATE_LIMIT, QUOTA, INVALID_OUTPUT (schema, empty, truncated, blocked), AUTH/CONFIG. First-attempt success, coverage after retry, retries used, quota pauses, `modelVersion` changes | Secondary |
-| M10 | Latency | HTTP-only seconds per successful request (pacing excluded): median, p90, p95, max; timeouts counted separately | Secondary |
+| Area | Measurements |
+|---|---|
+| Fraud detection | Fraud recall (M1); recall on dossier-detectable fraud (M1a); fraud held before activation (M1b, simulated) |
+| Errors | False-positive rate (M2) |
+| Precision | Fraud precision (M3); sensitivity version counting borderline as negative (M3s) |
+| Approvals | Legitimate approval rate: L (M4), L + I (M4b), activation (M4c, simulated) |
+| Information requests | Overall (M5); avoidable, on L (M5L); appropriate, on I (M5I) |
+| Manual review | Overall (M6), by review basis; non-fraud (M6nf) |
+| Unsafe provisional approvals | Incomplete (M7I); fraud (M7F); dossier-detectable fraud (M7Fd); borderline (M7B) |
+| Unsafe activations | Fraud (M8a, simulated); with an unconfirmed check (M8b); of incomplete cases (M8c); without a confirmation record (M8d); via a campaign-supplied contact (M8e) |
+| Independent-confirmation failures (simulated) | Fraud passing confirmation (M9a); legitimate cases blocked at confirmation (M9b); campaign-supplied confirmations accepted (M9c); amount check (M9d) |
+| API | First-attempt success, valid-answer coverage, invalid-output rate, outcome categories, retries, quota pauses, `modelVersion` values and token counts (M10); HTTP-only latency median, p90, p95 and max with bootstrap intervals, plus timeouts (M11) |
+| Comparisons and trade-off | Paired case-level comparisons (M12); trade-off (M13) |
 
-**Also reported:**
-- all rates by category, mechanism, keyword-free status, incomplete sub-type and review basis;
-- paired differences between hybrid v3, hybrid v2 and V3 alone, with McNemar's test at group level;
-- external contacts per 100 campaigns;
-- retrieval coverage;
-- κ;
-- every misclassified group with its findings.
+**Safety gates for hybrid v3.** A gate passes only with zero observed events; the 95% upper bound is also reported.
 
-**Primary endpoints (no others are tested for significance):** M1, M2, M7 for stratum I, and M8 (b)–(e).
+| Gate | Requirement |
+|---|---|
+| G1 | No provisional approval of an incomplete case |
+| G2 | No unsafe activation of types b–e |
+| G3 | No rejection based on Gemini alone |
+| G4 | Provisional approval never treated as activation |
+| G5 | No campaign-supplied confirmation accepted |
 
-**Gates.** The gates are pass/fail safety invariants. Recall, FPR and precision are reported as estimates with intervals; no numeric targets are set unless approved in decision D9.
+**Proposed performance criteria (need approval).** These apply to hybrid v3, intent-to-treat, primary interval.
+- **MET** means the 95% bound clears the threshold.
+- **INCONCLUSIVE** means the point estimate clears it but the bound does not.
+- **NOT_MET** means the point estimate does not.
 
-**Claims.** An improvement over hybrid v2 is claimed only if the group-level paired 95% interval excludes zero. Results apply only to the model, tier and retrieval mode actually used.
+| Criterion | Metric | Threshold |
+|---|---|---|
+| C1 | Recall on dossier-detectable fraud | lower bound ≥ 0.50 |
+| C2 | Fraud precision | lower bound ≥ 0.70 |
+| C3 | False-positive rate | upper bound ≤ 0.10 |
+| C4 | Legitimate (complete) approval rate | lower bound ≥ 0.50 |
+| C5 | Avoidable information requests (L) | upper bound ≤ 0.40 |
+| C5b | Appropriate information requests (I) | lower bound ≥ 0.70 |
+| C6 | Non-fraud manual-review rate | upper bound ≤ 0.20 |
+| C7 | Dossier-detectable fraud provisionally approved | upper bound ≤ 0.10 |
+| C7b | Borderline provisionally approved | upper bound ≤ 0.15 |
+| C8 | Fraud activations (simulated) | upper bound ≤ 0.10 |
+| C10 | First-attempt API success | lower bound ≥ 0.85 |
+| C10b | Valid-answer coverage | lower bound ≥ 0.90 |
+| C10c | Invalid-output rate | upper bound ≤ 0.05 |
+| C11 | Latency p95 | ≤ 60 s (point estimate) |
 
-## 7. Provisional approval, final approval and activation
+**How the thresholds were chosen.**
+- They are policy judgements set before any independent data exists. They are not calibrated to an external benchmark.
+- Recall is judged on dossier-detectable fraud, because fraud invisible in the documents is, by design, left to external confirmation; it is covered by C8 and M1b.
+- There is no composite pass mark.
+
+**Paired claims (D4).** Hybrid v3 is reported as better or worse than hybrid v2 on M1, M2, M4 or M7 only if both hold:
+- the Holm-adjusted exact McNemar p is below 0.05;
+- the cluster-bootstrap 95% interval of the case-level difference excludes 0.
+
+**Trade-off (M13).** For each system the report shows two sides:
+- **Fraud:** detected, held before activation, provisionally approved, activated.
+- **Legitimate applicants:** provisionally approved, delayed by an information request, flagged, errored, activated.
+
+It also reports:
+- the extra legitimate delays per extra fraud case detected, against hybrid v2;
+- rates per 1,000 campaigns re-weighted to fraud prevalence of 2%, 5% and 10% (the test mix of about one-third fraud is not real-world prevalence).
+
+## 8. Provisional approval, final approval and activation
 
 | Stage | State | How it is reached | What it allows |
 |---|---|---|---|
-| Automated decision | APPROVED → ELIGIBLE_PENDING_CONFIRMATION | Hybrid v3 finds no contradiction, no open item, supported financial evidence, and a clean Gemini answer | Nothing public. Authenticity UNCONFIRMED; no fundraising, no disbursement. Three confirmations are listed as pending. This is **provisional approval** |
-| Confirmation | stays ELIGIBLE_PENDING_CONFIRMATION | A verifier records each check. A contradiction sends the campaign to FLAG_FOR_REVIEW; an unreachable or inconclusive contact leaves the check open; a campaign-supplied contact never satisfies a check | — |
-| Final approval and activation | VERIFIED_ACTIVE | Only `record_confirmation`, when the last required check is CONFIRMED through an independent source. Automated verification and reviewers cannot set it, and the workflow raises `IllegalTransition` if anything tries | Campaign live; disbursement allowed. `activation_status` reports authenticity CONFIRMED_BY_INDEPENDENT_SOURCES |
-| Review | FLAG_FOR_REVIEW | A contradiction, a model warning, or a post-activation suspension | A reviewer may clear the campaign back to pending, which resets every check; they cannot activate it |
+| Automated decision | APPROVED → ELIGIBLE_PENDING_CONFIRMATION | Hybrid v3 finds no contradiction, no open item, supported financial evidence and a clean Gemini answer | Nothing public. Authenticity UNCONFIRMED; no fundraising; no disbursement. This is **provisional approval** |
+| Confirmation | stays ELIGIBLE_PENDING_CONFIRMATION | Each check is recorded. A contradiction sends the campaign to FLAG_FOR_REVIEW; an unreachable or inconclusive contact leaves it open; a campaign-supplied contact never satisfies a check | — |
+| Final approval and activation | VERIFIED_ACTIVE | Only `record_confirmation`, when the last required check is CONFIRMED through an independent source. Automation and reviewers cannot set it (`IllegalTransition`) | Live, with disbursement allowed |
+| Review | FLAG_FOR_REVIEW | A contradiction, a model warning, or a suspension | A reviewer can return the campaign to pending, which resets every check; a reviewer can never activate it |
 
-**Final approval and activation are currently the same event.** They are a single state in the frozen workflow, and disbursement is allowed in it.
+In the frozen workflow, final approval and activation are a single event. Separating activation from tranche-wise disbursement (Appendix A) would be a new candidate (D10).
 
-**Recommended future change (decision D10, needs a new version):**
-- separate *activation*, when fundraising opens after the identity, institution and payee confirmations;
-- from *disbursement*, which is released in tranches to the institution's verified account against invoices, after the amount confirmation (Appendix A).
+## 9. API usage, elapsed time and cost (estimates; nothing approved)
 
-The evaluation measures each existing stage separately: M4/M7 at provisional approval, M8 at activation.
+These figures come from `run_independent_test_v5.py plan`, which makes no calls.
 
-## 8. API budget (recommended; requires approval, D2)
+**Assumptions:**
+- Requests = N cases + ⌈0.10 N⌉ retries + 8 pilot requests. There are no embedding requests.
+- Free tier: about 20 requests a day were observed for this model.
+- Prompt size: the engineering fixtures average 3,667 characters; the bound for 5 full chunks and a long story is 23,664 characters. Tokens are estimated at about 4 characters each.
+- Interval half-widths assume recall 0.60, FPR 0.05 and legitimate approval 0.70.
+- Power assumes a 10-point paired difference with 20% discordance (approximate).
 
-| Stage | Calls | Purpose |
-|---|---|---|
-| 0. Offline dry run | 0 | Fake transport on the pilot cases only. The sealed test set is parsed and validated, but no decisions on it are computed or displayed before the live run |
-| 1. Pipeline pilot | ≤ 8 (6 cases + 2 retries) | 6 extra cases written by the authors for the pilot, excluded from every analysis, never used to change any frozen component |
-| 2. Main run | N + ⌈0.10 N⌉ | One generation call per case, plus one retry for at most 10% of cases |
-| Embeddings | 0 | Lexical retrieval (D3). Embedding retrieval would add about 6 calls per case |
-| **Total at N = 540** | **≤ 602 generation calls, 0 embedding calls** | Hard cap enforced by the transport |
+| Design | Groups | Cases | Max requests | Free-tier days (min) | Recall ± | FPR ± | Legit. approval ± | Zero-event upper bound (I) | Paired power, fraud / legit |
+|---|---|---|---|---|---|---|---|---|---|
+| A: preferred, 270 groups × ~2 | 270 | ≤ 540 | 602 | 31 | 0.07–0.10 | 0.03–0.04 | 0.07–0.09 | 4.1–7.9% | 0.86 / 0.96 |
+| B: 270 groups × 1 | 270 | 270 | 305 | 16 | 0.10 | 0.04 | 0.09 | 7.9% | 0.57 / 0.74 |
+| C: reduced, 150 groups × 1 | 150 | 150 | 173 | 9 | 0.14 | 0.05 | 0.13 | 11.4% | 0.32 / 0.49 |
+| D: minimal, 90 groups × 1 | 90 | 90 | 107 | 6 | 0.17 | 0.07 | 0.16 | 20.4% | 0.23 / 0.32 |
 
-**Not included, each needing separate approval:**
-- the production-prompt comparator: +N calls;
-- a reliability-only probe of the production default `gemini-3.8-flash`, measured at 17% success and about 175 s latency in earlier runs: about 20 calls.
+**Precision versus power.**
+- Design B keeps nearly all of A's group-level precision for half the calls and half the authoring, because cases within a group are correlated.
+- B does lose power for paired case-level comparisons (0.86 → 0.57 for fraud).
+- C and D explicitly reduce both precision and power. They are offered only if staffing is insufficient, and never as a silent reduction.
 
-**Schedule.** On the free tier (20 requests a day for `gemini-3.6-flash`), 602 calls take at least 31 days. Quota pauses would also dominate the reliability figures. A paid tier would take hours, but reliability results would then apply to that tier only.
+**Tokens (design A).**
+- Input: about 0.55 million tokens typical, at most about 3.6 million.
+- Visible output: at most 2,048 × 602 ≈ 1.23 million tokens.
+- "Thinking" tokens are not capped by the output setting and are unknown until measured; `usageMetadata` is logged for every request.
 
-## 9. Stopping rules (pre-registered)
+**Cost.**
+- **Free tier:** no API charge, but at least 31 days for design A. Free-tier terms may allow the provider to use prompts to improve its products, so only synthetic cases may be sent.
+- **Paid usage is not approved.** For reference, the published standard price from 1 January 2027 is $1.50 per million input tokens and $7.50 per million output tokens, with thinking counted as output; it is $0.75 / $3.75 until 31 December 2026.
+- At the 2027 price, design A would cost about $1–5 for input plus at most $9.25 for visible output, plus about $4.50 for every 1,000 thinking tokens per request.
+- Design B is about half that.
 
-**Stop permanently** (report as an incomplete run):
+**Human effort (assumption-based).** This is the dominant cost.
 
-1. The approved cap is reached. The transport refuses the next request.
-2. Any authentication, permission, model-not-found or invalid-request error. This is a configuration problem, so the run stops at the first one.
-3. The hybrid v3 freeze, either earlier freeze, the sealed test set or the sealed labels fail verification at start or at any resume.
-4. A pipeline integrity failure: a runner exception, a case that cannot be mapped, or an output-directory conflict.
-5. After at least 100 requests, the cumulative transient-failure rate exceeds 25%, or the retry allowance (⌈0.10 N⌉) is used up. Coverage would then be too low to interpret.
+| Design | Authoring | Labelling (2 labellers) | Adjudication | Coordination |
+|---|---|---|---|---|
+| A | ~315 h | ~144 h | ~18 h | ~27 h |
+| B | ~180 h | ~72 h | ~9 h | ~14 h |
+
+## 10. Stopping rules (D11, approved as proposed)
+
+**Stop permanently:**
+- the authorised call cap is reached;
+- a configuration error: authentication, permission, model not found, bad request, or no key;
+- a freeze, seal or kit check fails at start or resume;
+- after at least 100 requests, the cumulative transient-failure rate exceeds 25%;
+- the retry allowance is used up;
+- 45 calendar days have passed.
 
 **Pause, then resume with an identical configuration:**
+- **Quota exhausted:** until 08:00 UTC.
+- **Three consecutive transient failures, or more than 20% transient failures in the last 25 requests:** 60 minutes. After the third such pause in one UTC day, wait until the next day.
 
-6. **Quota exhaustion (daily 429).** Pause until the provider's reset (08:00 UTC on the free tier). Quota pauses are not model failures and are reported separately.
-7. **Three consecutive transient failures** (5xx, timeout, connection), or more than 20% transient failures in the last 25 requests. Pause for at least 1 hour. After a third pause in one UTC day, wait for the next day.
+**Retries.** At most one retry per case, only after a transient failure. Invalid outputs are final for that case.
 
-**Retry policy.**
-- At most one retry per case, and only after a transient failure, waiting 30 s or as long as Retry-After requires.
-- No retry for invalid output, blocked output or configuration errors. These count as reliability failures, and the case becomes VERIFICATION_ERROR.
+**Never stop on results.** Interim status shows only:
+- requests used;
+- failure categories;
+- cases completed;
+- the pause or stop reason.
 
-**Never stop on results.**
-- No interim look at decisions, labels or accuracy, so there is no optional stopping.
-- Interim status shows only calls used, failures by category and coverage.
-- Safety-invariant violations (M7-I, M8 b–e) are results to report, not stopping triggers. No real campaign is affected, and stopping would bias the estimate.
+The runner never parses labels; it only compares the label file's hash with its seal. Safety-gate violations are results to report, not stopping triggers.
 
-**Other rules.**
-- **Model drift.** If `modelVersion` changes during the run, both segments are reported separately.
-- **Calendar limit.** If the run has not finished within 45 days of starting, it stops and is reported as partial.
-- **Coverage threshold.** If valid Gemini coverage is below 90%, the Gemini-dependent results are reported as inconclusive. The intent-to-treat results still stand.
+## 11. Tooling and order of work
 
-## 10. Order of work
+| Purpose | Command |
+|---|---|
+| Data preparation | `prepare_independent_data_v5.py`: fixtures, exclusion registry, participants, validate, validate-pilot, blind, labels-check, labels-agreement, labels-adjudication-template, labels-merge, labels-seal |
+| Runner | `run_independent_test_v5.py`: plan, integrity, dry-run (ENG- fixtures or pilot only), status, seal-kit, verify-kit, execute (live; refuses without every precondition) |
+| Scorer | `score_independent_test_v5.py score`. Standard library only; never imports `app`; writes once, outside `app/` |
 
-1. Approve decisions D1–D11 (§12).
-2. Build the v5 tooling with no API use:
-   - validator: v4 checks plus the new strata, mechanisms, `COST_ISSUER`, the extended novelty list and the LLM-assisted flag;
-   - budgeted runner with the stopping rules;
-   - scorer implementing §6 exactly.
+**Tests.** `tests/test_independent_v5.py` exercises everything offline on the ENG- engineering fixtures, using a scripted fake Gemini and a guard that fails any network attempt.
 
-   Then test the tooling on synthetic toy data, freeze it with a hash manifest, and seal this protocol.
-3. Recruit at least 3 authors, 2 labellers and 1 adjudicator, none of them involved in development. Brief them with the author or labeller kit only.
-4. Authors write the pilot cases and the test cases. The coordinator then:
-   - validates them;
-   - seals the submission hash;
-   - stores the file outside the developer's workspace.
-5. Blind labelling, then κ, then adjudication, then sealing the labels.
-6. Stage 0 (offline), then Stage 1 (pilot, ≤ 8 calls, with a pipeline-only review).
-7. Stage 2 (main run). The runner verifies every freeze and seal, and refuses to reuse its output directory.
-8. The scorer writes every metric before anyone looks at an individual case. Then the report is written, including every misclassified group, the redacted audit records, the API log summary and the provenance of each case.
+**Order of work:**
+1. The owner approves the §13 items. The pre-registration status is set to APPROVED, and `seal-kit` is run.
+2. Confirm and register participants (D6).
+3. Authors write the pilot and test cases. The coordinator validates them under the full profile and seals them.
+4. Blind labelling, then agreement, then adjudication, then sealing the labels.
+5. The owner writes the API authorisation file for the pilot (at most 8 requests). Run the pilot, which is never scored, and review the pipeline only.
+6. A separate authorisation for the main run. Execute; pauses and resumes follow §10.
+7. Score once, then write the report.
 
-## 11. Data protection
+## 12. Data protection
 
-**Synthetic cases.** Synthetic by default, with invented people, phone numbers and accounts. Real institution names may be used only with the coordinator's approval, and never with invented misconduct attached.
+- Synthetic cases only. The runner refuses non-synthetic cases until a separate data-processing approval exists.
+- Pseudonymous participant codes.
+- Request logs record no prompt content, no response text and no key.
 
-**Real material.** De-identified real dossiers need all of the following before any external model sees them:
-- consent;
-- a data-processing agreement;
-- redaction;
-- the framework's data-authorisation guard.
+## 13. Items still requiring the owner's approval
 
-Real and synthetic results are reported separately.
-
-**Logs.** The API log never holds content or the key.
-
-## 12. Decisions requiring approval before sealing
-
-| ID | Decision | Recommendation |
-|---|---|---|
-| D1 | Model under test | `gemini-3.6-flash`: the prompt and policy were developed on it, and it is the only model with acceptable measured reliability. Production default stays `gemini-3.8-flash` (unchanged); results then describe 3.6 only |
-| D2 | API budget and tier | Hard cap N + ⌈0.10 N⌉ + 8 generation calls, 0 embeddings (≤ 602 at N = 540). Paid tier preferred; free tier means at least 31 days |
-| D3 | Retrieval | Lexical top-5 with no embeddings, coverage reported. Differs from production embedding retrieval for cases with more than five chunks |
-| D4 | Comparators | Hybrid v2 and V3 alone, both paired at zero extra cost. Exclude the production-prompt system (+N calls) |
-| D5 | Amount confirmation | Keep v3 frozen; evaluate Appendix A as a pre-registered, simulated secondary analysis. Implementing it in the workflow would mean a new version and a new freeze before authoring starts |
-| D6 | Authors and labellers | Human authors and labellers independent of development are required for an "independent" claim. LLM-assisted cases are a separate, non-primary stratum |
-| D7 | Size | Full design: 270 groups, ≤ 540 cases. The reduced 150-group design widens recall intervals to about ±14 points |
-| D8 | Reference date | Each case's `submitted_on` |
-| D9 | Numeric targets | Gates only (M7-I = 0, M8 b–e = 0), plus estimates with intervals. No recall or FPR targets without an external basis |
-| D10 | Policy changes for later versions | Appendix A amount confirmation; Appendix B assisted route and capped partial activation; separating activation from disbursement. None of these is in the frozen system |
-| D11 | Stopping rules | As in §9 |
+See `docs/independent_v5_readiness.md`, section G.
 
 ---
 
-## Appendix A: independently confirming the requested amount (proposed procedure)
+## Appendix A: independently confirming the requested amount (proposed procedure; simulated only, D5)
 
-**Purpose.** Establish, through a channel the campaigner does not control, how much money the need actually requires. Then compare that figure with the goal before any money moves.
+**Purpose.** Establish, through a channel the campaigner does not control, how much money the need actually requires. Compare that figure with the goal before any money moves.
 
 **Steps.**
 
-1. **Identify the cost issuer.** This is the billing desk of the hospital, the institution's accounts office, or the supplier or contractor. The financial gate already extracts the issuer; the verifier confirms it.
-2. **Source the contact independently.** Use an official directory or website, a state health-department list or the NABH directory, UDISE+ or AISHE for schools and colleges, the GST portal (GSTIN lookup) for suppliers, or NGO Darpan or the registrar for organisations. Contacts printed in the uploads are recorded but never sufficient, which is the same rule as the existing workflow.
-3. **Ask blind.** Give the patient, student or project identifier and the document's reference number, and ask the issuer to *state*:
-   - the estimated or outstanding amount;
-   - amounts covered by insurance, PMJAY, scholarships, waivers or advances;
-   - the account the issuer accepts payment into.
+1. **Identify the cost issuer:** the hospital billing desk, the institution's accounts office, or the supplier or contractor.
+2. **Source the contact independently.** Use:
+   - official directories or websites;
+   - state health-department lists or the NABH directory;
+   - UDISE+ or AISHE for schools and colleges;
+   - the GST portal for suppliers;
+   - NGO Darpan or the registrar for organisations.
 
-   Never read out the campaign's figure first. Record the stated amounts, the date, the contact source and the verifier ID.
+   Contacts printed in the uploads are recorded but never sufficient.
+3. **Ask blind.** Give the identifier and the reference number, and ask the issuer to state:
+   - the estimated or outstanding amount;
+   - any insurance, PMJAY, scholarship, waiver or advance;
+   - the account it accepts payment into.
+
+   Never read out the campaign's figure first.
 4. **Compare.**
    - **Within tolerance:** the goal is at most (stated amount − other payers) × 1.05. Record CONFIRMED.
-   - **Above that:** record CONTRADICTED. The campaign goes to review, where the goal can be capped at the confirmed figure with the campaigner's consent.
-   - **Cannot disclose:** request the estimate directly from the issuer's official email to the platform, or obtain the beneficiary's signed disclosure consent.
+   - **Above that:** record CONTRADICTED. The campaign goes to review, where it can be capped at the confirmed amount with the campaigner's consent.
+   - **Cannot disclose:** have the issuer email the estimate directly, or obtain the beneficiary's signed consent.
    - **Unreachable:** the check stays open.
-5. **Bind the money to the issuer.** Prefer direct payment to the issuer's verified account, with an account-holder name match and the directory as the source. Then even an overstated goal cannot leave the treating institution.
-6. **Disburse in tranches.** For goals above an agreed threshold (for example ₹2 lakh), or long treatments, release money in tranches against invoices. Re-confirm when a confirmation is more than 30 days old at disbursement.
-7. **Community and organisation campaigns.** Confirm that the supplier exists (active GSTIN, address) and confirm the quotation with the supplier. Where there are many suppliers, confirm the items covering at least 80% of the goal.
-8. **Handle surplus.** State in advance how surplus is handled (refund, or transfer with donor consent).
-9. **Privacy.** Collect disclosure consent at campaign creation, and share the minimum data needed.
+5. **Bind the money to the issuer.** Prefer direct payment to the issuer's verified account.
+6. **Disburse in tranches.** For large goals (for example above ₹2 lakh) or long treatments, release money in tranches against invoices. Re-confirm when a confirmation is more than 30 days old.
+7. **Community and organisation campaigns.** Confirm that the supplier exists (active GSTIN) and confirm its quotation. Cover the items making up at least 80% of the goal.
+8. **Surplus and privacy.** State surplus handling in advance. Collect disclosure consent at creation and share the minimum data needed.
 
-**Gaps in the frozen version.**
-- Medical and education institution checks already *describe* confirming the billed amount or fee demand, but the record holds no amount.
-- Community checks confirm registration only.
-
-Making this an explicit, recorded check is a workflow change, which means a new version (D5, D10). The evaluation measures it as a simulation, from the `COST_ISSUER` record:
-- amount-inflation fraud caught;
-- genuine cases wrongly contradicted;
-- added contacts per 100 campaigns.
+**In this evaluation** the procedure is simulated from the `COST_ISSUER` record and reported separately (M9d). It is never described as real-world verification. Making it a recorded workflow check requires a new candidate version (D10).
 
 ## Appendix B: fair review for genuine beneficiaries without formal cost quotations (proposed procedure)
 
 **Principles.**
 - A missing formal quotation leads to NEEDS_MORE_INFORMATION, never to rejection.
-- The safety bar for activation does not change. What changes is who does the work to produce evidence and which evidence is accepted.
+- The safety bar for activation does not change. What changes is who does the work to produce evidence, and which evidence is accepted.
 
 **Steps.**
 
 1. **Triage.**
    - Within 1 working day.
-   - Within 24 hours when the documents show treatment within 14 days, or the reviewer judges the case urgent.
-2. **A specific request.** Written in plain language and in the campaigner's language, it names what is missing and lists the acceptable alternatives:
+   - Within 24 hours when the documents show treatment within 14 days, or a reviewer judges the case urgent.
+2. **A specific request** in plain language, in the campaigner's language, listing acceptable alternatives:
 
    | Category | Alternative evidence of cost |
    |---|---|
-   | Medical | Government hospital's list of items to buy, with pharmacy or supplier quotes; the treating doctor's note naming the procedure, plus a billing-desk confirmation obtained by the platform; an insurance or PMJAY pre-authorisation showing covered and uncovered amounts; recent receipts for ongoing treatment (for example 3 months of dialysis) establishing the running cost |
-   | Education | Official fee structure from the institution's website or prospectus; last term's receipt plus the current circular; a scholarship or waiver letter showing the balance; hostel or mess bills |
-   | Community | Two supplier quotations; the government schedule of rates (for example PWD SOR) for construction items; invoices from a comparable earlier project |
+   | Medical | Government hospital's list of items to buy, with pharmacy or supplier quotes; the treating doctor's note naming the procedure, plus a billing-desk confirmation obtained by the platform; an insurance or PMJAY pre-authorisation showing covered and uncovered amounts; recent receipts for ongoing treatment establishing the running cost |
+   | Education | Official fee structure from the website or prospectus; last term's receipt plus the current circular; a scholarship or waiver letter showing the balance; hostel or mess bills |
+   | Community | Two supplier quotations; the government schedule of rates for construction items; invoices from a comparable earlier project |
 
-3. **Assisted route.** A trained caseworker or a partner NGO obtains the amount independently from the institution, using the Appendix A procedure, so the family does not have to produce a document. The recorded, independently sourced figure substitutes for the quotation.
-4. **Partial and direct options** (a policy change; D10):
-   - activate a campaign capped at the independently confirmed amount, raising the cap later on new evidence;
-   - or pay the institution directly against invoices.
+3. **Assisted route.** A trained caseworker or a partner NGO obtains the amount independently from the institution, using the Appendix A procedure. The recorded, independently sourced figure substitutes for the quotation.
+4. **Partial and direct options** (a policy change, needing a new version):
+   - activation capped at the independently confirmed amount;
+   - or direct payment to the institution against invoices.
 5. **Reviewer rules.**
    - Reviewers cannot reject solely because a formal quotation is missing.
    - Any rejection needs two reviewers.
    - Reviewers see findings labelled by basis, and must not treat an UNVERIFIED_MODEL_SUSPICION as evidence.
-   - Reasons are recorded from a fixed list.
+   - Reasons come from a fixed list.
    - Appeals go to a different reviewer and are decided within 5 working days.
 6. **Time limits.**
    - A decision within 3 working days of receiving evidence.
    - A request never expires automatically. After 14 days without a reply, the campaigner gets a reminder and a phone call.
-7. **Fairness monitoring.** Each month, compare information-request rates, time to activation, abandonment after a request, and legitimate approval rates across:
+7. **Fairness monitoring.** Each month, compare information-request rates, time to activation, abandonment and legitimate approval rates across:
    - category;
    - government and private hospitals;
    - language;
@@ -425,9 +401,9 @@ Making this an explicit, recorded check is a workflow change, which means a new 
    - rural and urban beneficiaries;
    - beneficiary type.
 
-   A ratio below 0.8 between groups triggers a policy review. This is a screening heuristic, not a legal test.
+   A ratio below 0.8 between groups triggers a policy review (a screening heuristic).
 8. **Data minimisation and consent** throughout.
 
-**In this evaluation**, the I(d) "genuine but informal" sub-type measures:
-- how often these beneficiaries receive an information request rather than a flag;
-- how many could be resolved through the assisted route, i.e. where the `COST_ISSUER` record would independently confirm an amount.
+**In this evaluation** the incomplete sub-type "genuine but informal" measures:
+- how often such cases receive an information request rather than a flag (M5I, by subtype);
+- how many could be resolved through the assisted route, i.e. where `COST_ISSUER` would confirm an amount.

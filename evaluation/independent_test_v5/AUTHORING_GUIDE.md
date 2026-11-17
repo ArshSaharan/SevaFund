@@ -40,7 +40,19 @@ Write one JSON object per line in a `.jsonl` file. The example shows every field
   - `amount_inflation`: the need is genuine but the goal overstates it. For example, the quote is altered, insurance already pays, or the same bill appears twice.
   - `misrepresented_need`: the documents show the treatment or purpose is not needed or not happening.
 - **`keyword_free`.** Set this to `true` for a fraud case written in calm, ordinary language with no stereotypical scam wording. Aim for about a third of your fraud cases.
-- **`submitted_on`.** The date the campaign is submitted, as `YYYY-MM-DD`. Write every document date as a real calendar date that makes sense relative to it. Future dates are fine for scheduled events, such as a surgery date.
+- **IDs.** The coordinator gives you a pseudonymous `author_id` (for example `A03`) and a block of group numbers.
+  - Each `scenario_group` looks like `T5-MED-0412`.
+  - The cases in it are `T5-MED-0412-A`, `-B` and `-C`.
+  - Pilot cases use the prefix `P5-` instead.
+- **`submitted_on`.** The date the campaign is submitted, as `YYYY-MM-DD`. It is "today" for that case. Write every document date as a real calendar date that makes sense relative to it. Future dates are fine for scheduled events, such as a surgery date or a fee due date.
+- **`date_sensitive` and `date_facts`.** Set `date_sensitive` to `true` when any date matters to the case. Examples: an expiry or validity date, a scheduled surgery, an admission or discharge date, a death date, or a date that contradicts another date.
+  - For each such date, add an entry to `date_facts`:
+    - `document_title` (or `STORY`);
+    - `as_written`: copied exactly from the text, for example `31/03/2027`;
+    - `date`: the same date as `YYYY-MM-DD`;
+    - `role`: one of `issue`, `validity_end`, `scheduled_event`, `completed_event`, `death` or `other`.
+  - If a date is *deliberately* wrong as part of a fraud, for example a bill dated after the submission, add `"intentional_date_anomaly": true` to that entry.
+  - The coordinator checks every declared date automatically. Labellers check date-sensitive cases independently.
 - **Documents.** Make them realistic:
   - letterheads, tables, and stamps described in text;
   - local date formats;

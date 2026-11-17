@@ -59,3 +59,14 @@ records commits, file hashes, the captured prompt and model configuration, a beh
 and known limitations. `independent_test_protocol_v5.md` is a **draft** independent-evaluation protocol for it
 (author and labeller kit in `independent_test_v5/`); it is not sealed and has not been executed. All results so far
 are development results.
+
+## v5 independent evaluation: offline tooling (November 2026)
+
+Tooling for the independent evaluation of the frozen hybrid v3 candidate, built and tested offline; nothing is
+sealed and no independent case exists yet. Protocol: `independent_test_protocol_v5.md`; pre-registration:
+`independent_test_v5/preregistration.json` (PROPOSED); readiness: `docs/independent_v5_readiness.md`.
+Code is in `independent_v5/` (validator, exclusion registry, labels, production-fallback retrieval, budgeted
+transport and stopping rules, runner, scorer); entry points are `prepare_independent_data_v5.py`,
+`run_independent_test_v5.py` and `score_independent_test_v5.py`. `independent_v5/engineering_fixtures/` holds ENG-
+fixtures for testing the tools only - they are not test data and are excluded from it. No API call is possible
+without a sealed kit and the owner's written authorisation.
