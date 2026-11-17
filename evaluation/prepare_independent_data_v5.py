@@ -7,6 +7,9 @@
     validate SUBMISSION [--profile full|engineering] [--participants P] [--pilot PILOT] [--seal OUT]
     validate-pilot PILOT [--profile ...] [--participants P] [--seal OUT]
     blind SUBMISSION OUT                 labellers' copy without author intent, mechanisms or gold titles
+    packet ROLE OUT [--cases BLIND] [--sheet DISAGREEMENTS]
+                                         the only material a participant receives (author, labeller, adjudicator);
+                                         built outside the repository from an allowlist, with a hash manifest
     labels-check SHEET --submission S [--participants P]
     labels-agreement SHEET_A SHEET_B
     labels-adjudication-template SHEET_A SHEET_B OUT
@@ -43,6 +46,11 @@ def main(argv=None):
     b = sub.add_parser("blind")
     b.add_argument("submission", type=Path)
     b.add_argument("out", type=Path)
+    pk = sub.add_parser("packet")
+    pk.add_argument("role", choices=["author", "labeller", "adjudicator"])
+    pk.add_argument("out", type=Path)
+    pk.add_argument("--cases", type=Path)
+    pk.add_argument("--sheet", type=Path)
     c = sub.add_parser("labels-check")
     c.add_argument("sheet", type=Path)
     c.add_argument("--submission", type=Path, required=True)
@@ -84,6 +92,9 @@ def main(argv=None):
             result["sealed_to"] = str(args.seal)
     elif args.command == "blind":
         result = {"cases": validator.blind_copy(args.submission, args.out)}
+    elif args.command == "packet":
+        from independent_v5 import packets
+        result = packets.build(args.role, args.out, args.cases, args.sheet)
     elif args.command == "labels-check":
         ids = [c["case_id"] for c in config.read_jsonl(args.submission)]
         authors = {c.get("author_id") for c in config.read_jsonl(args.submission)}

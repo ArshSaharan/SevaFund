@@ -488,7 +488,9 @@ def evaluate_criteria(metrics: dict, api: dict, prereg: dict) -> dict:
             "secondary_benchmarks_descriptive": _judge_all(criteria["secondary_benchmarks_descriptive"], metrics, api),
             "operational_api_descriptive": _judge_all(criteria["operational_api_descriptive"], metrics, api),
             "rule": criteria["evaluation_rule"], "multiplicity_note": criteria["multiplicity_note"],
-            "zero_event_interpretation": criteria["gates"]["interpretation"]}
+            "zero_event_interpretation": criteria["gates"]["interpretation"],
+            "verdict_scope": criteria.get("verdict_scope"),
+            "known_weakness_commitment": prereg.get("owner_approvals", {}).get("known_weakness_commitment")}
 
 
 # ------------------------------------------------------------------ driver
@@ -530,6 +532,7 @@ def score(run_dir: Path, label_file: Path, label_seal: Path, submission: Path, o
         "disclaimers": [prereg["analysis"]["simulation_disclaimer"], prereg["retrieval"]["claim_restriction"],
                         f"Results apply to {prereg['model']['id']} on the {prereg['api_usage']['tier']} tier only.",
                         "Provisional approval (ELIGIBLE_PENDING_CONFIRMATION) is never counted as final approval or activation.",
+                        *([prereg["success_criteria"]["verdict_scope"]] if prereg["success_criteria"].get("verdict_scope") else []),
                         "Zero observed events never establish a zero population rate; see the one-sided upper bounds."],
     }
     out_dir.mkdir(parents=True)
@@ -565,6 +568,8 @@ def render(result: dict) -> str:
     lines += ["## Safety gates (zero tolerance, observed)", "", "| Gate | Result | Count | One-sided 95% upper bound if zero |",
               "|---|---|---|---|"]
     lines += [f"| {k} | {v['result']} | {v['count']} | {v['one_sided_95_upper_if_zero']} |" for k, v in crit["gates"].items()]
+    if crit.get("known_weakness_commitment"):
+        lines += ["", f"Pre-registered commitment: {crit['known_weakness_commitment']}"]
     lines += ["", "## Primary endpoint, key secondary criteria and research target (hybrid v3)", "",
               "| Item | Result | Estimate (95% CI) | Threshold | n_eff |", "|---|---|---|---|---|"]
     for section in ("primary_endpoint", "key_secondary", "research_target"):

@@ -13,8 +13,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "evaluation"))
 
-from independent_v5 import (config, datecheck, exclusion, kit, labels, participants, retrieval, runner,  # noqa: E402
-                            scorer, stats, validator)
+from independent_v5 import (config, datecheck, exclusion, kit, labels, packets, participants, preseal,  # noqa: E402
+                            retrieval, runner, scorer, stats, validator)
 from independent_v5.transport import AuditedTransport, NotSent, PolicyState, StopPolicy  # noqa: E402
 
 FIX = config.FIXTURES
@@ -577,6 +577,11 @@ def test_scorer_end_to_end_on_engineering_fixtures(tmp_path):
         assert result[key]
     assert {"M10_first_attempt_success", "M11_latency_seconds"} <= set(result["api"])
     assert (tmp_path / "scores" / "report.md").exists() and (tmp_path / "scores" / "case_level.csv").exists()
+    scope = PREREG["success_criteria"]["verdict_scope"]
+    assert "not evidence of production readiness" in scope and scope in result["disclaimers"]
+    assert criteria["known_weakness_commitment"] == PREREG["owner_approvals"]["known_weakness_commitment"]
+    report_text = (tmp_path / "scores" / "report.md").read_text()
+    assert scope in report_text and "Pre-registered commitment" in report_text
     with pytest.raises(SystemExit, match="written once"):
         scorer.score(tmp_path / "run", tmp_path / "final.csv", tmp_path / "seal.json", FIX / "submission.jsonl",
                      tmp_path / "scores")
@@ -670,12 +675,132 @@ def test_any_fraud_activation_fails_the_zero_tolerance_gate(tmp_path):
 
 
 # ------------------------------------------------------------------ kit and pre-registration
-def test_kit_cannot_be_sealed_before_approval():
-    assert PREREG["status"] == "PROPOSED"
+def test_kit_cannot_be_sealed_before_approval(monkeypatch):
+    assert PREREG["status"] in {"PROPOSED", "APPROVED"}
+    monkeypatch.setattr(config, "load_prereg", lambda path=config.PREREG_PATH: {**PREREG, "status": "PROPOSED"})
     with pytest.raises(SystemExit, match="has not been approved"):
         kit.seal()
-    assert kit.verify()["valid"] is False
+    if not config.KIT_MANIFEST.exists():
+        assert kit.verify()["valid"] is False
     assert "tests/test_independent_v5.py" in kit.kit_files()
+    assert {"evaluation/independent_v5/preseal.py", "evaluation/independent_v5/packets.py"} <= set(kit.kit_files())
+
+
+def test_kit_seal_requires_a_passing_preseal_report_for_the_current_kit(monkeypatch, tmp_path):
+    monkeypatch.setattr(config, "load_prereg", lambda path=config.PREREG_PATH: {**PREREG, "status": "APPROVED"})
+    monkeypatch.setattr(config, "KIT_MANIFEST", tmp_path / "kit_manifest.json")
+    with pytest.raises(SystemExit, match="no pre-seal report"):
+        kit.seal()
+    report = tmp_path / "preseal.json"
+    passing = {"complete_check": True, "ready_to_seal": True, "failures": {}, "blocking_requirements": [],
+               "kit_hashes": kit.current()}
+    report.write_text(json.dumps({**passing, "ready_to_seal": False, "blocking_requirements": ["no design"]}))
+    with pytest.raises(SystemExit, match="not passing"):
+        kit.seal(report)
+    report.write_text(json.dumps({**passing, "complete_check": False}))
+    with pytest.raises(SystemExit, match="skipped"):
+        kit.seal(report)
+    report.write_text(json.dumps({**passing, "kit_hashes": {**passing["kit_hashes"], "tests/test_independent_v5.py": "0"}}))
+    with pytest.raises(SystemExit, match="kit changed"):
+        kit.seal(report)
+    report.write_text(json.dumps(passing))
+    assert kit.seal(report)["sealed"] is True
+    sealed = json.loads((tmp_path / "kit_manifest.json").read_text())
+    assert sealed["preseal_report_sha256"] == config.sha256_file(report)
+
+
+# ------------------------------------------------------------------ owner approval, pre-seal checks, packets
+def test_criteria_match_the_owner_approval_snapshot():
+    assert preseal.snapshot_problems(PREREG) == []
+    approval = PREREG["owner_approvals"]["criteria_review_2026_11_17"]
+    assert approval["criteria_snapshot"]["K2_threshold"] == 0.5 and "preliminary" in approval["decisions"]["A4_legitimate_approval"]
+    assert PREREG["success_criteria"]["key_secondary"]["K2_legitimate_complete_approval"]["scope"].startswith(
+        "Preliminary evaluation floor only")
+    changed = copy.deepcopy(PREREG)
+    changed["success_criteria"]["key_secondary"]["K1_false_positive_rate"]["threshold"] = 0.12
+    assert any(p.startswith("K1_threshold") for p in preseal.snapshot_problems(changed))
+    narrowed = copy.deepcopy(PREREG)
+    narrowed["success_criteria"]["gates"]["G2_no_unsafe_activation"] = "fraud activations only"
+    assert any(p.startswith("G2_unsafe_activation_types") for p in preseal.snapshot_problems(narrowed))
+    relaxed = copy.deepcopy(PREREG)
+    relaxed["design"]["incomplete_subtype_min_groups_per_category"]["genuine_but_informal"] = 3
+    assert preseal.snapshot_problems(relaxed)
+    no_commitment = copy.deepcopy(PREREG)
+    del no_commitment["owner_approvals"]["known_weakness_commitment"]
+    assert "the G2 non-weakening commitment is missing" in preseal.snapshot_problems(no_commitment)
+
+
+def test_provider_facts_stay_unverified_and_nothing_is_approved():
+    assert preseal.provider_and_budget_problems(PREREG) == []
+    claimed = copy.deepcopy(PREREG)
+    claimed["api_usage"]["quota_verified"] = True
+    assert preseal.provider_and_budget_problems(claimed)
+    approved = copy.deepcopy(PREREG)
+    approved["api_usage"]["approved_requests"] = 10
+    assert preseal.provider_and_budget_problems(approved)
+
+
+def test_committed_statistical_validation_meets_the_acceptance_bounds():
+    record = json.loads((config.KIT / "statistical_validation.json").read_text())
+    assert preseal.statistics_problems(record) == []
+    summary = preseal.statistics_summary(record)
+    assert summary["primary_interval_coverage_min"] >= 0.935 and summary["naive_wilson_coverage_min"] < 0.9
+    worse = copy.deepcopy(record)
+    worse["paired_type1"][0]["type1_cluster_sign_flip"] = 0.08
+    assert any("type I" in p for p in preseal.statistics_problems(worse))
+
+
+def test_preseal_network_guard_blocks_and_records_connections():
+    import socket
+    original = socket.socket.connect
+    with preseal.NetworkGuard() as guard:
+        with socket.socket() as sock, pytest.raises(OSError, match="disabled during the pre-seal check"):
+            sock.connect(("192.0.2.1", 443))
+    assert guard.attempts == ["('192.0.2.1', 443)"] and socket.socket.connect is original
+
+
+def test_preseal_lists_what_still_blocks_sealing():
+    blocking = preseal.blocking_requirements(PREREG, None)
+    if PREREG["status"] == "PROPOSED":
+        assert any("no participant registry" in b for b in blocking)
+        assert any("no design selected" in b for b in blocking)
+        assert any("has not authorised APPROVED" in b for b in blocking)
+    engineering = preseal.blocking_requirements(PREREG, FIX / "participants.csv")
+    assert any("recruitment feasibility not demonstrated: design A" in b for b in engineering)
+    assert preseal.independent_cases_in_repository() == []
+
+
+def test_participants_receive_only_their_role_packet(tmp_path):
+    author = packets.build("author", tmp_path / "author")
+    assert set(author["files"]) == set(packets.PACKETS["author"]) | {"README.md"}
+    built = {p.name for p in (tmp_path / "author").iterdir()}
+    assert built == set(author["files"]) | {"packet_manifest.json"}
+    assert not any(name.endswith((".py", ".jsonl")) for name in built)
+    readme = (tmp_path / "author" / "README.md").read_text()
+    assert "source code" in readme and "coordinator only" in readme
+
+    blinded = tmp_path / "blind.jsonl"
+    validator.blind_copy(FIX / "submission.jsonl", blinded)
+    labeller = packets.build("labeller", tmp_path / "labeller", cases=blinded)
+    assert "cases.jsonl" in labeller["files"] and "example_case.json" not in labeller["files"]
+    for row in config.read_jsonl(tmp_path / "labeller" / "cases.jsonl"):
+        assert not set(row) & set(validator.HIDDEN_FROM_LABELLERS)
+
+    with pytest.raises(SystemExit, match="hidden from labellers"):
+        packets.build("labeller", tmp_path / "leak", cases=FIX / "submission.jsonl")
+    with pytest.raises(SystemExit, match="authors receive no cases"):
+        packets.build("author", tmp_path / "a2", cases=blinded)
+    with pytest.raises(SystemExit, match="only the adjudicator"):
+        packets.build("labeller", tmp_path / "l2", sheet=config.KIT / "adjudication_template.csv")
+    with pytest.raises(SystemExit, match="inside the repository"):
+        packets.build("author", ROOT / "evaluation" / "packet_should_not_exist")
+    assert not (ROOT / "evaluation" / "packet_should_not_exist").exists()
+    sheet = tmp_path / "disagreements.csv"
+    labels.adjudication_template(FIX / "labels_a.csv", FIX / "labels_b.csv", sheet)
+    adjudicator = packets.build("adjudicator", tmp_path / "adj", cases=blinded, sheet=sheet)
+    assert {"cases.jsonl", "disagreements.csv"} <= set(adjudicator["files"])
+    manifest = json.loads((tmp_path / "adj" / "packet_manifest.json").read_text())
+    assert manifest["files"]["disagreements.csv"] == config.sha256_file(sheet)
 
 
 def test_preregistration_fixes_model_retrieval_and_budget():

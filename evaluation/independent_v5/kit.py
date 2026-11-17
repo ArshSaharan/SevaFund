@@ -6,7 +6,7 @@ exists.  A live run refuses to start unless the kit verifies.  Standard library 
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from . import config
 
@@ -28,7 +28,23 @@ def current() -> dict:
     return {p: config.sha256_file(config.ROOT / p) for p in kit_files() if (config.ROOT / p).exists()}
 
 
-def seal() -> dict:
+def preseal_report_problems(report_path: Optional[Path]) -> List[str]:
+    """A passing pre-seal report (run_independent_test_v5.py preseal-check) written for exactly the current kit."""
+    if report_path is None or not Path(report_path).exists():
+        return ["no pre-seal report: run run_independent_test_v5.py preseal-check --registry R --out REPORT first"]
+    report = json.loads(Path(report_path).read_text(encoding="utf-8"))
+    problems = []
+    if not report.get("complete_check"):
+        problems.append("the pre-seal check skipped the statistics re-run or the tooling tests")
+    if not report.get("ready_to_seal"):
+        problems.append(f"the pre-seal check is not passing: failures {sorted(report.get('failures', {}))}, "
+                        f"blocking {report.get('blocking_requirements')}")
+    if report.get("kit_hashes") != current():
+        problems.append("the kit changed since the pre-seal check; run it again")
+    return problems
+
+
+def seal(preseal_report: Optional[Path] = None) -> dict:
     prereg = config.load_prereg()
     if prereg.get("status") != "APPROVED":
         raise SystemExit("Refusing to seal: the pre-registration has not been approved (status must be APPROVED)")
@@ -37,8 +53,12 @@ def seal() -> dict:
     missing = [p for p in kit_files() if not (config.ROOT / p).exists()]
     if missing:
         raise SystemExit(f"Refusing to seal: missing kit files {missing}")
+    problems = preseal_report_problems(preseal_report)
+    if problems:
+        raise SystemExit("Refusing to seal: " + "; ".join(problems))
     manifest = {"sealed_at_utc": datetime.now(timezone.utc).isoformat(), "files": current(),
                 "prereg_version": prereg["version"],
+                "preseal_report_sha256": config.sha256_file(preseal_report),
                 "rule": "Sealed before any independent case exists. Any change invalidates the live run."}
     config.KIT_MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return {"sealed": True, "files": len(manifest["files"])}

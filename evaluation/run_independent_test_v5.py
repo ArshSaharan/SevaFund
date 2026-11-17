@@ -5,7 +5,12 @@
     dry-run SUBMISSION --run-dir D [--script S] [--pilot] [--resume]
                                               ENG- fixtures or pilot cases only, scripted fake Gemini, no network
     status RUN_DIR                            counters only; never decisions or labels
-    seal-kit / verify-kit                     seal (after the owner approves the pre-registration) / verify the kit
+    preseal-check [--registry R] [--out REPORT] [--no-rerun] [--no-tests]
+                                              final offline checks before sealing (no network): criteria match the
+                                              owner's approval, statistics meet the acceptance bounds and reproduce,
+                                              tooling tests, freezes, exclusion registry, packets; lists what still blocks
+    seal-kit --preseal-report REPORT          seal (status APPROVED and a passing report for the current kit required)
+    verify-kit                                verify the sealed kit
     validate-statistics [--quick]             Monte Carlo check of the interval, test and power methods (offline);
                                               writes independent_test_v5/statistical_validation.json
     execute SUBMISSION --seal SEAL --run-dir D --scope pilot|main --authorisation AUTH.json
@@ -40,7 +45,13 @@ def main(argv=None):
     d.add_argument("--resume", action="store_true")
     s = sub.add_parser("status")
     s.add_argument("run_dir", type=Path)
-    sub.add_parser("seal-kit")
+    pc = sub.add_parser("preseal-check")
+    pc.add_argument("--registry", type=Path)
+    pc.add_argument("--out", type=Path)
+    pc.add_argument("--no-rerun", action="store_true")
+    pc.add_argument("--no-tests", action="store_true")
+    sk = sub.add_parser("seal-kit")
+    sk.add_argument("--preseal-report", type=Path)
     sub.add_parser("verify-kit")
     v = sub.add_parser("validate-statistics")
     v.add_argument("--quick", action="store_true")
@@ -64,8 +75,14 @@ def main(argv=None):
         result = runner.dry_run(args.submission, args.run_dir, script, pilot=args.pilot, resume=args.resume)
     elif args.command == "status":
         result = runner.status(args.run_dir)
+    elif args.command == "preseal-check":
+        from independent_v5 import preseal
+        report = preseal.check(args.registry, rerun=not args.no_rerun, run_tests=not args.no_tests)
+        if args.out:
+            preseal.write_report(report, args.out)
+        result = {k: v for k, v in report.items() if k not in ("kit_hashes",)}
     elif args.command == "seal-kit":
-        result = kit.seal()
+        result = kit.seal(args.preseal_report)
     elif args.command == "verify-kit":
         result = kit.verify()
     elif args.command == "validate-statistics":
