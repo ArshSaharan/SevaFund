@@ -10,6 +10,7 @@ from app.models.payout import PayoutRequest
 from app.models.user import User
 from app.schemas.payout import PayoutCreate, PayoutResponse
 from app.routers.auth import get_current_user
+from app.services import dev_hybrid_v4_flag  # development-only hybrid v4 integration; OFF unless SEVAFUND_DEV_HYBRID_V4=1
 
 router = APIRouter(tags=["Payouts & Indian Bank Settlements"])
 
@@ -41,6 +42,12 @@ def request_payout(
     )
     total_withdrawn = sum(p.amount for p in existing_payouts)
     available_balance = round(campaign.current_amount - total_withdrawn, 2)
+
+    if dev_hybrid_v4_flag.enabled():  # development-only: payouts need an active record and stay within the confirmed amount
+        from app.services import dev_hybrid_v4_integration
+        blocked = dev_hybrid_v4_integration.payout_block_reason(db, campaign, total_withdrawn, payout_in.amount)
+        if blocked:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=blocked)
 
     if payout_in.amount > available_balance:
         raise HTTPException(

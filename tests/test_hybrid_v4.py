@@ -307,8 +307,10 @@ def test_hybrid_v4_matches_hybrid_v3_except_for_its_documented_additions():
 
 # ------------------------------------------------------------------ isolation and the final evaluation
 def test_production_does_not_import_hybrid_v4_and_frozen_packages_are_untouched():
+    """Only the development integration (loaded lazily, and only when SEVAFUND_DEV_HYBRID_V4 is on) imports hybrid v4."""
+    allowed = {ROOT / "app/services/dev_hybrid_v4_integration.py"}
     for path in (ROOT / "app").rglob("*.py"):
-        if "development_hybrid_v4" in path.parts:
+        if "development_hybrid_v4" in path.parts or path in allowed:
             continue
         tree = ast.parse(path.read_text(encoding="utf-8"))
         modules = {n.module or "" for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)} | \

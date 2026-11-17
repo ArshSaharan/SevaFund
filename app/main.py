@@ -66,6 +66,10 @@ app.include_router(ai_router, prefix=settings.API_PREFIX)
 app.include_router(admin_router, prefix=settings.API_PREFIX)
 app.include_router(documents_router, prefix=settings.API_PREFIX)
 
+# Development-only hybrid v4 endpoints: hidden from the schema and 404 unless SEVAFUND_DEV_HYBRID_V4=1
+from app.routers.dev_hybrid_v4 import router as dev_hybrid_v4_router  # noqa: E402
+app.include_router(dev_hybrid_v4_router, prefix=settings.API_PREFIX)
+
 @app.get("/", tags=["Health"])
 def root_index():
     return {

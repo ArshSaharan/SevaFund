@@ -10,6 +10,7 @@ from sqlalchemy import desc
 
 from app.config import settings
 from app.database import get_db
+from app.services import dev_hybrid_v4_flag  # development-only hybrid v4 integration; OFF unless SEVAFUND_DEV_HYBRID_V4=1
 from app.models.campaign import Campaign
 from app.models.donation import Donation
 from app.schemas.donation import (
@@ -42,6 +43,11 @@ def create_payment_order(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"This campaign is currently {campaign.status.lower()} and cannot receive donations."
         )
+    if dev_hybrid_v4_flag.enabled():  # development-only: money moves only after all four independent confirmations
+        from app.services import dev_hybrid_v4_integration
+        blocked = dev_hybrid_v4_integration.funds_block_reason(db, campaign)
+        if blocked:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=blocked)
 
     order_info = payment_service.create_gateway_order(campaign, req.amount)
     return CreateGatewayOrderResponse(
@@ -70,6 +76,11 @@ def make_donation(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"This campaign is currently {campaign.status.lower()} and cannot receive donations."
         )
+    if dev_hybrid_v4_flag.enabled():  # development-only: money moves only after all four independent confirmations
+        from app.services import dev_hybrid_v4_integration
+        blocked = dev_hybrid_v4_integration.funds_block_reason(db, campaign)
+        if blocked:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=blocked)
 
     # Optional signature verification if razorpay order was used
     if donation_in.gateway_order_id and donation_in.gateway_payment_id and donation_in.gateway_signature:
