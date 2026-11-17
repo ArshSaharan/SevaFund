@@ -9,8 +9,45 @@ import bcrypt
 
 from app.config import settings
 
+# ==============================================================================
+# Signing key: fail closed unless a strong, private SECRET_KEY is configured
+# ==============================================================================
+
+MIN_SIGNING_KEY_CHARS = 32
+# SHA-256 fingerprints of signing keys that are publicly known (the app/config.py fallback default and the value
+# that was published in .env.example).  Only fingerprints are stored, never the keys.
+_PUBLIC_SIGNING_KEY_SHA256 = {
+    "aa46cf8b9b464f63227d9b174c36f301a6ee78c58400330847fdc77ceaf53c3c",
+    "1c9a3557b02c551028384b6e56582a853b00eef9aa97f6af58d4bc4c9342199e",
+}
+_PLACEHOLDER_KEY = re.compile(r"^(replace[_-]?me|change[_-]?me|your[_-]|example|placeholder|secret$|changeit)", re.I)
+
+
+class InsecureSigningKeyError(RuntimeError):
+    """Raised at import time so the application refuses to start with a missing or publicly known key."""
+
+
+def require_signing_key(key: Optional[str]) -> str:
+    """Return the key if it is safe to sign tokens with; otherwise raise.  The key is never included in errors."""
+    key = key or ""
+    problem = None
+    if not key.strip():
+        problem = "SECRET_KEY is not set"
+    elif hashlib.sha256(key.encode("utf-8")).hexdigest() in _PUBLIC_SIGNING_KEY_SHA256:
+        problem = "SECRET_KEY is a publicly known value"
+    elif _PLACEHOLDER_KEY.search(key.strip()):
+        problem = "SECRET_KEY is a placeholder"
+    elif len(key) < MIN_SIGNING_KEY_CHARS or len(set(key)) < 10:
+        problem = f"SECRET_KEY is too weak (use at least {MIN_SIGNING_KEY_CHARS} random characters)"
+    if problem:
+        raise InsecureSigningKeyError(
+            f"{problem}. Refusing to start. Put a random value in .env, for example the output of: "
+            'python3 -c "import secrets; print(secrets.token_urlsafe(64))"')
+    return key
+
+
 # JWT Config
-JWT_SECRET = settings.SECRET_KEY
+JWT_SECRET = require_signing_key(settings.SECRET_KEY)
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
@@ -133,46 +170,60 @@ def verify_otp_hash(plain_otp: str, stored_hash: str) -> bool:
 # Google OAuth Token Verification
 # ==============================================================================
 
+GOOGLE_ISSUERS = ("accounts.google.com", "https://accounts.google.com")
+
+
+class GoogleSignInUnavailable(Exception):
+    """Google sign-in is not securely configured on this server; sign-in fails closed."""
+
+
+class InvalidGoogleToken(Exception):
+    """The token is not a valid, verified Google ID token for this application."""
+
+
+def google_client_id() -> Optional[str]:
+    """The OAuth client ID that ID tokens must be issued for (their audience), or None if not configured."""
+    value = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+    if not value.endswith(".apps.googleusercontent.com") or _PLACEHOLDER_KEY.search(value):
+        return None
+    return value
+
+
+def _google_request():
+    """Transport used to fetch Google's signing certificates.  Tests replace this with an isolated fixture."""
+    from google.auth.transport import requests as google_requests
+    return google_requests.Request()
+
+
 def verify_google_id_token(id_token_str: str) -> Dict[str, Any]:
     """
-    Verifies a Google ID token from Google Sign-In SDK.
-    Returns payload containing 'email', 'name', 'sub' (google_id), 'picture'.
+    Verifies a Google ID token with Google's library: RS256 signature against Google's published certificates,
+    expiry, audience (this server's GOOGLE_CLIENT_ID) and issuer, and requires a verified email address.
+    There is no test or development bypass.  Without a configured client ID it fails closed.
     """
-    google_client_id = os.getenv("GOOGLE_CLIENT_ID", "")
-    
-    # Check for simulated dev/testing token in DEBUG or test mode
-    if id_token_str.startswith("mock_google_"):
-        parts = id_token_str.split("_")
-        email = f"{parts[2]}@gmail.com" if len(parts) > 2 else "google.user@example.com"
-        return {
-            "email": email,
-            "name": "Google Verified User",
-            "sub": f"google_sub_{email}",
-            "picture": "https://lh3.googleusercontent.com/a/default-user",
-            "email_verified": True
-        }
-
+    client_id = google_client_id()
+    if not client_id:
+        raise GoogleSignInUnavailable("Google sign-in is not configured on this server.")
     try:
-        from google.oauth2 import id_token
-        from google.auth.transport import requests as google_requests
-        
-        request = google_requests.Request()
-        id_info = id_token.verify_oauth2_token(
-            id_token_str,
-            request,
-            audience=google_client_id if google_client_id else None
-        )
-        
-        # Verify issuer
-        if id_info.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
-            raise ValueError("Wrong issuer in Google token.")
-            
-        return {
-            "email": id_info.get("email"),
-            "name": id_info.get("name", "Google User"),
-            "sub": id_info.get("sub"),
-            "picture": id_info.get("picture"),
-            "email_verified": id_info.get("email_verified", False)
-        }
-    except Exception as e:
-        raise ValueError(f"Google token verification failed: {str(e)}")
+        from google.auth import exceptions as google_exceptions
+        from google.oauth2 import id_token as google_id_token
+        request = _google_request()
+    except ImportError as exc:
+        raise GoogleSignInUnavailable("Google sign-in support is not installed on this server.") from exc
+    try:
+        id_info = google_id_token.verify_oauth2_token(id_token_str, request, audience=client_id)
+    except google_exceptions.TransportError as exc:
+        raise GoogleSignInUnavailable("Google's signing certificates could not be fetched.") from exc
+    except Exception as exc:          # bad signature, expired, wrong audience or issuer, malformed token
+        raise InvalidGoogleToken("Google ID token could not be verified.") from exc
+    if id_info.get("iss") not in GOOGLE_ISSUERS or id_info.get("aud") != client_id:
+        raise InvalidGoogleToken("Google ID token was not issued by Google for this application.")
+    if not id_info.get("sub") or not id_info.get("email") or id_info.get("email_verified") is not True:
+        raise InvalidGoogleToken("Google account has no verified email address.")
+    return {
+        "email": id_info["email"],
+        "name": id_info.get("name", "Google User"),
+        "sub": id_info["sub"],
+        "picture": id_info.get("picture"),
+        "email_verified": True,
+    }

@@ -129,9 +129,9 @@ cp .env.example .env
 Configure the following variables in `.env`:
 
 - `DATABASE_URL`: Database connection string (defaults to `sqlite:///./crowdfund.db`).
-- `SECRET_KEY`: A secure random string for JWT signing.
-- `FAST2SMS_API_KEY`: API key from Fast2SMS (for Indian mobile OTPs).
-- `GOOGLE_CLIENT_ID`: Google Cloud Web Client ID (Authorized JavaScript origin: `http://localhost:4200`).
+- `SECRET_KEY`: **Required.** A private random string for JWT signing, for example from `python3 -c "import secrets; print(secrets.token_urlsafe(64))"`. The application refuses to start if it is missing, shorter than 32 characters, a placeholder, or a publicly known value.
+- `FAST2SMS_API_KEY` (or `TWILIO_*`): Required for phone (OTP) sign-in. The code is only ever delivered by SMS, never returned by the API; if no SMS can be sent, OTP sign-in returns 503.
+- `GOOGLE_CLIENT_ID`: Google Cloud Web Client ID (Authorized JavaScript origin: `http://localhost:4200`). Required for Google sign-in: ID tokens are verified with Google's library (signature, expiry, audience and issuer) and must carry a verified email. Without it, Google sign-in returns 503 (fails closed).
 - `RAZORPAY_KEY_ID`: Razorpay Test Key ID (leave blank to run in simulation mode).
 - `RAZORPAY_KEY_SECRET`: Razorpay Test Key Secret.
 - `GEMINI_API_KEY`: Google Gemini API key (optional; system includes offline heuristic verifier).
