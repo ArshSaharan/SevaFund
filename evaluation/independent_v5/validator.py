@@ -17,7 +17,7 @@ from .participants import eligible, load as load_participants
 FORMS = {"structured", "prose"}
 HIDDEN_FROM_LABELLERS = ["author_id", "author_intended_label", "author_intended_documentation", "mechanism", "form",
                          "keyword_free", "incomplete_subtype", "gold_evidence_titles", "date_facts", "date_sensitive",
-                         "author_notes", "llm_assisted"]
+                         "author_notes", "llm_assisted", "intended_detectable_from_dossier"]
 
 
 # ------------------------------------------------------------------ per case
@@ -60,6 +60,8 @@ def case_errors(case: dict, prereg: dict, prefix: str) -> List[str]:
             errors.append("document_contradiction needs form structured or prose")
         if not isinstance(case.get("keyword_free"), bool):
             errors.append("fraud cases need keyword_free true or false")
+        if not isinstance(case.get("intended_detectable_from_dossier"), bool):
+            errors.append("fraud cases need intended_detectable_from_dossier true or false")
     elif case.get("mechanism"):
         errors.append("only fraud cases have a mechanism")
     if label == "legitimate" and documentation == "incomplete" and case.get("incomplete_subtype") not in design["incomplete_subtypes"]:
@@ -149,12 +151,17 @@ def _quota_errors(cases: List[dict], groups: Dict[str, List[dict]], prereg: dict
                 if mech[m] / len(fraud_groups) < design["mechanism_min_share_per_category"]:
                     errors.append(f"{category}: mechanism {m} is {mech[m]}/{len(fraud_groups)} fraud groups "
                                   f"(minimum {design['mechanism_min_share_per_category']:.0%})")
+            detectable = sum(bool(first[g].get("intended_detectable_from_dossier")) for g in fraud_groups)
+            if detectable / len(fraud_groups) < design["intended_detectable_min_share_per_category"]:
+                errors.append(f"{category}: {detectable}/{len(fraud_groups)} fraud groups are intended to be detectable "
+                              f"from the dossier (minimum {design['intended_detectable_min_share_per_category']:.0%})")
         incomplete = Counter(first[g].get("incomplete_subtype") for g in in_cat if _stratum(first[g]) == "I")
         if not engineering:
+            minimums = design["incomplete_subtype_min_groups_per_category"]
             for sub in design["incomplete_subtypes"]:
-                if incomplete[sub] < design["incomplete_subtype_min_groups_per_category"]:
-                    errors.append(f"{category}: {incomplete[sub]} incomplete groups of subtype {sub} "
-                                  f"(minimum {design['incomplete_subtype_min_groups_per_category']})")
+                minimum = minimums[sub] if isinstance(minimums, dict) else minimums
+                if incomplete[sub] < minimum:
+                    errors.append(f"{category}: {incomplete[sub]} incomplete groups of subtype {sub} (minimum {minimum})")
             cat_cases = [c for c in cases if c["category"] == category]
             sensitive = sum(bool(c.get("date_sensitive")) for c in cat_cases)
             if cat_cases and sensitive / len(cat_cases) < design["date_sensitive_min_share_per_category"]:

@@ -3,6 +3,7 @@
     make-engineering-fixtures            regenerate the ENG- fixtures (engineering only, never test data)
     build-exclusion-registry             register every previously used corpus (before the kit is sealed)
     participants REGISTRY                independence check of the pseudonymous participant registry
+    feasibility REGISTRY                 do eligible participants' committed hours cover design A or B (+20% buffer)?
     validate SUBMISSION [--profile full|engineering] [--participants P] [--pilot PILOT] [--seal OUT]
     validate-pilot PILOT [--profile ...] [--participants P] [--seal OUT]
     blind SUBMISSION OUT                 labellers' copy without author intent, mechanisms or gold titles
@@ -30,6 +31,8 @@ def main(argv=None):
     sub.add_parser("build-exclusion-registry")
     p = sub.add_parser("participants")
     p.add_argument("registry", type=Path)
+    fz = sub.add_parser("feasibility")
+    fz.add_argument("registry", type=Path)
     for name in ("validate", "validate-pilot"):
         v = sub.add_parser(name)
         v.add_argument("submission", type=Path)
@@ -69,6 +72,8 @@ def main(argv=None):
     elif args.command == "participants":
         loaded = participants.load(args.registry)
         result = {"errors": loaded["errors"], "by_role": participants.summary(loaded)}
+    elif args.command == "feasibility":
+        result = participants.feasibility(participants.load(args.registry), config.load_prereg()["staffing"])
     elif args.command in ("validate", "validate-pilot"):
         result = validator.validate_submission(args.submission, args.profile, args.participants, args.pilot,
                                                is_pilot=args.command == "validate-pilot")

@@ -373,11 +373,17 @@ def _max_prompt_chars(prereg: dict) -> int:
 
 def plan(submission: Optional[Path] = None, prereg: Optional[dict] = None) -> dict:
     prereg = prereg or config.load_prereg()
-    daily = prereg["api_usage"]["observed_free_tier_daily_limit"]
+    daily = prereg["api_usage"]["planning_free_tier_daily_limit"]
     sample = config.read_jsonl(submission) if submission else config.read_jsonl(config.FIXTURES / "submission.jsonl")
     chars = [_prompt_chars(c) for c in sample]
     mean_chars, max_chars = sum(chars) / len(chars), _max_prompt_chars(prereg)
     max_output = prereg["model"]["generation_config"]["maxOutputTokens"]
+    validation = config.KIT / "statistical_validation.json"
+    simulated = {}
+    if validation.exists():
+        for row in json.loads(validation.read_text(encoding="utf-8")).get("comparison_power", []):
+            simulated.setdefault(row["design"][0], []).append(
+                {k: row[k] for k in ("difference", "pattern", "power_alpha_0.05", "power_holm_worst_case_alpha_0.0125")})
     designs = []
     for name, (groups, per_group) in DESIGNS.items():
         row = stats.design_row(name, groups, per_group, daily, prereg["budget"]["retry_share"],
@@ -394,11 +400,13 @@ def plan(submission: Optional[Path] = None, prereg: Optional[dict] = None) -> di
             "adjudication": round(n * e["disagreement_share"] * e["adjudicator_minutes_per_disagreement"] / 60),
             "coordination": round(n * e["coordinator_minutes_per_case"] / 60)}
         row["free_tier_api_cost_usd"] = 0
+        row["simulated_paired_power"] = simulated.get(name[0], [])
         designs.append(row)
     return {"api_calls_made": 0,
             "model": prereg["model"]["id"], "tier": prereg["api_usage"]["tier"],
             "paid_usage_allowed": prereg["api_usage"]["paid_usage_allowed"],
-            "observed_free_tier_daily_limit": daily,
+            "planning_free_tier_daily_limit": daily, "quota_verified": prereg["api_usage"]["quota_verified"],
+            "model_availability_verified": prereg["model"]["availability_verified"],
             "budget_formula": prereg["budget"]["formula"],
             "embedding_requests": 0,
             "prompt_size_basis": {"cases": len(sample), "source": str(submission or "engineering fixtures"),
@@ -407,8 +415,9 @@ def plan(submission: Optional[Path] = None, prereg: Optional[dict] = None) -> di
             "token_caveat": "Token counts are character-based estimates. Output tokens are capped at 2,048 visible "
                             "tokens per request; any model 'thinking' tokens are not capped by this setting and are "
                             "unknown until measured (usageMetadata is logged for every request).",
-            "cost_note": "Free tier: no charge, but at most about 20 requests a day were observed for this model, and "
-                         "free-tier prompts may be used by the provider to improve its products, so only synthetic "
+            "cost_note": "Free tier: no charge. About 20 requests a day were observed once for this model; the quota and "
+                         "the model's current availability are NOT verified. Free-tier "
+                         "prompts may be used by the provider to improve its products, so only synthetic "
                          "cases may be sent. Paid usage is not approved; a paid estimate needs the provider's current "
                          "per-token price for this model, applied to the token figures here.",
             "effort_assumptions": EFFORT_ASSUMPTIONS,

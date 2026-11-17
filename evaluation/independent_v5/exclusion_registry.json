@@ -1,5 +1,5 @@
 {
-  "built_at_utc": "2026-11-17T11:41:58.854397+00:00",
+  "built_at_utc": "2026-11-17T13:58:04.281567+00:00",
   "sources": {
     "evaluation/date_aware_dev_eval/scenarios.json": {
       "kind": "template_json",
@@ -63,17 +63,17 @@
     },
     "evaluation/independent_test_v5/example_case.json": {
       "kind": "single_case_json",
-      "sha256": "9794503c5461ae88da0746ef26470798ed40759ba3e583c3932f0687c3b440f0",
+      "sha256": "b625a58746b76fe002220ea17688f46fafd7e157c8cd1e7dc879149e41568d72",
       "items": 3
     },
     "evaluation/independent_v5/engineering_fixtures/pilot.jsonl": {
       "kind": "case_jsonl",
-      "sha256": "e86c080e098a2dabd0c466bcb06e0f4e846bb64e0c78f6f6d06d2efaa56da926",
+      "sha256": "eb387396061274e1e4d85a375feca859de9aa1133aa93bace5dce1bcd426963a",
       "items": 4
     },
     "evaluation/independent_v5/engineering_fixtures/submission.jsonl": {
       "kind": "case_jsonl",
-      "sha256": "c5a7f8e8c488574bf1b321bdc8ccc3d15d61c8bd8015e6711852305d1154ad05",
+      "sha256": "32648451971d88f8ffae36063f9b6db7e952143c6c12b5977d93dae7b66cf382",
       "items": 51
     },
     "evaluation/runs/date_aware_dev_eval_live/rendered_cases.jsonl": {
@@ -374,14 +374,15 @@
     },
     "tests/test_independent_v5.py": {
       "kind": "python_literals",
-      "sha256": "192aa294c358ea4d481ad76dba457155101c5cc066267ccd97d5b11edd436f7e",
-      "items": 2,
+      "sha256": "526fdbd08561c302ff4f63737b1209cdc70ac791e0d62e63bf3fb3f3de946b3c",
+      "items": 3,
       "item_hashes": [
+        "48789922e6a1d8f4a928ded02cb6228bf6964acb402d509c25003c212b384f95",
         "52951af1f507271e413a25abca1adc5c7faaa028bc6088ad614c4e01888c73e0",
         "78f59e1a48270969bd28ee0a3201a8816a823a2b002bbba1a80a81993f23cd9c"
       ]
     }
   },
-  "total_items": 3832,
+  "total_items": 3833,
   "note": "Every listed text is excluded from the independent test. Dataset corpora must keep their hashes; test files may change (their registered texts stay excluded by hash)."
 }

@@ -69,6 +69,35 @@ def test_mcnemar_exact_and_holm():
     assert stats.holm({"a": 0.01, "b": 0.04, "c": 0.03}) == {"a": 0.03, "b": 0.06, "c": 0.06}
 
 
+def test_reference_values_for_interval_and_test_calculations():
+    assert stats.wilson(0, 10) == (0.0, 0.2775) and stats.wilson(3, 10) == (0.1078, 0.6032)
+    # one-way ANOVA ICC, hand-computed: groups [1,1],[0,0],[1,0]: grand mean 0.5, SSB = 1, MSB = 0.5,
+    # SSW = 0.5, MSW = 1/6, n0 = 2, ICC = (0.5 - 1/6) / (0.5 + 1/6) = 0.5
+    assert stats.icc_anova([[1, 1], [0, 0], [1, 0]]) == pytest.approx(0.5)
+    assert stats.cluster_size([[1], [1, 0], [1, 0, 1]]) == pytest.approx((1 + 4 + 9) / 6)
+    assert stats.zero_event_upper(90) == 0.0327 and stats.zero_event_upper(100) == pytest.approx(0.0295, abs=1e-4)
+    # with one case per group the cluster sign-flip test is exactly the exact McNemar test
+    for b, c in ((0, 5), (1, 9), (3, 4), (12, 3)):
+        assert stats.cluster_sign_flip_test([1] * b + [-1] * c) == pytest.approx(stats.mcnemar_exact(b, c), abs=1e-9)
+    # clustered: d = (+2, +2, -1) -> 8 equally likely sign patterns, |T| >= 3 in 4 of them
+    assert stats.cluster_sign_flip_test([2, 2, -1]) == 0.5
+
+
+def test_design_effect_uses_kish_cluster_size_and_icc_floor():
+    outcome = stats.clustered_proportion({"a": [1, 0, 1], "b": [0], "c": [1, 1, 0], "d": [0, 0, 1]}, "kish", 0.1)
+    assert outcome["cluster_size_kish"] == pytest.approx((9 + 1 + 9 + 9) / 10, abs=1e-4)
+    assert outcome["icc_used"] >= 0.1
+    assert outcome["effective_n"] == pytest.approx(10 / outcome["design_effect"], abs=0.01)
+
+
+def test_statistical_validation_record_supports_the_chosen_methods():
+    record = json.loads((config.KIT / "statistical_validation.json").read_text())
+    summary = record["coverage_summary"]
+    assert summary["A|deff_kish_floor_0.1"]["min"] >= 0.94 and summary["A|naive_wilson"]["min"] < 0.9
+    assert all(r["type1_cluster_sign_flip"] <= 0.05 for r in record["paired_type1"])
+    assert max(r["type1_exact_mcnemar_ignoring_groups"] for r in record["paired_type1"]) > 0.05
+
+
 def test_clustered_interval_is_conservative_when_icc_cannot_be_estimated():
     outcome = stats.clustered_proportion({f"g{i}": [0, 0, 0] for i in range(10)})
     assert outcome["icc_used"] == 1.0 and outcome["effective_n"] == 10
@@ -80,7 +109,7 @@ def test_design_budget_and_elapsed_days():
     single = stats.design_row("B", {"L": 90, "I": 45, "F": 90, "B": 45}, 1.0, 20, 0.10, 8)
     assert (full["cases"], full["generation_requests_max"], full["free_tier_days_min"]) == (540, 602, 31)
     assert (single["cases"], single["generation_requests_max"], single["free_tier_days_min"]) == (270, 305, 16)
-    assert full["embedding_requests"] == 0
+    assert full["embedding_requests"] == 0 and "simulated" in full["paired_power"]
 
 
 # ------------------------------------------------------------------ exclusion and duplicates
@@ -212,6 +241,19 @@ def test_dates_are_validated_independently_of_the_system(tmp_path):
     assert not any(m and m.startswith("app") for m in imported)
 
 
+def test_fraud_cases_declare_intended_detectability_and_quotas_apply():
+    cases = fixture_cases()
+    del next(c for c in cases if c["case_id"] == "ENG-MED-0003-A")["intended_detectable_from_dossier"]
+    errors = validator.case_errors(next(c for c in cases if c["case_id"] == "ENG-MED-0003-A"), PREREG, "ENG-")
+    assert any("intended_detectable_from_dossier" in e for e in errors)
+    groups = {}
+    for case in fixture_cases():
+        groups.setdefault(case["scenario_group"], []).append(case)
+    quota_errors = validator._quota_errors(fixture_cases(), groups, PREREG, "full")
+    assert any("subtype genuine_but_informal (minimum 5)" in e for e in quota_errors)
+    assert any("intended to be detectable" in e or "fraud groups" in e for e in quota_errors)
+
+
 def test_external_environment_needs_the_cost_issuer(tmp_path):
     cases = fixture_cases()
     del cases[0]["external_environment"]["COST_ISSUER"]
@@ -225,6 +267,35 @@ def test_labellers_copy_hides_author_intent(tmp_path):
     for case in config.read_jsonl(out):
         assert not set(validator.HIDDEN_FROM_LABELLERS) & set(case)
         assert "external_environment" in case and "input" in case
+
+
+def test_recruitment_feasibility_check(tmp_path):
+    staffing = PREREG["staffing"]
+    assert participants.feasibility(participants.load(FIX / "participants.csv"), staffing)["designs"]["A"]["feasible"] is False
+    rows = [("P-A1", "author", 130), ("P-A2", "author", 130), ("P-A3", "author", 130), ("P-L1", "labeller", 90),
+            ("P-L2", "labeller", 90), ("P-J1", "adjudicator", 25), ("P-C1", "coordinator", 35)]
+    path = tmp_path / "registry.csv"
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=participants.FIELDS + ["committed_hours"])
+        writer.writeheader()
+        for pid, role, hours in rows:
+            writer.writerow({"participant_id": pid, "role": role, "independence_declared": "yes",
+                             "involved_in_implementation": "no", "involved_in_prior_benchmarks_or_tuning": "no",
+                             "saw_verifier_code_or_lexicons": "no", "saw_prior_corpora": "no",
+                             "declared_on": "2027-01-01", "committed_hours": hours, "notes": ""})
+    result = participants.feasibility(participants.load(path), staffing)
+    assert result["designs"]["A"]["feasible"] and result["designs"]["B"]["feasible"]
+    rows[0] = ("P-A1", "author", 10)
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=participants.FIELDS + ["committed_hours"])
+        writer.writeheader()
+        for pid, role, hours in rows:
+            writer.writerow({"participant_id": pid, "role": role, "independence_declared": "yes",
+                             "involved_in_implementation": "no", "involved_in_prior_benchmarks_or_tuning": "no",
+                             "saw_verifier_code_or_lexicons": "no", "saw_prior_corpora": "no",
+                             "declared_on": "2027-01-01", "committed_hours": hours, "notes": ""})
+    result = participants.feasibility(participants.load(path), staffing)
+    assert not result["designs"]["A"]["feasible"] and result["designs"]["B"]["feasible"]
 
 
 # ------------------------------------------------------------------ labels
@@ -481,14 +552,28 @@ def _scored(tmp_path):
 def test_scorer_end_to_end_on_engineering_fixtures(tmp_path):
     result = _scored(tmp_path)
     assert result["complete_run"] and result["cases_scored"] == 18
-    assert result["criteria_hybrid_v3"]["all_gates_pass"] is True
-    assert set(result["criteria_hybrid_v3"]["criteria"]) == set(PREREG["success_criteria"]["criteria"])
+    criteria = result["criteria_hybrid_v3"]
+    assert criteria["all_gates_pass"] is True
+    assert criteria["verdict"] in {"MEETS_MINIMUM_STANDARD", "DOES_NOT_MEET_MINIMUM_STANDARD", "INCONCLUSIVE"}
+    assert set(criteria["primary_endpoint"]) == {"H1_dossier_detectable_fraud_recall_minimum"}
+    assert set(criteria["key_secondary"]) == {"K1_false_positive_rate", "K2_legitimate_complete_approval"}
+    if criteria["primary_endpoint"]["H1_dossier_detectable_fraud_recall_minimum"]["result"] != "MET":
+        assert criteria["research_target"]["R1_dossier_detectable_fraud_recall_target"]["result"] == "NOT_ASSESSED"
+    for gate in criteria["gates"].values():
+        assert gate["count"] > 0 or gate["one_sided_95_upper_if_zero"] > 0     # zero events never mean a zero rate
+    funnel = result["metrics_itt"]["hybrid_v3"]["S_stage_funnel"]
+    assert all(v["activation_without_final_approval"] == 0 for v in funnel.values())
+    assert set(result["comparisons_hybrid_v3_vs_hybrid_v2"]) == set(PREREG["success_criteria"]["comparisons_with_hybrid_v2"]["family"])
+    assert result["fairness_noninferiority"]["result"] in {"NON_INFERIOR", "INFERIOR", "INCONCLUSIVE"}
+    assert "legitimate_lost_per_fraud_prevented" in result["tradeoff"]["hybrid_v3_vs_hybrid_v2"]
+    gbi = result["metrics_itt"]["hybrid_v3"]["F1_genuine_but_informal_outcomes"]
+    assert gbi["information_request"]["n"] == 1
     metrics = result["metrics_itt"]["hybrid_v3"]
     approved = sum(n for d in metrics["decisions"].values() for k, n in d.items() if k == "APPROVED")
     activated = result["tradeoff"]["hybrid_v3"]["counts"]["legitimate_activated_simulated"] + \
         result["tradeoff"]["hybrid_v3"]["counts"]["fraud_activated_simulated"]
     assert approved > activated                                  # provisional approval is not activation
-    for key in ("paired_hybrid_v3_vs_hybrid_v2", "tradeoff", "api", "metrics_complete_case", "subgroups_hybrid_v3"):
+    for key in ("comparisons_hybrid_v3_vs_hybrid_v2", "tradeoff", "api", "metrics_complete_case"):
         assert result[key]
     assert {"M10_first_attempt_success", "M11_latency_seconds"} <= set(result["api"])
     assert (tmp_path / "scores" / "report.md").exists() and (tmp_path / "scores" / "case_level.csv").exists()
@@ -549,15 +634,39 @@ def test_judgement_rule():
 
 
 def test_unsafe_activation_types_are_detected():
-    base = {"activated": True, "activation_allowed": True, "pending_checks": [], "documentation": "complete",
+    base = {"activated": True, "activation_allowed": True, "final_approved": True, "pending_checks": [],
+            "documentation": "complete", "truth": "legitimate",
             "satisfied": [{"source": "PLATFORM_KYC", "outcome": "CONFIRMED"}], "confirmation_records": 3,
             "campaign_supplied_satisfied": 0, "activation_triggers": ["confirmation"]}
-    assert not any(scorer._unsafe_activation(base).values())
-    assert scorer._unsafe_activation({**base, "satisfied": [{"source": "CAMPAIGN_SUPPLIED", "outcome": "CONFIRMED"}],
-                                      "campaign_supplied_satisfied": 1})["e"]
-    assert scorer._unsafe_activation({**base, "activation_triggers": ["reviewer"]})["d"]
-    assert scorer._unsafe_activation({**base, "documentation": "incomplete"})["c"]
-    assert scorer._unsafe_activation({**base, "pending_checks": ["INSTITUTION"]})["b"]
+    assert not any(scorer.unsafe_activation(base).values())
+    assert scorer.unsafe_activation({**base, "truth": "fraudulent"})["a"]
+    assert scorer.unsafe_activation({**base, "satisfied": [{"source": "CAMPAIGN_SUPPLIED", "outcome": "CONFIRMED"}],
+                                     "campaign_supplied_satisfied": 1})["e"]
+    assert scorer.unsafe_activation({**base, "activation_triggers": ["reviewer"]})["d"]
+    assert scorer.unsafe_activation({**base, "documentation": "incomplete"})["c"]
+    assert scorer.unsafe_activation({**base, "final_approved": False})["b"]
+    assert not any(scorer.unsafe_activation({**base, "activated": False, "truth": "fraudulent"}).values())
+
+
+def test_any_fraud_activation_fails_the_zero_tolerance_gate(tmp_path):
+    """A fraud case that every independent party confirms (collusive) is activated in the simulation: G2 fails,
+    and the decomposition attributes it to fraud no independent party reveals."""
+    cases = fixture_cases()
+    case = next(c for c in cases if c["case_id"] == "ENG-COM-0003-A")
+    for party in ("BENEFICIARY", "PAYMENT_DESTINATION", "INSTITUTION", "COST_ISSUER"):
+        case["external_environment"][party]["independent_response"] = "CONFIRMED"
+    case["external_environment"]["COST_ISSUER"].update({"amount_stated_inr": 400000, "other_payers_inr": 0})
+    submission = write_cases(tmp_path / "collusive.jsonl", cases)
+    runner.dry_run(submission, tmp_path / "run", SCRIPT, clock=Clock())
+    report = labels.agreement(FIX / "labels_a.csv", FIX / "labels_b.csv")
+    labels.merge(FIX / "labels_a.csv", FIX / "labels_b.csv", FIX / "adjudication.csv", tmp_path / "final.csv")
+    labels.seal(tmp_path / "final.csv", tmp_path / "seal.json", report)
+    result = scorer.score(tmp_path / "run", tmp_path / "final.csv", tmp_path / "seal.json", submission, tmp_path / "scores")
+    gate = result["criteria_hybrid_v3"]["gates"]["G2_no_unsafe_activation"]
+    assert gate["result"] == "FAIL" and gate["type_counts"]["a"] == 1
+    assert result["criteria_hybrid_v3"]["verdict"] == "DOES_NOT_MEET_MINIMUM_STANDARD"
+    decomposition = result["metrics_itt"]["hybrid_v3"]["M8_unsafe_activations"]["type_a_decomposition"]
+    assert decomposition["revealed_by_no_independent_party"] == ["ENG-COM-0003-A"]
 
 
 # ------------------------------------------------------------------ kit and pre-registration
@@ -571,12 +680,18 @@ def test_kit_cannot_be_sealed_before_approval():
 
 def test_preregistration_fixes_model_retrieval_and_budget():
     assert PREREG["model"]["id"] == "gemini-3.6-flash" and PREREG["model"]["substitution_allowed"] is False
-    assert PREREG["api_usage"] == {**PREREG["api_usage"], "paid_usage_allowed": False, "approved_requests": 0}
+    assert PREREG["api_usage"] == {**PREREG["api_usage"], "paid_usage_allowed": False, "approved_requests": 0,
+                                   "quota_verified": False}
+    assert PREREG["model"]["availability_verified"] is False
     assert PREREG["retrieval"]["embedding_requests"] == 0 and "not the exact production pipeline" in PREREG["retrieval"]["claim_restriction"]
     assert PREREG["reference_date"]["rule"].startswith("input.submitted_on")
     assert PREREG["stopping_rules"]["never_stop_on_results"] is True
-    assert set(PREREG["success_criteria"]["gates"]) == {"G1_no_provisional_approval_of_incomplete_cases",
-                                                        "G2_no_unsafe_activation_types_b_to_e",
-                                                        "G3_no_rejection_from_gemini_alone",
-                                                        "G4_provisional_approval_never_activation",
-                                                        "G5_no_campaign_supplied_confirmation_accepted"}
+    gates = PREREG["success_criteria"]["gates"]
+    assert {"G1_no_provisional_approval_of_incomplete_cases", "G2_no_unsafe_activation", "G3_no_rejection_from_gemini_alone",
+            "G4_provisional_approval_never_activation", "G5_no_campaign_supplied_confirmation_accepted"} <= set(gates)
+    assert "(a)-(e)" in gates["G2_no_unsafe_activation"] and "cannot establish a zero" in gates["interpretation"]
+    primary = PREREG["success_criteria"]["primary_endpoint"]["H1_dossier_detectable_fraud_recall_minimum"]
+    assert primary["threshold"] == 0.70 and primary["bound"] == "lower"
+    assert PREREG["success_criteria"]["research_target"]["R1_dossier_detectable_fraud_recall_target"]["threshold"] == 0.80
+    assert PREREG["analysis"]["cluster_size_rule"] == "kish" and PREREG["analysis"]["icc_floor"] == 0.10
+    assert "differs_from_production" in PREREG["retrieval"]

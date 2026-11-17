@@ -6,6 +6,8 @@
                                               ENG- fixtures or pilot cases only, scripted fake Gemini, no network
     status RUN_DIR                            counters only; never decisions or labels
     seal-kit / verify-kit                     seal (after the owner approves the pre-registration) / verify the kit
+    validate-statistics [--quick]             Monte Carlo check of the interval, test and power methods (offline);
+                                              writes independent_test_v5/statistical_validation.json
     execute SUBMISSION --seal SEAL --run-dir D --scope pilot|main --authorisation AUTH.json
             [--labels FINAL --label-seal SEAL] [--resume]
                                               LIVE.  Refuses unless the kit is sealed, every freeze verifies, the
@@ -40,6 +42,8 @@ def main(argv=None):
     s.add_argument("run_dir", type=Path)
     sub.add_parser("seal-kit")
     sub.add_parser("verify-kit")
+    v = sub.add_parser("validate-statistics")
+    v.add_argument("--quick", action="store_true")
     e = sub.add_parser("execute")
     e.add_argument("submission", type=Path)
     e.add_argument("--seal", type=Path, required=True)
@@ -64,6 +68,14 @@ def main(argv=None):
         result = kit.seal()
     elif args.command == "verify-kit":
         result = kit.verify()
+    elif args.command == "validate-statistics":
+        from independent_v5 import ci_validation
+        full = ci_validation.run_all(quick=args.quick)
+        full["coverage_summary"] = ci_validation.summarise_coverage(full["proportion_coverage"])
+        if not args.quick:
+            (config.KIT / "statistical_validation.json").write_text(json.dumps(full, indent=1) + "\n", encoding="utf-8")
+        result = {k: full[k] for k in ("coverage_summary", "bootstrap_coverage", "paired_type1",
+                                       "paired_difference_coverage", "comparison_power", "verdict_operating_characteristics", "zero_event_bounds")}
     else:
         result = runner.execute(args.submission, args.seal, args.run_dir, args.scope, args.authorisation,
                                 args.labels, args.label_seal, args.resume)

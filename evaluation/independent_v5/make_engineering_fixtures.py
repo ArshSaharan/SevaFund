@@ -29,12 +29,13 @@ def _env(beneficiary="CONFIRMED", payee="CONFIRMED", institution="CONFIRMED", co
 
 def _case(cid, category, label, documentation, title, story, goal, beneficiary, city, state, submitted, documents,
           env, gold=None, mechanism=None, form=None, keyword_free=False, subtype=None, date_sensitive=False,
-          date_facts=None, beneficiary_type="SELF"):
+          date_facts=None, beneficiary_type="SELF", detectable=None):
     group = cid.rsplit("-", 1)[0]
     return {"case_id": cid, "scenario_group": group, "author_id": AUTHOR, "provenance": "synthetic", "synthetic": True,
             "llm_assisted": True, "engineering_fixture": True, "category": category, "author_intended_label": label,
             "author_intended_documentation": documentation, "mechanism": mechanism, "form": form,
             "keyword_free": keyword_free, "incomplete_subtype": subtype, "date_sensitive": date_sensitive,
+            "intended_detectable_from_dossier": detectable if label == "fraudulent" else None,
             "date_facts": date_facts or [],
             "input": {"title": title, "category": category, "story": story, "goal_amount": goal, "goal_currency": "INR",
                       "beneficiary_name": beneficiary, "beneficiary_type": beneficiary_type, "city": city, "state": state,
@@ -111,7 +112,7 @@ def cases() -> list:
                 "Government of Andhra Pradesh, Registrar of Births and Deaths, Vijayawada. Name: Gopal Rao, male, 66. "
                 "Date of death: 05/01/2027. Place of death: residence. Registration No. VJA-D-2027-00412")],
               _env(institution="CONTRADICTED", cost="CONTRADICTED", stated=None, notes={"i": "No admission on record."}),
-              gold=["Death certificate", "Admission note"], mechanism="document_contradiction", form="structured",
+              gold=["Death certificate", "Admission note"], mechanism="document_contradiction", form="structured", detectable=True,
               date_sensitive=True,
               date_facts=[{"document_title": "Death certificate", "as_written": "05/01/2027", "date": "2027-01-05", "role": "death"},
                           {"document_title": "Admission note", "as_written": "20/01/2027", "date": "2027-01-20",
@@ -127,7 +128,7 @@ def cases() -> list:
                 "Netra Jyoti Eye Hospital OPD. Savitri Devi. Mature senile cataract both eyes, vision counting fingers "
                 "at 2 metres. Advised phacoemulsification. Dr A. Sinha")],
               _env(cost="CONFIRMED", stated=110000, other=0, notes={"c": "Billing states Rs 1,10,000 for both eyes."}),
-              gold=["Eye hospital estimate"], mechanism="amount_inflation", keyword_free=True),
+              gold=["Eye hospital estimate"], mechanism="amount_inflation", keyword_free=True, detectable=True),
         _case("ENG-MED-0005-A", "MEDICAL", "borderline", "complete", "Spine surgery for Ravikumar",
               "Ravikumar Murthy injured his back lifting cement bags. A clinic has quoted for a spine operation. "
               "We are a family of daily-wage workers and need support.",
@@ -183,7 +184,7 @@ def cases() -> list:
                 "Account name: Edu Path Admissions Consultancy. Bank: Kottayam Co-operative Bank. A/c 00000123456")],
               _env(payee="CONTRADICTED", stated=120000, other=0,
                    notes={"p": "Account belongs to an admissions agent, not the college or the student."}),
-              gold=["Payout details"], mechanism="suspicious_payee"),
+              gold=["Payout details"], mechanism="suspicious_payee", detectable=True),
         _case("ENG-EDU-0004-A", "EDUCATION", "fraudulent", "complete", "Final-year MBA fees for Rohit",
               "Rohit Verma is in the final year of his MBA at Doon School of Management and needs the last instalment.",
               150000, "Rohit Verma", "Dehradun", "Uttarakhand", "2027-02-03",
@@ -195,7 +196,7 @@ def cases() -> list:
                 "Doon School of Management. MBA programme fee schedule. Final-year instalment Rs 1,50,000.")],
               _env(institution="CONTRADICTED", stated=None, cost="INCONCLUSIVE",
                    notes={"i": "Registrar confirms the student graduated in 2025."}),
-              gold=["College certificate"], mechanism="misrepresented_need"),
+              gold=["College certificate"], mechanism="misrepresented_need", detectable=True),
         _case("ENG-EDU-0005-A", "EDUCATION", "borderline", "complete", "Diploma in aviation for Sameer",
               "Sameer wants to become an aircraft maintenance engineer. He has an offer from SkyWings Aviation Academy.",
               260000, "Sameer Khan", "Indore", "Madhya Pradesh", "2027-01-30",
@@ -246,7 +247,7 @@ def cases() -> list:
                 "shed 60x30 ft Rs 2,90,000; treatment room Rs 1,10,000. Total Rs 4,00,000. Proprietor")],
               _env(institution="CONTRADICTED", supplied=True, cost="UNREACHABLE", stated=None,
                    notes={"i": "Registrar has no trust with this number."}),
-              gold=["Trust deed extract"], mechanism="consistent_fabrication", beneficiary_type="ORGANISATION"),
+              gold=["Trust deed extract"], mechanism="consistent_fabrication", beneficiary_type="ORGANISATION", detectable=False),
         _case("ENG-COM-0003-B", "COMMUNITY", "fraudulent", "complete", "Bird rescue ward in Udaipur",
               "The same trust volunteers rescue birds hurt by kite strings every January and want an aviary ward with "
               "cages, a small operating table and medicines for the season.",
@@ -258,7 +259,7 @@ def cases() -> list:
                 "Karuna Jeev Raksha Trust letterhead. Our volunteers treated 312 birds during last year's kite season. "
                 "Signed, M. Jain, trustee")],
               _env(institution="CONTRADICTED", supplied=True, cost="CONFIRMED", stated=150000, other=0),
-              gold=["Volunteer letter"], mechanism="consistent_fabrication", beneficiary_type="ORGANISATION"),
+              gold=["Volunteer letter"], mechanism="consistent_fabrication", beneficiary_type="ORGANISATION", detectable=False),
         _case("ENG-COM-0004-A", "COMMUNITY", "fraudulent", "complete", "New roof for the village library",
               "The roof of the Ambedkar reading room in Sonpur leaks over the bookshelves. Navjyoti Yuva Mandal has a "
               "contractor's estimate and asks villagers abroad to help.",
@@ -271,7 +272,7 @@ def cases() -> list:
               _env(institution="CONFIRMED", cost="CONTRADICTED", stated=85000, other=85000,
                    notes={"c": "Builder states the panchayat grant settled this work in January."}),
               gold=["Roof estimate"], mechanism="independent_record_contradiction", beneficiary_type="ORGANISATION",
-              keyword_free=True),
+              keyword_free=True, detectable=False),
         _case("ENG-COM-0005-A", "COMMUNITY", "borderline", "complete", "Community kitchen during harvest",
               "Volunteers in Malda want to run a community kitchen for migrant farm workers for two months.",
               70000, "Annapurna Seva Samiti", "Malda", "West Bengal", "2027-02-12",

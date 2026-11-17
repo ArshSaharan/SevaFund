@@ -64,3 +64,39 @@ def summary(registry: dict) -> dict:
         members = [r for r in rows if r["role"] == role]
         by_role[role] = {"registered": len(members), "eligible": sum(not eligible(r, role) for r in members)}
     return by_role
+
+
+def _hours(row: dict) -> float:
+    try:
+        return float((row.get("committed_hours") or "0").strip() or 0)
+    except ValueError:
+        return 0.0
+
+
+def feasibility(registry: dict, staffing: dict) -> dict:
+    """Whether eligible, registered participants' committed hours cover each design (plus the buffer).
+
+    `committed_hours` is an optional registry column; a missing value counts as 0.  The design is chosen only after
+    this check, and the sample size is never reduced without the owner's approval."""
+    rows = list(registry["participants"].values())
+    eligible_rows = {role: [r for r in rows if r["role"] == role and not eligible(r, role)] for role in ROLES}
+    buffer = 1 + staffing["buffer"]
+    out = {"eligible_counts": {role: len(v) for role, v in eligible_rows.items()},
+           "committed_hours": {role: sum(_hours(r) for r in v) for role, v in eligible_rows.items()}, "designs": {}}
+    for design, hours in staffing["hours_by_design"].items():
+        shortfalls = []
+        if len(eligible_rows["author"]) < 3:
+            shortfalls.append(f"{len(eligible_rows['author'])} eligible authors (minimum 3)")
+        need = hours["authoring"] * buffer
+        if out["committed_hours"]["author"] < need:
+            shortfalls.append(f"authors commit {out['committed_hours']['author']:g} h of {need:.0f} h needed")
+        labellers = sorted(_hours(r) for r in eligible_rows["labeller"])[-2:]
+        per_labeller = hours["labelling_total"] / 2 * buffer
+        if len(labellers) < 2 or min(labellers) < per_labeller:
+            shortfalls.append(f"needs 2 eligible labellers with {per_labeller:.0f} h each (have {labellers})")
+        for role, key in (("adjudicator", "adjudication"), ("coordinator", "coordination")):
+            need = hours[key] * buffer
+            if not eligible_rows[role] or max(_hours(r) for r in eligible_rows[role]) < need:
+                shortfalls.append(f"needs an eligible {role} with {need:.0f} h")
+        out["designs"][design] = {"feasible": not shortfalls, "shortfalls": shortfalls}
+    return out
