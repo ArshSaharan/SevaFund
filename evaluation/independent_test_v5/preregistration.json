@@ -1,12 +1,51 @@
 {
-  "version": "v5-prereg-2",
+  "version": "v5-prereg-3",
   "status": "PROPOSED",
-  "status_note": "Proposed by the developer for approval. Becomes binding only when the owner approves it, status is set to APPROVED and the kit is sealed (run_independent_test_v5.py seal-kit) before any independent case exists. Never edited after sealing.",
+  "status_note": "Success criteria and statistical methods approved by the owner on 2026-11-17 (owner_approvals). The pre-registration as a whole is still PROPOSED: it becomes binding only after recruitment feasibility is shown, the owner selects the design, the owner authorises status APPROVED, and the kit is sealed (run_independent_test_v5.py seal-kit) before any independent case exists. Never edited after sealing.",
+  "owner_approvals": {
+    "criteria_review_2026_11_17": {
+      "approved_on": "2026-11-17",
+      "scope": "Success criteria and statistical methods only. Not an approval to select a design, recruit, create or label cases, set status APPROVED, seal, or make any API call.",
+      "decisions": {
+        "A1_fraud_recall": "H1: lower 95% bound of dossier-detectable fraud recall >= 0.70 (minimum). R1: research target >= 0.80.",
+        "A2_zero_tolerance_gates": "All zero-tolerance gates kept. G2 includes unsafe activation involving collusive documents and cost-issuer-only fraud.",
+        "A3_false_positive_rate": "K1: upper 95% bound <= 0.10.",
+        "A4_legitimate_approval": "K2: lower 95% bound >= 0.50, as a preliminary evaluation floor only. Never represented as sufficient for production readiness.",
+        "A5_fairness_margin": "Non-inferiority margin of -10 percentage points versus hybrid v2.",
+        "A6_genuine_but_informal": "At least 5 genuine-but-informal scenario groups per relevant category; all three categories (MEDICAL, EDUCATION, COMMUNITY) are treated as relevant.",
+        "A7_statistical_methods": "Group-aware confidence intervals, paired cluster comparisons and multiple-testing corrections retained as specified in analysis and success_criteria.",
+        "A8_provider_facts": "Model availability and free-tier quota recorded as unverified.",
+        "A9_api_usage": "No API calls or paid usage authorised."
+      },
+      "criteria_snapshot": {
+        "H1_threshold": 0.7,
+        "R1_threshold": 0.8,
+        "K1_threshold": 0.1,
+        "K2_threshold": 0.5,
+        "fairness_margin": -0.1,
+        "genuine_but_informal_min_groups_per_category": 5,
+        "G2_unsafe_activation_types": "abcde",
+        "cluster_size_rule": "kish",
+        "icc_floor": 0.1,
+        "comparison_adjustment": "Holm over the four",
+        "paired_test_family": "cluster sign-flip, two-sided"
+      },
+      "snapshot_rule": "run_independent_test_v5.py preseal-check fails if any value in success_criteria, design or analysis differs from this snapshot.",
+      "not_yet_approved": [
+        "participant recruitment and the feasibility demonstration",
+        "design selection (A preferred; B the resource-constrained alternative)",
+        "setting status APPROVED and sealing the kit",
+        "pilot and main-run API authorisations"
+      ]
+    },
+    "known_weakness_commitment": "The frozen workflow cannot independently verify the requested amount. This is a known safety weakness of the candidate. Gate G2 is not weakened, narrowed or redefined to accommodate it. If hybrid v3 fails G2, the failure is reported as a failure of the candidate. The frozen candidate is never modified to make this evaluation pass: any change creates a separately versioned candidate (D10) that needs its own freeze and test data it has not been evaluated on."
+  },
   "candidate": {
     "policy_version": "hybrid-v3-dev-1",
     "freeze_manifest": "evaluation/hybrid_v3_freeze.json",
     "behavioural_fingerprint": "2d117adb47d30d5c0eaef571845f2c784d9a2f1c623b0074c3147e52b5e840f8",
-    "freeze_commit": "e7b3688"
+    "freeze_commit": "e7b3688",
+    "modification_rule": "No change to frozen V3, hybrid v2 or hybrid v3 during or because of this evaluation. Every run start verifies all three freezes and the behavioural fingerprint."
   },
   "model": {
     "id": "gemini-3.6-flash",
@@ -270,7 +309,8 @@
       "G4_provisional_approval_never_activation": "APPROVED decisions in VERIFIED_ACTIVE before any confirmation record == 0",
       "G5_no_campaign_supplied_confirmation_accepted": "checks satisfied by campaign-supplied contacts == 0",
       "interpretation": "A gate passes only on zero observed events. Zero events in a finite sample cannot establish a zero population rate: each gate reports the one-sided 95% upper bound (for example, zero unsafe activations among 90 fraud groups is compatible with a population rate up to 3.3%). The bound also applies only to the simulated confirmation process, which assumes honest independent parties.",
-      "pre_registered_expectation": "The frozen workflow does not confirm amounts. Fraud that only the cost issuer would reveal can therefore reach activation in the simulation and fail G2; this would be a correct finding about the frozen candidate, reported with the M8a decomposition."
+      "pre_registered_expectation": "The frozen workflow does not confirm amounts. Fraud that only the cost issuer would reveal can therefore reach activation in the simulation and fail G2; this would be a correct finding about the frozen candidate, reported with the M8a decomposition.",
+      "non_weakening": "See owner_approvals.known_weakness_commitment. G2 counts every type (a)-(e), including activations from collusive documents and cost-issuer-only fraud; no type is excluded, down-weighted or reported only descriptively."
     },
     "primary_endpoint": {
       "H1_dossier_detectable_fraud_recall_minimum": {
@@ -289,10 +329,12 @@
       "K2_legitimate_complete_approval": {
         "metric": "M4_legitimate_approval_rate",
         "bound": "lower",
-        "threshold": 0.5
+        "threshold": 0.5,
+        "scope": "Preliminary evaluation floor only. Meeting it is not evidence that legitimate applicants are served well enough for production."
       }
     },
     "verdict": "MEETS_MINIMUM_STANDARD only if all gates PASS and H1, K1 and K2 are MET; otherwise DOES_NOT_MEET (with the failing components listed) or INCONCLUSIVE when no component is NOT_MET or FAIL but at least one is INCONCLUSIVE.",
+    "verdict_scope": "MEETS_MINIMUM_STANDARD is a preliminary evaluation standard for a development candidate under simulated confirmation. It is not evidence of production readiness, and K2 (legitimate approval >= 0.50) is a preliminary floor, not a sufficient service level.",
     "research_target": {
       "R1_dossier_detectable_fraud_recall_target": {
         "metric": "M1a_dossier_detectable_fraud_recall",
@@ -377,7 +419,8 @@
   },
   "revision_history": [
     "v5-prereg-1 (2026-11-17): first proposal.",
-    "v5-prereg-2 (2026-11-17, before any independent case exists): owner-requested refinements - tiered fraud-recall thresholds with a single primary endpoint; all unsafe activations a zero-tolerance gate; validated cluster-adjusted intervals (Kish design effect, ICC floor 0.1) and a cluster sign-flip paired test; hierarchical/intersection-union multiplicity rules; explicit fairness trade-off and genuine-but-informal outcomes; recruitment-feasibility gate; model availability and quota marked unverified."
+    "v5-prereg-2 (2026-11-17, before any independent case exists): owner-requested refinements - tiered fraud-recall thresholds with a single primary endpoint; all unsafe activations a zero-tolerance gate; validated cluster-adjusted intervals (Kish design effect, ICC floor 0.1) and a cluster sign-flip paired test; hierarchical/intersection-union multiplicity rules; explicit fairness trade-off and genuine-but-informal outcomes; recruitment-feasibility gate; model availability and quota marked unverified.",
+    "v5-prereg-3 (2026-11-17, before any independent case exists): owner approval of the criteria and methods recorded with a snapshot checked before sealing; K2 and the verdict scoped as preliminary, not production readiness; non-weakening commitment for G2 and no modification of the frozen candidate; recruitment not confirmed and no design selected; participant packets and the pre-seal check added. No threshold changed."
   ],
   "staffing": {
     "roles": {
@@ -401,6 +444,11 @@
       }
     },
     "buffer": 0.2,
-    "feasibility_rule": "The final design is selected only after the participant registry lists eligible participants whose committed hours cover the chosen design's hours plus a 20% buffer for revisions (prepare_independent_data_v5.py feasibility). The sample size is never reduced without the owner's approval."
+    "feasibility_rule": "The final design is selected only after the participant registry lists eligible participants whose committed hours cover the chosen design's hours plus a 20% buffer for revisions (prepare_independent_data_v5.py feasibility). The sample size is never reduced without the owner's approval.",
+    "recruitment_status": "NOT_CONFIRMED",
+    "design_preference": "A preferred (full evaluation); B the resource-constrained alternative; C and D only with explicit owner approval",
+    "design_selected": null,
+    "recruitment_checklist": "docs/independent_v5_recruitment.md",
+    "participant_access": "Participants receive only a role packet (prepare_independent_data_v5.py packet) and, for labelling, the blinded cases. They never receive repository access, source code, prompts, lexicons, earlier datasets or system outputs."
   }
 }

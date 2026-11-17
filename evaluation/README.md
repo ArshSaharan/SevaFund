@@ -64,9 +64,12 @@ are development results.
 
 Tooling for the independent evaluation of the frozen hybrid v3 candidate, built and tested offline; nothing is
 sealed and no independent case exists yet. Protocol: `independent_test_protocol_v5.md`; pre-registration:
-`independent_test_v5/preregistration.json` (PROPOSED); readiness: `docs/independent_v5_readiness.md`.
+`independent_test_v5/preregistration.json` (v5-prereg-3, PROPOSED; success criteria and statistical methods
+approved by the owner); readiness: `docs/independent_v5_readiness.md`; recruitment, effort and participant packets:
+`docs/independent_v5_recruitment.md`. `run_independent_test_v5.py preseal-check` is the final offline check and
+lists what still blocks sealing; `seal-kit` requires its passing report.
 Code is in `independent_v5/` (validator, exclusion registry, labels, production-fallback retrieval, budgeted
-transport and stopping rules, runner, scorer); entry points are `prepare_independent_data_v5.py`,
+transport and stopping rules, runner, scorer, participant packets, pre-seal check); entry points are `prepare_independent_data_v5.py`,
 `run_independent_test_v5.py` and `score_independent_test_v5.py`. `independent_v5/engineering_fixtures/` holds ENG-
 fixtures for testing the tools only - they are not test data and are excluded from it. No API call is possible
 without a sealed kit and the owner's written authorisation.

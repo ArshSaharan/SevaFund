@@ -5,16 +5,19 @@
 | Item | State |
 |---|---|
 | Tooling | Built and tested offline |
+| Success criteria and statistical methods | **Approved by the owner** (2026-11-17, A1–A9 in §2) |
 | Protocol, pre-registration and kit | Not sealed |
-| Independent cases | None exist yet |
-| Independent participants | **Not yet confirmed**; recruitment feasibility must be shown before the design is chosen |
+| Independent cases | None exist yet; none may be created or labelled yet |
+| Independent participants | **Not confirmed**; recruitment feasibility must be shown before the design is chosen |
+| Design | **Not selected** (A preferred; B the resource-constrained alternative) |
 | Model availability and free-tier quota | **Not verified** |
 | API calls | 0 made. 0 approved for this evaluation |
 
-- The owner's decisions D1–D11 and the second-review refinements R1–R10 are recorded in §2.
-- The machine-readable pre-registration is `independent_test_v5/preregistration.json`, version `v5-prereg-2`, status `PROPOSED`. It holds every definition, threshold and parameter used by the tools.
+- The owner's decisions D1–D11, the second-review refinements R1–R10 and the criteria approval A1–A9 are recorded in §2.
+- The machine-readable pre-registration is `independent_test_v5/preregistration.json`, version `v5-prereg-3`, status `PROPOSED`. It holds every definition, threshold and parameter used by the tools, and a snapshot of the approved criteria that the pre-seal check compares against.
 - The statistical methods and their validation are in `docs/independent_v5_statistical_methodology.md`.
-- Nothing runs live until the owner approves the open items in §13 and gives a separate written API authorisation.
+- Recruitment, effort and participant packets are in `docs/independent_v5_recruitment.md`.
+- Nothing runs live until the remaining requirements in §13 are met and the owner gives a separate written API authorisation.
 - This protocol supersedes `independent_test_protocol_v4.md` for hybrid v3. v4 was prepared for hybrid v2 and never executed.
 
 ## 1. System under test
@@ -66,6 +69,29 @@
 | R9 | Model availability and quota are not verified | Marked unverified in the pre-registration, the plan and the reports |
 | R10 | Keep the login-test issue separate | `docs/known_issue_campaign_verification_test.md`; nothing changed |
 
+**Criteria approval (owner, 2026-11-17).** Recorded in `preregistration.json` → `owner_approvals`, with a snapshot that `preseal-check` compares against before sealing.
+
+| ID | Approved |
+|---|---|
+| A1 | Fraud recall: H1 lower 95% bound ≥ 0.70 (minimum); R1 research target ≥ 0.80 |
+| A2 | Every zero-tolerance gate kept, including unsafe activation from collusive documents and cost-issuer-only fraud |
+| A3 | K1: false-positive upper 95% bound ≤ 0.10 |
+| A4 | K2: legitimate-approval lower bound ≥ 0.50, **as a preliminary evaluation floor only**. Never represented as sufficient for production readiness |
+| A5 | Fairness non-inferiority margin of −10 points versus hybrid v2 |
+| A6 | At least 5 genuine-but-informal groups per relevant category. All three categories are treated as relevant |
+| A7 | Group-aware intervals, paired cluster comparisons and multiple-testing corrections retained |
+| A8 | Model availability and quota recorded as unverified |
+| A9 | No API calls or paid usage authorised |
+
+**Known weakness: no commitment to soften it.**
+- The frozen workflow cannot independently verify the requested amount. This is a known safety weakness.
+- Gate G2 is not weakened, narrowed or redefined to accommodate it. If hybrid v3 fails G2, the report states that the candidate failed.
+- The frozen candidate is never modified to make this evaluation pass. Any change is a new candidate (D10), with its own freeze, evaluated on test data it has not been evaluated on before.
+
+**Scope of the verdict.**
+- MEETS_MINIMUM_STANDARD is a preliminary standard for a development candidate under simulated confirmation. It is not evidence of production readiness.
+- Every score report carries this statement.
+
 ## 3. Unseen data and independence
 
 **Excluded material.** This material is never used, modified or relabelled as test data:
@@ -107,6 +133,12 @@ The checks:
 - Participants are registered with `committed_hours`.
 - `prepare_independent_data_v5.py feasibility` checks each design. It needs at least 3 eligible authors, 2 eligible labellers, an eligible adjudicator and a coordinator, whose committed hours cover the design's hours plus 20%.
 - The owner chooses the design only after this check passes. The sample size is never reduced without the owner's approval.
+- The checklist and per-person effort are in `docs/independent_v5_recruitment.md`.
+
+**Participant access.**
+- Participants never receive repository access. Each receives a role packet (`prepare_independent_data_v5.py packet`), built outside the repository from an allowlist, with a hash manifest.
+- Labellers and the adjudicator also receive the blinded cases. The build fails if any field hidden from labellers is present.
+- A packet never contains code, prompts, rule or keyword lists, earlier datasets or system outputs.
 
 ## 4. Case design
 
@@ -347,20 +379,31 @@ The runner never parses labels; it only compares the label file's hash with its 
 
 | Purpose | Command |
 |---|---|
-| Data preparation | `prepare_independent_data_v5.py`: fixtures, exclusion registry, participants, validate, validate-pilot, blind, labels-check, labels-agreement, labels-adjudication-template, labels-merge, labels-seal |
-| Runner | `run_independent_test_v5.py`: plan, integrity, dry-run (ENG- fixtures or pilot only), status, seal-kit, verify-kit, execute (live; refuses without every precondition) |
+| Data preparation | `prepare_independent_data_v5.py`: fixtures, exclusion registry, participants, feasibility, validate, validate-pilot, blind, packet, labels-check, labels-agreement, labels-adjudication-template, labels-merge, labels-seal |
+| Runner | `run_independent_test_v5.py`: plan, integrity, dry-run (ENG- fixtures or pilot only), status, validate-statistics, preseal-check, seal-kit, verify-kit, execute (live; refuses without every precondition) |
 | Scorer | `score_independent_test_v5.py score`. Standard library only; never imports `app`; writes once, outside `app/` |
 
 **Tests.** `tests/test_independent_v5.py` exercises everything offline on the ENG- engineering fixtures, using a scripted fake Gemini and a guard that fails any network attempt.
 
 **Order of work:**
 1. Register candidate participants with committed hours, and run `feasibility` (R6).
-2. The owner chooses the design (A preferred) and approves the §13 items. The pre-registration status is set to APPROVED, and `seal-kit` is run.
-3. Authors write the pilot and test cases. The coordinator validates them under the full profile and seals them.
-4. Blind labelling, then agreement, then adjudication, then sealing the labels.
-5. The owner writes the API authorisation file for the pilot (at most 8 requests). Run the pilot, which is never scored, and review the pipeline only.
-6. A separate authorisation for the main run. Execute; pauses and resumes follow §10.
-7. Score once, then write the report.
+2. The owner chooses the design (A preferred) and authorises status APPROVED.
+3. Run `preseal-check --registry R --out REPORT`, the final offline check:
+   - the criteria match the owner's approval;
+   - the statistics meet their acceptance bounds and reproduce exactly;
+   - the tooling tests pass;
+   - the freezes and the `app/` tree are intact;
+   - the exclusion registry is intact;
+   - the packets are clean;
+   - no independent case exists in the repository;
+   - nothing blocks.
+
+   Then run `seal-kit --preseal-report REPORT`, which refuses unless the report passes for exactly the current kit files.
+4. Authors (who receive only the author packet) write the pilot cases, then the test cases. If the pilot shows that authoring takes materially longer than assumed, the effort estimate and feasibility check are re-run first. The coordinator validates the cases under the full profile and seals them.
+5. Blind labelling (labeller packets), then agreement, then adjudication (adjudicator packet), then sealing the labels.
+6. The owner writes the API authorisation file for the pilot (at most 8 requests). Run the pilot, which is never scored, and review the pipeline only.
+7. A separate authorisation for the main run. Execute; pauses and resumes follow §10.
+8. Score once, then write the report.
 
 ## 12. Data protection
 
@@ -368,9 +411,9 @@ The runner never parses labels; it only compares the label file's hash with its 
 - Pseudonymous participant codes.
 - Request logs record no prompt content, no response text and no key.
 
-## 13. Items still requiring the owner's approval
+## 13. Remaining requirements before sealing
 
-See `docs/independent_v5_readiness.md`, section G.
+See `docs/independent_v5_readiness.md`, section G. `run_independent_test_v5.py preseal-check` lists the items that still block sealing.
 
 ---
 

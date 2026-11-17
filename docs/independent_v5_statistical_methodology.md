@@ -1,7 +1,7 @@
 # v5 independent evaluation: statistical methodology and validation
 
 **Status (2026-11-17).**
-- Pre-registration `v5-prereg-2` is PROPOSED, not sealed.
+- The owner approved these methods and the success criteria on 2026-11-17 (A1–A9). Pre-registration `v5-prereg-3` is still PROPOSED and not sealed.
 - No independent data exists, and no API call was made.
 - Every number below comes from offline Monte Carlo or exact binomial calculations. The full record is `evaluation/independent_test_v5/statistical_validation.json`, reproducible with `python evaluation/run_independent_test_v5.py validate-statistics`. The validator was seeded and used no evaluation data.
 
@@ -214,3 +214,19 @@ K1 is the most demanding component when the true FPR is near 5%. With strong clu
   - the sign-flip test against exact McNemar for singleton groups, plus a hand-enumerated clustered case.
 
   These are in `tests/test_independent_v5.py`.
+- **Re-run check.** The full validation re-run on 2026-11-17 reproduced `statistical_validation.json` byte for byte. It takes about 3 CPU-minutes, and about 9 minutes of wall-clock time on the development machine.
+
+## 9. Acceptance bounds checked before sealing
+
+`run_independent_test_v5.py preseal-check` (`independent_v5/preseal.py`) re-runs the full validation and requires an exact match with the committed record. It then checks these pre-specified bounds:
+
+| Check | Bound | Committed result |
+|---|---|---|
+| Primary interval (Kish DEFF, ICC floor 0.1): minimum coverage over every design and scenario | ≥ 0.935 | 0.9385 |
+| Cluster bootstrap: minimum coverage | ≥ 0.92 | 0.9275 |
+| Cluster sign-flip test: maximum type I error | ≤ 0.05 | 0.0387 |
+| Paired-difference bootstrap: minimum coverage | ≥ 0.93 | 0.9375 |
+
+- **Why 0.935:** with 2,000 simulations, a coverage near 0.95 has a Monte Carlo standard error of about 0.005, so 0.935 is three standard errors below nominal.
+- **Reference:** naive Wilson, which ignores groups, falls to 0.81 under the same scenarios.
+- **Snapshot check:** the pre-seal check also requires the pre-registered thresholds, the gate definition, the cluster rule, the ICC floor and the comparison family to equal the snapshot of the owner's approval. It confirms that the scorer still implements all five unsafe-activation types.

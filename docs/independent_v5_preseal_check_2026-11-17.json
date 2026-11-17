@@ -1,0 +1,110 @@
+{
+  "checked_at_utc": "2026-11-17T15:27:24.733310+00:00",
+  "prereg_version": "v5-prereg-3",
+  "api_calls": 0,
+  "checks": {
+    "criteria_match_owner_approval": "PASSED",
+    "provider_facts_unverified_and_no_api_approval": "PASSED",
+    "statistical_validation_meets_acceptance": "PASSED",
+    "freezes_production_and_app_tree": "PASSED",
+    "exclusion_registry": "PASSED",
+    "participant_packets": "PASSED",
+    "no_independent_cases_in_repository": "PASSED",
+    "statistical_validation_reproduces": "PASSED",
+    "tooling_tests_pass": "PASSED",
+    "no_network_access": "PASSED"
+  },
+  "failures": {},
+  "blocking_requirements": [
+    "recruitment feasibility not demonstrated: no participant registry supplied",
+    "no design selected by the owner (A preferred, B resource-constrained; C or D only with explicit approval recorded as staffing.reduced_design_owner_approval)",
+    "pre-registration status is PROPOSED: the owner has not authorised APPROVED"
+  ],
+  "complete_check": true,
+  "ready_to_seal": false,
+  "registry_sha256": null,
+  "kit_hashes": {
+    "evaluation/freeze_hybrid_v3.py": "4b3c4f9c57fc9458447784f84976057c6044832871d37557f41f8ceb42e77d1b",
+    "evaluation/hybrid_v3_freeze.json": "005062f5844283c6918eb481807c09fa754a413d91fefe0a981daca908c3a86d",
+    "evaluation/independent_test_protocol_v5.md": "8e9339a8abed54ef4b7804afd8c2f4a68c5c6905b712cc96dcd4cce040ba7efb",
+    "evaluation/independent_test_v5/AUTHORING_GUIDE.md": "3f498e45a89b1185926183709582d8f0b93f730b9a4fc6205bcbfc13a6fb618f",
+    "evaluation/independent_test_v5/INDEPENDENCE_DECLARATION.md": "bf2cdf39a68b5d4b03d9248da8acdbbf1663b0358a2cf94d7a6388af5bff8f27",
+    "evaluation/independent_test_v5/LABELLING_GUIDE.md": "9b4448c8284a5ca3da5c809e46c817f574adc67861ba3597d3951fca2d5f382d",
+    "evaluation/independent_test_v5/REQUIRED_EVIDENCE_POLICY.md": "0f1f8c5512bb8e3c8150af5a4de2dc1785791e3e7fd7c15ec1453e323dc77e50",
+    "evaluation/independent_test_v5/adjudication_template.csv": "eeb96c556245452efd7d4b97ed416b14ca041db6a38b667b569cb39df3bbcd93",
+    "evaluation/independent_test_v5/example_case.json": "b625a58746b76fe002220ea17688f46fafd7e157c8cd1e7dc879149e41568d72",
+    "evaluation/independent_test_v5/labeling_sheet_template.csv": "0b0be26d47baee407b789cc5181ad2b5e361f3178790e3f25628257cec44dcc7",
+    "evaluation/independent_test_v5/participants_template.csv": "fa4309491707d8fbba723546721d958271a98f5b1eeecffddb9647d0c5acc3fb",
+    "evaluation/independent_test_v5/preregistration.json": "eec6dc2879ced170b01eaca183df0d2526a60d3ad5ceae379ab46680cffbbfb2",
+    "evaluation/independent_test_v5/statistical_validation.json": "6c0fc49395d695c7842cce74069de69fe4ca68769e37976c4d0f3361ab2c6dc3",
+    "evaluation/independent_v5/__init__.py": "e927df2094b556fdf66ec12aea5160ddaac6dd8d6d09651d398760f79f0d90b5",
+    "evaluation/independent_v5/ci_validation.py": "e9502c685cb70e35174cc4e203d177ac2ce4be270acf52ad8da2fa0d25caec4f",
+    "evaluation/independent_v5/config.py": "21124d5a5c6333d295615057ec30c075b02709fc5d1209e713f6676044951b98",
+    "evaluation/independent_v5/datecheck.py": "b44ebdbde9849748bed17d403cd11e52752611e1727ba51e4b02ba264c4bdb81",
+    "evaluation/independent_v5/engineering_fixtures/README.md": "bdc46402d709ff089780a2bf71dd3b23aff584b5cd9350c327014910c7ceabb5",
+    "evaluation/independent_v5/engineering_fixtures/adjudication.csv": "1e3c317cdafe7f3edece8d28e438799816e0b658050e0caeac2cc82e559ee723",
+    "evaluation/independent_v5/engineering_fixtures/gemini_script.json": "72ecf5f5183f4cab3e54aae6c7e1cd7aae06eb0e30cc23d28145ea4fe74f9730",
+    "evaluation/independent_v5/engineering_fixtures/labels_a.csv": "fff1feaf91c1d3fd6cbd949f04aacfb89b6962537f052a77ae1bc2d6b8f5272e",
+    "evaluation/independent_v5/engineering_fixtures/labels_b.csv": "0d388df095ac8e4d7caf923d5443abfb935afc8343f8406f6d90d409b6a38ab9",
+    "evaluation/independent_v5/engineering_fixtures/participants.csv": "0a6b895a96eb5bec2ab91134332da38a821b07a062477105defe663c9eb9e624",
+    "evaluation/independent_v5/engineering_fixtures/pilot.jsonl": "eb387396061274e1e4d85a375feca859de9aa1133aa93bace5dce1bcd426963a",
+    "evaluation/independent_v5/engineering_fixtures/submission.jsonl": "32648451971d88f8ffae36063f9b6db7e952143c6c12b5977d93dae7b66cf382",
+    "evaluation/independent_v5/exclusion.py": "8c1605b7a0758a3e54fb61f889a138cde7f5ae55d0ec9bc04739138262e7f3d0",
+    "evaluation/independent_v5/exclusion_registry.json": "22f3f5c5e8b7e01cf8560a8047ee68471fff8a187788827a67b9ff7cd3ce4bc9",
+    "evaluation/independent_v5/kit.py": "d4305e797ee238b6a7dd83a2f4cb5a2c96bf199a8f4ada6a3765dc9a01b1f23b",
+    "evaluation/independent_v5/labels.py": "e7fb630feaa3691c9a8f6e2cba10490d2a17fbac4f2fb9c03904eedc25c028fe",
+    "evaluation/independent_v5/make_engineering_fixtures.py": "14b5410e726f8527bc1e93d4f2ece36731c2daeca9ff736f8118c51a93124651",
+    "evaluation/independent_v5/packets.py": "e40cbdb920c4cbe1bd9d0a9c4d3a7e77b5be9dd87dfd967627f8af7116614db0",
+    "evaluation/independent_v5/participants.py": "2357868ae0f57aa9e328f61c1329025593434fa8f9313e457b014bbf4b67f0a1",
+    "evaluation/independent_v5/pipeline.py": "4e176e0a4e7a5b803f38fa38dda261e12730268f837ba11f3135609a38272657",
+    "evaluation/independent_v5/preseal.py": "2f9abc1ae938880fa7ba0d7b57b6279df85a41894ae5da6dbacb0e885bae9ed0",
+    "evaluation/independent_v5/retrieval.py": "e0dff18bf706a8ebe9121c4873db437fd83f262bc978cff6f7a1cc3c2e60dd44",
+    "evaluation/independent_v5/runner.py": "62128db1feb50e554d5c717e767a308e4155e1ce362124854d4652de5545560e",
+    "evaluation/independent_v5/scorer.py": "843338a25747f7b3f58e11114b4ff660958e991111815398da0f406fe2bcf7aa",
+    "evaluation/independent_v5/stats.py": "0d763a0002466d5e1413152b7d7a965f11818b491766ba6ef0e45d1b535ca548",
+    "evaluation/independent_v5/transport.py": "f4d42185338e169d8593dcd8051f49c2cceebc21fa9e587252edb6fc3088bf3b",
+    "evaluation/independent_v5/validator.py": "b1cc9f9f8a52a8c87d8160f0e64c16793b117eecc2aa3a139f1d469d018b303a",
+    "evaluation/prepare_independent_data_v5.py": "64d20d71a2866dbb4d6f19a12a8762c517638a38f2f59f496db09b9d14ba5843",
+    "evaluation/run_independent_test_v5.py": "59f8b680752dfd3e9804422fa6178178d81804529a8d05db43914150874058f3",
+    "evaluation/score_independent_test_v5.py": "66e77ff837386803f14940f547e3384016761005ddf94bd0281357ef38b6fb58",
+    "tests/test_independent_v5.py": "54dc79d406a48c9a50cb22fdf396e45d726e5eb732f541af531c83659a68fc89"
+  },
+  "details": {
+    "statistics": {
+      "primary_interval_coverage_min": 0.9385,
+      "primary_interval_scenarios": 60,
+      "naive_wilson_coverage_min": 0.81,
+      "bootstrap_coverage_min": 0.9275,
+      "cluster_sign_flip_type1_max": 0.0387,
+      "mcnemar_ignoring_groups_type1_max": 0.075,
+      "paired_difference_coverage_min": 0.9375
+    },
+    "integrity": {
+      "hybrid_v3_freeze_valid": true,
+      "behavioural_fingerprint": "2d117adb47d30d5c0eaef571845f2c784d9a2f1c623b0074c3147e52b5e840f8",
+      "hybrid_v2_freeze_valid": true,
+      "frozen_v3_freeze_valid": true,
+      "production_default_model_is_3_8": true,
+      "uncommitted_changes_under_app": false,
+      "ok": true
+    },
+    "exclusion_warnings": [
+      "registered corpus changed since the registry was built: tests/test_independent_v5.py"
+    ],
+    "acceptance_bounds": {
+      "primary_interval_min_coverage": 0.935,
+      "bootstrap_min_coverage": 0.92,
+      "paired_test_max_type1": 0.05,
+      "paired_difference_min_coverage": 0.93
+    },
+    "statistics_rerun": {
+      "reproduced": true,
+      "differing_sections": []
+    },
+    "tooling_tests": {
+      "passed": true,
+      "summary": "52 passed in 16.11s"
+    }
+  },
+  "network_connections_attempted_in_process": []
+}
