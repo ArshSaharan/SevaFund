@@ -1,0 +1,424 @@
+{
+  "candidate": "hybrid v3 (development evaluation candidate only; not approved for production)",
+  "policy_version": "hybrid-v3-dev-1",
+  "frozen_at_utc": "2026-11-17T10:52:13.958384+00:00",
+  "frozen_at_asia_kolkata": "2026-11-17T16:22:13.958384+05:30",
+  "git": {
+    "branch": "dev/verifier-v2-v3-evaluation",
+    "head_at_freeze": "d0479abbdff40f6c37eb0bf46c45032dbc76a265",
+    "upstream": null,
+    "main": "d649f56e99f27d92d1ce750162080f95dec5eddc",
+    "origin_main_local_ref": "d649f56e99f27d92d1ce750162080f95dec5eddc",
+    "recorded_files_uncommitted": [],
+    "commits": {
+      "hybrid_v3_code": "915209078e49fc99a4408ae14c80dcf7ebb9e4ad",
+      "hybrid_v3_report": "d0479abbdff40f6c37eb0bf46c45032dbc76a265",
+      "hybrid_v2_freeze": "b9f7514b062a9f743e4edcab652b17197e9f2a0a",
+      "frozen_v3_freeze": "1c7e739a35ff83980e0fb3cdadaad4d238fa5521",
+      "production_path_files_last_changed_on_this_branch": "81aec5ba13d4d5a4cfbf0b5d7db3d6066976d617",
+      "date_aware_live_results": "caba84ebd0fa27d77377340fc2e8347ad4015eff"
+    }
+  },
+  "files": {
+    "implementation": {
+      "app/services/development_hybrid_v3/__init__.py": "a7afc71867a8a8d44d50e420ec6b5c28eef1f7803cc132a687036667e56254e9",
+      "app/services/development_hybrid_v3/config.py": "cdc6924f981eeb0d4c6a688e8c44a02f469f6f9468f0257120f0e055299b0b51",
+      "app/services/development_hybrid_v3/confirmation.py": "22f65fd94e416170307f894db4551b3d1bec523eb1186ecab58b08eb19e20c7f",
+      "app/services/development_hybrid_v3/crossdoc.py": "26240babb8ed2f01351c6e2f757b08a56555ea6aed5a1cc038c92d8d1c40ada1",
+      "app/services/development_hybrid_v3/dates.py": "f0f4f47c1df3ac5b475b05bb7d47e8a6a86567a9f303344befc680dc21aa8e4e",
+      "app/services/development_hybrid_v3/financial.py": "5e7c8393e280c0e9017e661a3e5ddc7581feaa904f34ca37f3fd7f568223e969",
+      "app/services/development_hybrid_v3/policy.py": "952d93ae5e76add3c851fe5f88e265b6897656b3f7ceeb5950933a0c05d6d49d"
+    },
+    "supporting": {
+      "tests/test_hybrid_v3.py": "6a4dd891a819e229c19c6eb94f1c1c9369837f3f6d90676f65dccd95cb58b496",
+      "evaluation/compare_hybrid_v3_offline.py": "36beeabef7eab9800d057d1b1382afd32bf451daa0fc52cd5ee35d32a4a4a025",
+      "docs/hybrid_v3_safety_changes.md": "8682b60f04038e6a14426d7d782461f606f65ac34a12e4f48911f40ca1ce00e6",
+      "evaluation/runs/hybrid_v3_offline_20261117T091013Z/report.md": "f7d6d66f88d764e11e052c1215acecc1187a75a5dc807cc2af91709e179a964c",
+      "evaluation/runs/hybrid_v3_offline_20261117T091013Z/results.json": "a6089e97513748c884ee7b03692430354f8f7d7f1c5bfe9b08357e37a8a1d3ad"
+    },
+    "dependency_manifests": {
+      "evaluation/development_candidate_v3_freeze.json": "c984647adef5cb89aec61f00c056bd941d49ecbc86f92fbe4316a43b7713e183",
+      "evaluation/development_candidate_v3_config.json": "3835a9c2e20bd30e079664ca775b22f1becf25176ad2b85e4c9bd14598bfc9e9",
+      "evaluation/hybrid_v2_freeze.json": "5722968ac6d2d998cde0f378a78063aef00842e6cd18b60476fe4468b80d6db5"
+    },
+    "frozen_dependencies_and_production_path": {
+      "app/config.py": "edb58aa33fb33fd2dee8dea167b851f524ac1338f0560b13006b6928723d4bb3",
+      "app/schemas/ai.py": "8384f9a64fc3c3fb407409366606fc796adcce5257a02c33de03a7512a962317",
+      "app/services/ai_verifier.py": "3a3b857c8bf658d1400b1a9c92eb1f19a60a405e17ba86199be7298bcd1bc9c8",
+      "app/services/development_approval_workflow/__init__.py": "cd6be1aca209337d726fe235fd85497ccee7763f02d88035474f77bbcb080545",
+      "app/services/development_approval_workflow/schemas.py": "8f704795a36f64e157ad52c4226481d12a2a3d4b9ad33cbf21cb69138f3b0db2",
+      "app/services/development_approval_workflow/workflow.py": "4789829acb6c29de3265d0556088a7ae198ac9f6b801fd1378d2fbea537b1756",
+      "app/services/development_gemini_verification/__init__.py": "053ff0bd4e8f53912383b4567a951f460c0784d2fe8e392c94ce57619e3a10c2",
+      "app/services/development_gemini_verification/client.py": "ea5d25e109cb47286a984cbaa880ff368693baeb2f10d0a9a2248d106204003e",
+      "app/services/development_gemini_verification/concerns.py": "9e16fbb81f7abfc83e53336ab5bcdad432ca34a433ca4bda8e9068b6c624f0ab",
+      "app/services/development_gemini_verification/config.py": "89e2835184b7643397bbb7a48e48a19be93a85a1da877336434afcc433ab43e9",
+      "app/services/development_gemini_verification/dates.py": "f90fc2cd0c78067f1573e5f6f83db33273e014a8522f12e81162aa243d410860",
+      "app/services/development_gemini_verification/policy.py": "62571e4306dd2da516cf70d3a1564126ebf7c118d0ce61c9639e8bd100a4c7cc",
+      "app/services/development_gemini_verification/prompt.py": "8a314f8d161033a348e6e38b8552d297eb74626666641c06261a81156ddf3d11",
+      "app/services/development_verifier_v3/__init__.py": "ced58ad69c89af95bf396584cc896f013ce7542471d27d9a627fc95248059cbb",
+      "app/services/development_verifier_v3/audit.py": "aa5c44709b4dc08bb7c73f7dd285084b5efa8d65dff2262824a3fab25f9a835b",
+      "app/services/development_verifier_v3/category.py": "5bb084d6c47c72ac54b7240d5d0dfc46c6d16fabcbdafc946d237999295ede3c",
+      "app/services/development_verifier_v3/config.py": "a4db3161f6b72bb03a1c7bc7dd9fed6d6e75b4d09fab010531fddd8dfa8b7428",
+      "app/services/development_verifier_v3/consistency.py": "d7d5917f81a212b5e98d579660d586a187562cecdc988cdd25b9cb26067737d1",
+      "app/services/development_verifier_v3/decision.py": "bc4b6135ec97fb53e4ccdc39e597eefc4029c7fb326afe3a6af53f14acc27b65",
+      "app/services/development_verifier_v3/engine.py": "5b4cb360a5be359f86b2e92099e105dd11502bcbcc69a1e14cdc521ec53eb569",
+      "app/services/development_verifier_v3/evidence_policy.py": "1fac2afe23909cde49c012c1768b9e32f47444047f00438e71468f529bcc2fa8",
+      "app/services/development_verifier_v3/extraction.py": "c053fe0b7a9d68583d5680eec1a771c90ffad3584ab0c3369bb23c9895ee9815",
+      "app/services/development_verifier_v3/money.py": "9cf75f77335e7117beabe50dd75722a84b66d1ecf9d2cc431fafb83e5dd0b1dd",
+      "app/services/development_verifier_v3/normalize.py": "60d58fca5347b9b66d540c721c337f15bd06a596106b6c5d8fe1ae7fc79e416c",
+      "app/services/development_verifier_v3/quantitative_consistency.py": "cbe4e6309cebc9a6570951437e7fe9e0785caae275739f49564223b2d21b5927",
+      "app/services/development_verifier_v3/schemas.py": "42f93de385a090295a63358606df8c73889e698ad8ad6bd36370bf866d4d4708",
+      "app/services/development_verifier_v3/semantic.py": "dfdd824ceafa06da8ddf6a8f1fe0eb36e5c7071df8cf0545b0c2d25443345dfc",
+      "app/services/fraud_detector.py": "f47e641743d1d66272cf36d6bfa2053245bbf2b68bf15b19075fab41cf97279f",
+      "app/services/gemini_api.py": "487825065b663291ecc1297c12b4fbd9daacd7786c803451de3fcd61c7c6ee69",
+      "app/services/rag.py": "95b14980be44fd6b658cd4025a0c24a90447a53fb212f42cede257b2f4f71309",
+      "evaluation/evaluate_development_verifier_v3.py": "aa5e4b3cacfe0ba2b7d273963b0b466200aebbd8e319cd66beaab661893269fd",
+      "evaluation/gemini_evaluation_framework.py": "8e5c035c401fc4c46e982919e9e73f16fb4dc45995f0b652274de1ecf8cd03b2",
+      "evaluation/run_independent_test_v4.py": "5c3ad6a1c3314f8c59a19b28bdc41e807d57503c7dd4396134d392fd5d386437",
+      "evaluation/validate_independent_submission.py": "57e356defe4cf8cec4f3f52513dda8fc4f4ccc7bcf1ddeb5a1d4d48c4bc00cb6"
+    }
+  },
+  "model_and_prompt": {
+    "hybrid_v3_calls_models": false,
+    "note": "Hybrid v3 makes no model call. It consumes the GeminiOutcome produced by the frozen hybrid-v2 client (app/services/development_gemini_verification/client.py) with the frozen date-aware prompt (prompt.py). One Gemini answer per case therefore feeds both hybrid v2 and hybrid v3, so they can be compared paired at no extra API cost.",
+    "prompt_module": "app/services/development_gemini_verification/prompt.py",
+    "client_module": "app/services/development_gemini_verification/client.py",
+    "endpoint_template": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+    "generation_config": {
+      "temperature": 0.1,
+      "responseMimeType": "application/json",
+      "maxOutputTokens": 2048
+    },
+    "response_schema_sha256": "a8dbf8fa985542c504fe359bf51498a12ba3964baa2a83eff7bc75a156f0d3a6",
+    "response_schema_matches_DATED_SCHEMA": true,
+    "timeout_seconds": {
+      "connect": 10,
+      "read": 180,
+      "write": 20,
+      "pool": 10
+    },
+    "client_default_max_attempts": 2,
+    "fingerprint": {
+      "case_sha256": "7099a1bc3cdf0ac5a240520312709a845721802a83bd3ec857b68da0715e273a",
+      "chunks_sha256": "9ccd8b64a9247da8ed494fffef45748b993c632609d44c15bdc6661d8db924be",
+      "reference_date": "2026-01-15",
+      "submitted_on": "2026-01-14",
+      "rendered_prompt_sha256": "96b925164bf81fa0f24059b89408b83e431a727918def22b614fecd4eb50a8f5",
+      "rendered_prompt_chars": 2934,
+      "offline_outcome": "EMPTY_CANDIDATES"
+    },
+    "model": {
+      "set_by_frozen_code": false,
+      "client_rule": "model argument if given, else settings.GEMINI_MODEL",
+      "production_default_line": "GEMINI_MODEL: str = os.getenv(\"GEMINI_MODEL\", \"gemini-3.8-flash\")",
+      "production_embedding_model_line": "GEMINI_EMBEDDING_MODEL: str = os.getenv(\"GEMINI_EMBEDDING_MODEL\", \"gemini-embedding-001\")",
+      "development_runs_used": "gemini-3.6-flash (GEMINI_MODEL override for the evaluation process only)",
+      "independent_evaluation_model": "NOT FIXED - requires approval; the run manifest must record it"
+    }
+  },
+  "evaluation_configuration": {
+    "hybrid_v3": {
+      "policy_version": "hybrid-v3-dev-1",
+      "settings": {
+        "date_grace_days": 1,
+        "max_document_age_days": 365,
+        "date_conflict_tolerance_days": 2,
+        "age_conflict_tolerance_years": 1,
+        "amount_support_tolerance": 0.05,
+        "amount_conflict_tolerance": 0.02,
+        "amount_conflict_min_inr": 1000,
+        "min_financial_traceability": 2
+      },
+      "settings_digest": "a01273d9e3c89b0e"
+    },
+    "hybrid_v2_consumed": {
+      "policy_version": "hybrid-v2-dev-1",
+      "settings": {
+        "date_grace_days": 1,
+        "max_document_age_days": 365,
+        "min_quote_chars": 12,
+        "quote_token_overlap": 0.8
+      },
+      "settings_digest": "00b8a03e36de1bd2",
+      "used_for": "build_concerns (grounding Gemini concerns in retrieved evidence)"
+    },
+    "frozen_v3": {
+      "config_sha256": "3835a9c2e20bd30e079664ca775b22f1becf25176ad2b85e4c9bd14598bfc9e9",
+      "package_sha256": "ba1b045e8b9d594891b6aaa4ac8c55b1758f48007a9d0261b177788f2363a7cd"
+    },
+    "policy_order": [
+      "V3 error",
+      "V3 effective contradiction",
+      "cross-document contradiction",
+      "future-dated document or record",
+      "Gemini failed -> VERIFICATION_ERROR",
+      "Gemini FLAG or REJECT -> FLAG_FOR_REVIEW (never REJECTED)",
+      "grounded Gemini contradiction",
+      "open evidence (incl. financial gate) -> NEEDS_MORE_INFORMATION",
+      "all pass -> APPROVED (= ELIGIBLE_PENDING_CONFIRMATION, authenticity UNCONFIRMED)",
+      "otherwise -> NEEDS_MORE_INFORMATION"
+    ],
+    "decision_to_workflow_state": {
+      "APPROVED": "ELIGIBLE_PENDING_CONFIRMATION",
+      "NEEDS_MORE_INFORMATION": "NEEDS_MORE_INFORMATION",
+      "FLAG_FOR_REVIEW": "FLAG_FOR_REVIEW",
+      "REJECTED": "REJECTED",
+      "VERIFICATION_ERROR": "VERIFICATION_ERROR"
+    },
+    "required_confirmations": [
+      "BENEFICIARY",
+      "INSTITUTION",
+      "PAYMENT_DESTINATION"
+    ],
+    "independent_contact_sources": [
+      "OFFICIAL_DIRECTORY",
+      "OFFICIAL_REGISTRY",
+      "PLATFORM_KYC",
+      "PRIOR_VERIFIED_RECORD"
+    ],
+    "activation": "VERIFIED_ACTIVE only through recorded independent confirmations of all required checks; never set by automated verification or by a reviewer directly",
+    "fraud_detection_definition": "FLAG_FOR_REVIEW or REJECTED. NEEDS_MORE_INFORMATION and ELIGIBLE_PENDING_CONFIRMATION are never counted as detections.",
+    "review_bases": [
+      "DETERMINISTIC_FINDING",
+      "DOCUMENT_SUPPORTED_MODEL_FINDING",
+      "UNVERIFIED_MODEL_SUSPICION"
+    ],
+    "gemini_dependent_checks": [
+      "Contradictions in place, setting or circumstance (e.g. 'died at home' vs 'died in the ICU') unless a date also differs",
+      "Treatment or course mismatches expressed with synonyms or different procedure names (beyond explicit 'not indicated / not advised' statements)",
+      "Diagnosis inconsistent with the requested treatment, or implausible clinical narratives",
+      "Several admissions, discharges or procedures with different dates across documents (can be genuine)",
+      "Relationship and identity claims not written as name / age / sex / identifier (e.g. 'my father' vs 'son of')",
+      "Cost plausibility beyond V3's typical-range table; itemised arithmetic in free-form layouts",
+      "Dates written in unusual formats, regional languages or without a year; scanned documents without text",
+      "Narrative contradictions with no labelled field (e.g. the story says a fee is unpaid, a letter implies a scholarship)",
+      "Fabricated but internally consistent documents: not detectable from text at all - only external confirmation"
+    ],
+    "development_conventions": {
+      "retrieval": "frozen lexical top-5 (evaluation/gemini_evaluation_framework.py lexical_retrieve, top_k=5); no embedding calls. Production uses embedding retrieval (app/services/rag.py).",
+      "reference_date_live": "today in Asia/Kolkata at run time (run_date_aware_dev_eval.reference_date)",
+      "reference_date_offline": "submitted_on, else the latest document date, else a fixed fallback date"
+    },
+    "independent_evaluation_parameters": "NOT PART OF THIS FREEZE. Model, retrieval, reference-date rule, budget and stopping rules are fixed in the sealed v5 protocol after approval (evaluation/independent_test_protocol_v5.md)."
+  },
+  "behavioural_fingerprint": {
+    "assumption": "Benchmarks: Gemini approves cleanly (deterministic layers only), no retrieved chunks. Date-aware cases: committed rendered cases, frozen lexical top-5 retrieval, scripted outputs.",
+    "sets": {
+      "final_test_300": {
+        "cases": 300,
+        "reference_date_basis": {
+          "submitted_on": 300
+        },
+        "decisions_by_label": {
+          "borderline|APPROVED": 10,
+          "borderline|NEEDS_MORE_INFORMATION": 90,
+          "fraudulent|APPROVED": 20,
+          "fraudulent|FLAG_FOR_REVIEW": 60,
+          "fraudulent|NEEDS_MORE_INFORMATION": 20,
+          "legitimate|APPROVED": 90,
+          "legitimate|NEEDS_MORE_INFORMATION": 10
+        },
+        "sha256": "1299476f7d7b0eadf3138da8c02b6f8bdd33619a54a44c428c6f07b60afe72d9"
+      },
+      "fundraising_200": {
+        "cases": 200,
+        "reference_date_basis": {
+          "latest_document_date": 80,
+          "fixed_fallback_2026-11-17": 120
+        },
+        "decisions_by_label": {
+          "borderline|NEEDS_MORE_INFORMATION": 40,
+          "fraudulent|FLAG_FOR_REVIEW": 20,
+          "fraudulent|NEEDS_MORE_INFORMATION": 60,
+          "legitimate|APPROVED": 72,
+          "legitimate|NEEDS_MORE_INFORMATION": 8
+        },
+        "sha256": "cbed110d5d630f8cc29042343b67a5b4833d61acdfc83104a0af0f990c80d634"
+      },
+      "independent_test_150": {
+        "cases": 150,
+        "reference_date_basis": {
+          "fixed_fallback_2026-11-17": 150
+        },
+        "decisions_by_label": {
+          "borderline|NEEDS_MORE_INFORMATION": 30,
+          "fraudulent|FLAG_FOR_REVIEW": 10,
+          "fraudulent|NEEDS_MORE_INFORMATION": 50,
+          "legitimate|NEEDS_MORE_INFORMATION": 60
+        },
+        "sha256": "8ce949becbc93ca4f7a0a83ed4fd212e395ecee32b98b9fa348328673340d31e"
+      },
+      "independent_benchmark_100": {
+        "cases": 100,
+        "reference_date_basis": {
+          "fixed_fallback_2026-11-17": 100
+        },
+        "decisions_by_label": {
+          "borderline|FLAG_FOR_REVIEW": 2,
+          "borderline|NEEDS_MORE_INFORMATION": 18,
+          "fraudulent|FLAG_FOR_REVIEW": 6,
+          "fraudulent|NEEDS_MORE_INFORMATION": 34,
+          "legitimate|NEEDS_MORE_INFORMATION": 40
+        },
+        "sha256": "e2c609566821ad5ebace8f7ca42a6ec25b94d0efc0bde4533096b586f53d0026"
+      },
+      "date_aware_8_scripted": {
+        "cases": 32,
+        "decisions": {
+          "DA-01|gemini_approves|APPROVED": 1,
+          "DA-01|gemini_failed|VERIFICATION_ERROR": 1,
+          "DA-01|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-01|gemini_info_request_ungrounded_warning|NEEDS_MORE_INFORMATION": 1,
+          "DA-02|gemini_approves|NEEDS_MORE_INFORMATION": 1,
+          "DA-02|gemini_failed|VERIFICATION_ERROR": 1,
+          "DA-02|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-02|gemini_info_request_ungrounded_warning|NEEDS_MORE_INFORMATION": 1,
+          "DA-03|gemini_approves|FLAG_FOR_REVIEW": 1,
+          "DA-03|gemini_failed|FLAG_FOR_REVIEW": 1,
+          "DA-03|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-03|gemini_info_request_ungrounded_warning|FLAG_FOR_REVIEW": 1,
+          "DA-04|gemini_approves|NEEDS_MORE_INFORMATION": 1,
+          "DA-04|gemini_failed|VERIFICATION_ERROR": 1,
+          "DA-04|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-04|gemini_info_request_ungrounded_warning|NEEDS_MORE_INFORMATION": 1,
+          "DA-05|gemini_approves|FLAG_FOR_REVIEW": 1,
+          "DA-05|gemini_failed|FLAG_FOR_REVIEW": 1,
+          "DA-05|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-05|gemini_info_request_ungrounded_warning|FLAG_FOR_REVIEW": 1,
+          "DA-06|gemini_approves|APPROVED": 1,
+          "DA-06|gemini_failed|VERIFICATION_ERROR": 1,
+          "DA-06|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-06|gemini_info_request_ungrounded_warning|NEEDS_MORE_INFORMATION": 1,
+          "DA-07|gemini_approves|NEEDS_MORE_INFORMATION": 1,
+          "DA-07|gemini_failed|VERIFICATION_ERROR": 1,
+          "DA-07|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-07|gemini_info_request_ungrounded_warning|NEEDS_MORE_INFORMATION": 1,
+          "DA-08|gemini_approves|FLAG_FOR_REVIEW": 1,
+          "DA-08|gemini_failed|FLAG_FOR_REVIEW": 1,
+          "DA-08|gemini_flags_ungrounded|FLAG_FOR_REVIEW": 1,
+          "DA-08|gemini_info_request_ungrounded_warning|FLAG_FOR_REVIEW": 1
+        },
+        "sha256": "0883ba51d03f5b492b8498c7468e82f8783df56baa6002c98aadc62cc490c030"
+      }
+    },
+    "sha256": "2d117adb47d30d5c0eaef571845f2c784d9a2f1c623b0074c3147e52b5e840f8"
+  },
+  "test_results": {
+    "run_at_utc": "2026-11-17T10:52:13.611540+00:00",
+    "command": "python -m pytest -q -p no:cacheprovider (GEMINI_API_KEY blanked; conftest forces the local fallback)",
+    "full_suite": {
+      "collected": 422,
+      "passed": 421,
+      "failed": [
+        "tests.test_campaigns::test_campaign_verification_endpoint"
+      ],
+      "skipped": 0,
+      "exit_code": 1,
+      "unexpected_failures": [],
+      "known_failures": {
+        "tests.test_campaigns::test_campaign_verification_endpoint": "pre-existing HTTP 401 in the campaign verification endpoint test; unrelated to the development packages"
+      }
+    },
+    "hybrid_v3_tests": {
+      "collected": 71,
+      "failed": []
+    },
+    "frozen_benchmark_reproducibility": {
+      "command": "python evaluation/check_frozen_benchmark_reproducibility.py",
+      "exit_code": 0,
+      "all_reproduced": true,
+      "details": {
+        "v3_freeze_valid": true,
+        "hybrid_v2_freeze": {
+          "valid": true,
+          "changed": []
+        },
+        "benchmark_datasets_unchanged": true,
+        "final_test_300_v3": {
+          "cases": 300,
+          "mismatches": [],
+          "reproduced": true
+        },
+        "fundraising_200_v3": {
+          "cases": 200,
+          "mismatches": [],
+          "reproduced": true
+        },
+        "independent_test_150_v3": {
+          "cases": 150,
+          "mismatches": [],
+          "reproduced": true
+        },
+        "independent_benchmark_100_v3": {
+          "cases": 100,
+          "mismatches": [],
+          "reproduced": true
+        },
+        "hybrid_rescoring_10": {
+          "cases": 10,
+          "mismatches": [],
+          "reproduced": true
+        },
+        "all_reproduced": true
+      }
+    },
+    "frozen_v3_freeze_valid": true,
+    "hybrid_v2_freeze": {
+      "valid": true,
+      "changed": [],
+      "added": [],
+      "policy_version": "hybrid-v2-dev-1"
+    }
+  },
+  "environment": {
+    "python": "3.9.6",
+    "platform": "macOS-27.2.1-arm64-arm-64bit",
+    "packages": {
+      "pydantic": "2.13.5",
+      "httpx": "0.28.1",
+      "fastapi": "0.128.8",
+      "pytest": "8.4.2",
+      "python-dotenv": "1.2.1",
+      "SQLAlchemy": "2.0.54"
+    },
+    "requirements_txt_sha256": "1d5fa6f243ddbaf7953faf667d45a50bffa917de98749713996c9bb647427206"
+  },
+  "known_limitations": [
+    "Development evidence only. Every number so far is in-sample: the 750 benchmark cases, the 10 historical cases, the 8 date-aware cases and the test fixtures were all inspected during development; none can be reused as independent test data.",
+    "In-sample adjustments were made to the financial-document classifier after inspecting benchmark outcomes (see docs/hybrid_v3_safety_changes.md, 'Disclosed development adjustments').",
+    "Fabricated but internally consistent dossiers pass every automated check; only independent external confirmation stops them, and the confirmation pilot has not been run.",
+    "Insider-issued false documents from genuine institutions cannot be detected from text.",
+    "The requested amount is not independently confirmed as a separate, recorded step. For medical and education campaigns the institution check's description includes the billed amount or fee demand, but the outcome records no amount; for community and organisation campaigns the institution check confirms registration only.",
+    "Final approval and activation are one state (VERIFIED_ACTIVE) in the frozen workflow; disbursement is allowed in it.",
+    "Contradictions listed in gemini_dependent_checks depend on Gemini or a reviewer. Gemini 3.6 Flash on the free tier returned 1 valid answer in 4 HTTP requests in the last live run (2 server errors, 1 quota error).",
+    "Requiring formal cost evidence increases information requests for genuine applicants without formal quotations (benchmarks, in-sample: information requests 336 -> 460, legitimate approvals 231 -> 162).",
+    "Deterministic parsers were developed on clean synthetic English text; scans, OCR noise, regional languages and unusual date formats are untested.",
+    "Thresholds (5% amount tolerance, 2-day date tolerance, 1-year age tolerance, 365-day staleness, traceability 2 of 4) are reasoned defaults, not calibrated values.",
+    "Frozen V3's SERVICE_UNRELATED lexicon does not link synonyms such as 'palatoplasty' and 'cleft palate repair' (DA-04 receives an information request).",
+    "Development retrieval was lexical top-5 with no embeddings; production retrieval uses embeddings. Cases with more than five chunks would be retrieved differently.",
+    "370 benchmark cases have no submission date; their offline decisions depend on the reference date, so the behavioural fingerprint pins a fixed fallback date (2026-11-17)."
+  ],
+  "development_data_excluded_from_independent_testing": {
+    "benchmarks_750": {
+      "final_test_300": "evaluation/final_test_scenarios_v3.jsonl",
+      "fundraising_200": "evaluation/fundraising_scenarios.jsonl",
+      "independent_test_150": "evaluation/independent_test_150.jsonl",
+      "independent_benchmark_100": "evaluation/independent_benchmark_100.jsonl"
+    },
+    "historical_10": "evaluation/gemini_eval_v1/cases.jsonl",
+    "date_aware_8": "evaluation/date_aware_dev_eval/scenarios.json",
+    "development_sets": [
+      "evaluation/development_scenarios_v1.jsonl",
+      "evaluation/development_scenarios_v2.jsonl",
+      "evaluation/development_scenarios_v3.jsonl",
+      "evaluation/development_scenarios_v3_contradiction_only.jsonl",
+      "evaluation/development_scenarios_v3_initial.jsonl"
+    ],
+    "test_fixtures": [
+      "tests/test_hybrid_v3.py",
+      "tests/test_hybrid_v2.py"
+    ]
+  },
+  "api_calls_made_by_this_freeze": 0,
+  "rule": "Any change to a recorded file invalidates independent-test results for this candidate. A changed version needs a new freeze and a new, unseen test set. Defects found during the independent test are reported, not fixed. Do not tune against the independent test."
+}
