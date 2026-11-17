@@ -57,7 +57,8 @@ The output is identical on every run.
 python -m pytest -q tests/test_hybrid_v4.py          # 34 hybrid v4 tests
 python -m pytest -q tests/test_dev_hybrid_v4_integration.py   # 17 end-to-end tests of hybrid v4 inside the app
 python -m pytest -q tests/test_auth_hardening.py tests/test_access_control.py   # 43 authentication and access-control tests
-python -m pytest -q                                   # full suite on integration/hybrid-v4-auth: 576 pass, 0 fail
+python -m pytest -q tests/test_password_first_login.py   # 15 password-first / no-SMS tests
+python -m pytest -q                                   # full suite on integration/hybrid-v4-auth
 python evaluation/freeze_hybrid_v3.py verify          # frozen V3, hybrid v2 and hybrid v3 unchanged
 python evaluation/check_frozen_benchmark_reproducibility.py
 ```
@@ -146,6 +147,7 @@ want to keep the demo files.
 source .venv/bin/activate
 export SEVAFUND_DEV_HYBRID_V4=1 SEVAFUND_DEV_HYBRID_V4_GEMINI=mock-approve GEMINI_API_KEY=""
 export DATABASE_URL=sqlite:///./dev_hybrid_v4.db
+# seed_data.py reads SEED_USER_PASSWORD and SEED_ADMIN_PASSWORD from .env (private, at least 12 characters)
 python seed_data.py && python run.py
 ```
 
@@ -155,7 +157,10 @@ python seed_data.py && python run.py
 API=http://localhost:8000/api
 login() { curl -s -X POST $API/auth/login -H 'Content-Type: application/json' \
   -d "{\"email\":\"$1\",\"password\":\"$2\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin)["access_token"])'; }
-CREATOR=$(login priya.sharma@example.com password123); ADMIN=$(login admin@crowdfund-trust.in admin123)
+# Enter the passwords you set in .env (not echoed)
+printf 'SEED_USER_PASSWORD: '; read -rs SEED_USER_PASSWORD; echo
+printf 'SEED_ADMIN_PASSWORD: '; read -rs SEED_ADMIN_PASSWORD; echo
+CREATOR=$(login priya.sharma@example.com "$SEED_USER_PASSWORD"); ADMIN=$(login admin@crowdfund-trust.in "$SEED_ADMIN_PASSWORD")
 
 # Two supporting documents dated relative to today
 python3 - <<'EOF'

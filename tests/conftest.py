@@ -27,6 +27,18 @@ def no_live_gemini(monkeypatch):
     monkeypatch.setattr(ai_assistant, "api_key", "")
 
 
+@pytest.fixture(autouse=True)
+def no_real_sms_or_payment_credentials(monkeypatch):
+    """Tests never use real SMS or payment credentials loaded from .env.  SMS providers are unset, so nothing can
+    be sent unless a test installs an isolated fake sender (which captures codes inside the test process), and
+    Razorpay runs in its built-in offline demo mode (no API call)."""
+    for name in ("FAST2SMS_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_FROM_PHONE"):
+        monkeypatch.delenv(name, raising=False)
+    from app.config import settings
+    monkeypatch.setattr(settings, "RAZORPAY_KEY_ID", "rzp_test_sevafund_demo")
+    monkeypatch.setattr(settings, "RAZORPAY_KEY_SECRET", "mock_razorpay_secret")
+
+
 @pytest.fixture
 def make_user(db_session):
     """Explicit offline test fixture: creates a user directly in the test database and returns (user, auth headers).

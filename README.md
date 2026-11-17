@@ -173,17 +173,35 @@ The frontend application runs at `http://localhost:4200`.
 
 ---
 
+## Running SevaFund Locally Without SMS Credits (Fast2SMS)
+
+Email and password is the primary sign-in method; SMS (phone OTP) is optional.
+
+1. **Configure `.env`** (copy `.env.example` first):
+   - **SMS keys.** Leave `FAST2SMS_API_KEY` and the `TWILIO_*` values empty, or comment them out. The server then never contacts an SMS provider, and the *Mobile OTP* tab shows "Phone verification is temporarily unavailable".
+     - If a Fast2SMS key with exhausted credits is left in place, each OTP request fails at the provider and shows the same message.
+     - An OTP code is never returned by the API, shown in the browser, or written to the logs.
+   - **`SECRET_KEY`.** Required: see the configuration list above.
+   - **Demo passwords.** For demo accounts, set `SEED_USER_PASSWORD` and `SEED_ADMIN_PASSWORD` to private passwords of at least 12 characters.
+2. **Create the demo accounts:** `python seed_data.py`. This **drops and recreates every table** in `DATABASE_URL`. It refuses to run, before touching the database, if either seed password is missing or weak, and it never prints them.
+3. **Start the app:** `python run.py`, then `cd frontend && npm start`, and open `http://localhost:4200`.
+4. **Sign in:** choose **Sign in**. The **Email & password** tab is selected by default. Use a seeded account, or choose *Create an account* to register.
+5. **Google sign-in** is offered only when `GOOGLE_CLIENT_ID` is configured. Its ID tokens are verified with Google's library.
+6. **Accounts without a password.** An account created only through phone OTP has no password, and there is no password-reset flow. To keep using SevaFund without SMS, register an email and password account.
+
+Creating campaigns, uploading documents, requesting payouts and every admin action still require a signed-in user with the right role.
+
 ## Seed Data and Test Accounts
 
-Running `python seed_data.py` populates the database with realistic campaigns and test accounts:
+Running `python seed_data.py` populates the database with realistic campaigns and these accounts. Passwords come from your `.env`:
 
 - **Admin Account**:
-  - Email: `admin@sevafund.org`
-  - Password: `AdminPassword123!`
+  - Email: `admin@crowdfund-trust.in`
+  - Password: the value of `SEED_ADMIN_PASSWORD`
   - Role: Has full access to the Admin Dashboard and Donations Ledger at `/admin`.
-- **Organizer Account**:
-  - Email: `organizer@sevafund.org`
-  - Password: `OrganizerPassword123!`
+- **Organizer Accounts**:
+  - Emails: `priya.sharma@example.com`, `rahul.verma@example.com`
+  - Password: the value of `SEED_USER_PASSWORD`
 - **Sample Campaigns**:
   - Pediatric leukemia chemotherapy treatment at Tata Memorial Hospital, Mumbai.
   - Wayanad emergency flood relief and ration kits.
