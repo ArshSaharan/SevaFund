@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { Campaign } from '../../models/campaign.model';
 import { SmoothScrollService } from '../../services/smooth-scroll.service';
 import { CountUpDirective, RevealDirective, SpotlightDirective, celebrate, isBrowser } from '../../animation';
+import { RazorpayCheckout, loadRazorpayCheckout } from '../../services/razorpay-checkout';
 
 @Component({
   selector: 'app-campaign-detail',
@@ -245,7 +246,7 @@ import { CountUpDirective, RevealDirective, SpotlightDirective, celebrate, isBro
                 />
               </div>
 
-              <!-- Payment: UPI, cards and netbanking are all chosen inside Razorpay Checkout -->
+              <!-- Payment: every method is completed inside Razorpay Checkout; the server records the gift only after verifying it -->
               <div class="secure-checkout mt-3">
                 <div class="secure-head">
                   <span class="secure-icon" aria-hidden="true">
@@ -255,7 +256,7 @@ import { CountUpDirective, RevealDirective, SpotlightDirective, celebrate, isBro
                   </span>
                   <div>
                     <strong>Secure checkout by Razorpay</strong>
-                    <span>Choose UPI, a card or netbanking in Razorpay's secure payment window.</span>
+                    <span>Choose UPI, a card or netbanking in Razorpay's window. Your gift is recorded only after Razorpay confirms the payment.</span>
                   </div>
                 </div>
                 <div class="method-chips" aria-label="Accepted payment methods">
@@ -343,7 +344,7 @@ import { CountUpDirective, RevealDirective, SpotlightDirective, celebrate, isBro
               </svg>
               <h3>Thank you. Your gift is in.</h3>
               <p class="receipt-thank-msg">
-                Your contribution of <strong>₹{{ (receipt()?.amount || donationAmount) | number }}</strong> has been verified and settled to
+                Your contribution of <strong>₹{{ (receipt()?.amount || donationAmount) | number }}</strong> was confirmed by Razorpay and recorded for
                 <strong>{{ c.beneficiary_name || c.title }}</strong>.
               </p>
 
@@ -1302,6 +1303,7 @@ export class CampaignDetailComponent implements OnInit, OnDestroy {
           this.loading.set(false);
           this.titleService.setTitle(`${c.title} · SevaFund India`);
           this.loadDonors(+id);
+          if (isBrowser) loadRazorpayCheckout().catch(() => { /* retried when the donor presses Donate */ });
           this.zone.runOutsideAngular(() => setTimeout(() => this.zone.run(() => this.barReady.set(true)), 350));
           // Page height changed: re-measure scroll triggers (footer, reveals).
           this.zone.runOutsideAngular(() => setTimeout(() => this.smoothScroll.refresh(), 0));
@@ -1328,14 +1330,20 @@ export class CampaignDetailComponent implements OnInit, OnDestroy {
 
     // UPI, cards and netbanking are all completed inside Razorpay Checkout. The server records the donation only
     // after it verifies the Razorpay payment (signature, order, amount and captured status).
-    const rzp = (window as any).Razorpay;
-    if (!rzp) {
-      this.donationError.set('Online payment is unavailable right now (Razorpay Checkout could not load). No payment was taken.');
-      return;
-    }
     this.donating.set(true);
+    loadRazorpayCheckout().then(
+      (rzp) => this.zone.run(() => this.openCheckout(rzp, c)),
+      () => this.zone.run(() => {
+        this.donating.set(false);
+        this.donationError.set('Online payment is unavailable right now (Razorpay Checkout could not load). No payment was taken.');
+      }),
+    );
+  }
 
-    this.donationService.createGatewayOrder(c.id, this.donationAmount).subscribe({
+  private openCheckout(rzp: RazorpayCheckout, c: Campaign) {
+    // The order is created for this amount; the same amount is sent when recording it (the server checks they match).
+    const amount = this.donationAmount;
+    this.donationService.createGatewayOrder(c.id, amount).subscribe({
       next: (order) => {
         const options: any = {
           key: order.key_id,
@@ -1350,7 +1358,7 @@ export class CampaignDetailComponent implements OnInit, OnDestroy {
             contact: this.donorPhone ? (this.donorPhone.startsWith('+91') ? this.donorPhone : `+91${this.donorPhone}`) : undefined
           },
           theme: { color: '#F26B1D' },
-          handler: (response: any) => {
+          handler: (response: any) => this.zone.run(() => {
             if (!response?.razorpay_order_id || !response?.razorpay_payment_id || !response?.razorpay_signature) {
               this.donating.set(false);
               this.donationError.set('The payment could not be confirmed. If money was debited, it will be reconciled by Razorpay.');
@@ -1360,12 +1368,10 @@ export class CampaignDetailComponent implements OnInit, OnDestroy {
               gateway_order_id: response.razorpay_order_id,
               gateway_payment_id: response.razorpay_payment_id,
               gateway_signature: response.razorpay_signature
-            });
-          },
+            }, amount);
+          }),
           modal: {
-            ondismiss: () => {
-              this.donating.set(false);
-            }
+            ondismiss: () => this.zone.run(() => this.donating.set(false))
           }
         };
 
@@ -1384,12 +1390,13 @@ export class CampaignDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  completeDonation(gatewayData: { gateway_order_id: string; gateway_payment_id: string; gateway_signature: string }) {
+  completeDonation(gatewayData: { gateway_order_id: string; gateway_payment_id: string; gateway_signature: string },
+                   amount: number = this.donationAmount) {
     const c = this.campaign();
     if (!c) return;
 
     this.donationService.donate(c.id, {
-      amount: this.donationAmount,
+      amount: amount,
       payment_method: this.paymentMethod,
       upi_id: this.upiId || undefined,
       donor_name: this.donorName || 'Kind Supporter',
@@ -1412,21 +1419,24 @@ export class CampaignDetailComponent implements OnInit, OnDestroy {
           if (!camp) return null;
           return {
             ...camp,
-            current_amount: camp.current_amount + this.donationAmount,
+            current_amount: camp.current_amount + amount,
             donor_count: (camp.donor_count || 0) + 1
           };
         });
 
         const newDonor = {
           donor_name: this.isAnonymous ? 'Anonymous Supporter' : (this.donorName || 'Kind Supporter'),
-          amount: this.donationAmount,
+          amount: amount,
           message: this.donorMessage,
           created_at: new Date().toISOString()
         };
         this.donors.update(prev => [newDonor, ...prev]);
       },
       error: (err) => {
-        this.donationError.set(err?.error?.detail || 'Donation failed. Please try again.');
+        // The donor has already paid at this point, so never suggest paying again.
+        const reason = err?.error?.detail ? ` (${err.error.detail})` : '';
+        this.donationError.set(`We could not confirm payment ${gatewayData.gateway_payment_id}${reason}. `
+          + 'If money was debited, please do not pay again; share this payment ID with support so it can be reconciled.');
         this.donating.set(false);
       }
     });
