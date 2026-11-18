@@ -1071,61 +1071,67 @@ export class CampaignDetailComponent implements OnInit {
   submitDonation() {
     const c = this.campaign();
     if (!c || this.donationAmount < 10) return;
-    this.donating.set(true);
     this.donationError.set('');
 
+    // UPI, cards and netbanking are all completed inside Razorpay Checkout. The server records the donation only
+    // after it verifies the Razorpay payment (signature, order, amount and captured status).
     const rzp = (window as any).Razorpay;
-
-    if (this.paymentMethod === 'RAZORPAY' && rzp) {
-      this.donationService.createGatewayOrder(c.id, this.donationAmount).subscribe({
-        next: (order) => {
-          const options: any = {
-            key: order.key_id,
-            amount: order.amount,
-            currency: order.currency,
-            name: 'SevaFund India',
-            description: `Contribution for ${c.beneficiary_name || c.title}`,
-            order_id: (order.order_id && !order.order_id.startsWith('order_mock_')) ? order.order_id : undefined,
-            prefill: {
-              name: this.donorName || 'Kind Supporter',
-              email: this.donorEmail || undefined,
-              contact: this.donorPhone ? (this.donorPhone.startsWith('+91') ? this.donorPhone : `+91${this.donorPhone}`) : undefined
-            },
-            theme: { color: '#F26B1D' },
-            handler: (response: any) => {
-              this.completeDonation({
-                gateway_order_id: response.razorpay_order_id || order.order_id,
-                gateway_payment_id: response.razorpay_payment_id || `pay_${Date.now()}`,
-                gateway_signature: response.razorpay_signature || 'sig_demo'
-              });
-            },
-            modal: {
-              ondismiss: () => {
-                this.donating.set(false);
-              }
-            }
-          };
-
-          try {
-            const rzpInstance = new rzp(options);
-            rzpInstance.open();
-          } catch (e) {
-            this.completeDonation({
-              gateway_order_id: order.order_id,
-              gateway_payment_id: `pay_direct_${Date.now()}`
-            });
-          }
-        },
-        error: () => {
-          this.completeDonation();
-        }
-      });
-    } else {
-      this.completeDonation();
+    if (!rzp) {
+      this.donationError.set('Online payment is unavailable right now (Razorpay Checkout could not load). No payment was taken.');
+      return;
     }
+    this.donating.set(true);
+
+    this.donationService.createGatewayOrder(c.id, this.donationAmount).subscribe({
+      next: (order) => {
+        const options: any = {
+          key: order.key_id,
+          amount: order.amount,
+          currency: order.currency,
+          name: 'SevaFund India',
+          description: `Contribution for ${c.beneficiary_name || c.title}`,
+          order_id: order.order_id,
+          prefill: {
+            name: this.donorName || 'Kind Supporter',
+            email: this.donorEmail || undefined,
+            contact: this.donorPhone ? (this.donorPhone.startsWith('+91') ? this.donorPhone : `+91${this.donorPhone}`) : undefined
+          },
+          theme: { color: '#F26B1D' },
+          handler: (response: any) => {
+            if (!response?.razorpay_order_id || !response?.razorpay_payment_id || !response?.razorpay_signature) {
+              this.donating.set(false);
+              this.donationError.set('The payment could not be confirmed. If money was debited, it will be reconciled by Razorpay.');
+              return;
+            }
+            this.completeDonation({
+              gateway_order_id: response.razorpay_order_id,
+              gateway_payment_id: response.razorpay_payment_id,
+              gateway_signature: response.razorpay_signature
+            });
+          },
+          modal: {
+            ondismiss: () => {
+              this.donating.set(false);
+            }
+          }
+        };
+
+        try {
+          const rzpInstance = new rzp(options);
+          rzpInstance.open();
+        } catch (e) {
+          this.donating.set(false);
+          this.donationError.set('Could not open Razorpay Checkout. No payment was taken.');
+        }
+      },
+      error: (err) => {
+        this.donating.set(false);
+        this.donationError.set(err?.error?.detail || 'Online payments are unavailable right now. No payment was taken.');
+      }
+    });
   }
 
-  completeDonation(gatewayData?: { gateway_order_id?: string; gateway_payment_id?: string; gateway_signature?: string }) {
+  completeDonation(gatewayData: { gateway_order_id: string; gateway_payment_id: string; gateway_signature: string }) {
     const c = this.campaign();
     if (!c) return;
 
@@ -1140,9 +1146,9 @@ export class CampaignDetailComponent implements OnInit {
       message: this.donorMessage || undefined,
       support_message: this.donorMessage || undefined,
       is_anonymous: this.isAnonymous,
-      gateway_order_id: gatewayData?.gateway_order_id,
-      gateway_payment_id: gatewayData?.gateway_payment_id,
-      gateway_signature: gatewayData?.gateway_signature
+      gateway_order_id: gatewayData.gateway_order_id,
+      gateway_payment_id: gatewayData.gateway_payment_id,
+      gateway_signature: gatewayData.gateway_signature
     }).subscribe({
       next: (res) => {
         this.receipt.set(res);

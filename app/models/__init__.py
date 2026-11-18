@@ -6,6 +6,7 @@ from app.models.payout import PayoutRequest
 from app.models.verification import VerificationAudit
 from app.models.otp import OTPRecord
 from app.models.audit_log import AdminAuditLog
+from app.models.payment_order import PaymentOrder
 
 __all__ = [
     "User",
@@ -15,5 +16,6 @@ __all__ = [
     "PayoutRequest",
     "VerificationAudit",
     "OTPRecord",
-    "AdminAuditLog"
+    "AdminAuditLog",
+    "PaymentOrder"
 ]
