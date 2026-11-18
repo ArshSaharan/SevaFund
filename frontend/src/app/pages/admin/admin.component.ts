@@ -55,8 +55,9 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
               class="input"
               [(ngModel)]="loginEmail"
               name="email"
+              autocomplete="username"
               required
-              placeholder="admin@crowdfund-trust.in"
+              placeholder="you@organisation.in"
             />
           </div>
           <div class="form-group mt-3">
@@ -66,6 +67,7 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
               class="input"
               [(ngModel)]="loginPassword"
               name="password"
+              autocomplete="current-password"
               required
               placeholder="••••••••"
             />
@@ -75,13 +77,6 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
           </button>
           <div class="error-banner mt-3" *ngIf="loginError()">{{ loginError() }}</div>
         </form>
-
-        <div class="demo-access-box mt-4">
-          <span>Demo / Quick Access:</span>
-          <button class="btn btn-outline btn-sm quick-access-btn" (click)="quickLoginAdmin()">
-            Fill & Sign In as Lead Moderator
-          </button>
-        </div>
       </div>
 
       <!-- Admin Portal Workspace -->
@@ -499,16 +494,6 @@ import { Campaign, AdminDonationItem, AdminDonationsSummary } from '../../models
       text-align: left;
     }
 
-    .demo-access-box {
-      border-top: 1px dashed var(--border);
-      padding-top: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 12.5px;
-      color: var(--slate-500);
-    }
-
     /* Stats Grid */
     .stats-overview-grid {
       display: grid;
@@ -919,8 +904,8 @@ export class AdminComponent implements OnInit {
   decisions = signal<Record<number, string>>({});
   notes: Record<number, string> = {};
 
-  loginEmail = 'admin@crowdfund-trust.in';
-  loginPassword = 'admin123';
+  loginEmail = '';
+  loginPassword = '';
   loginLoading = signal(false);
   loginError = signal('');
 
@@ -972,12 +957,6 @@ export class AdminComponent implements OnInit {
         this.loginError.set(err?.error?.detail || 'Invalid admin credentials');
       }
     });
-  }
-
-  quickLoginAdmin() {
-    this.loginEmail = 'admin@crowdfund-trust.in';
-    this.loginPassword = 'admin123';
-    this.loginAsAdmin();
   }
 
   setTab(tabValue: string) {

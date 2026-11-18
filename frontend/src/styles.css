@@ -820,6 +820,129 @@ html.lenis body {
 }
 
 /* ==========================================================================
+   Motion polish — pointer effects, button shine, sheen
+   (classes below are only added by the directives when motion is allowed and
+   the pointer can hover; see app/animation/pointer.directives.ts)
+   ========================================================================== */
+
+@property --spot-alpha {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/* Magnetic: an independent `translate`, so :hover transforms keep working */
+.is-magnetic {
+  translate: var(--mag-x, 0px) var(--mag-y, 0px);
+}
+
+/* Primary buttons: a soft light sweep on hover, and a tactile press */
+.btn-primary,
+.btn-ink {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-primary::after,
+.btn-ink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.42) 50%, transparent 68%);
+  transform: translateX(-130%);
+  transition: transform 0.9s var(--ease-expo);
+  pointer-events: none;
+}
+
+.btn-ink::after {
+  background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.16) 50%, transparent 68%);
+}
+
+.btn-primary:hover:not(:disabled)::after,
+.btn-ink:hover:not(:disabled)::after {
+  transform: translateX(130%);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.12s;
+}
+
+/* Spotlight: a cursor-following glow layered over the surface's own colour */
+html .has-spotlight.has-spotlight {
+  --spot-tone: var(--accent);
+  background-image: radial-gradient(
+    480px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--spot-tone) calc(var(--spot-alpha) * 11%), transparent),
+    transparent 62%
+  );
+  background-repeat: no-repeat;
+  transition: --spot-alpha 0.45s var(--ease-smooth), transform 0.5s var(--ease-expo),
+              box-shadow 0.5s var(--ease-expo), border-color 0.3s ease, background-color 0.3s ease;
+}
+
+html .has-spotlight.spotlight-on { --spot-alpha: 1; }
+html .has-spotlight.spotlight-leaf { --spot-tone: var(--leaf); }
+html .has-spotlight.spotlight-violet { --spot-tone: var(--violet); }
+:root[data-theme="dark"] .has-spotlight.spotlight-on { --spot-alpha: 1.6; }
+
+/* Tilt: depth plus a glare that tracks the cursor */
+html .has-tilt.has-tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+html .has-tilt.tilt-on {
+  background-image: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.55),
+    transparent 58%
+  );
+}
+
+:root[data-theme="dark"] .has-tilt.tilt-on {
+  background-image: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 244, 230, 0.07),
+    transparent 58%
+  );
+}
+
+/* A slow light that runs along filled progress bars (add `.sheen` to the fill) */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-100%);
+  animation: sheen-run 2.8s var(--ease-smooth) 1.2s infinite;
+}
+
+@keyframes sheen-run {
+  0% { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(100%); }
+}
+
+/* Ambient drift for soft background glows (uses `translate`/`scale`, never `transform`,
+   so it composes with scroll-scrubbed GSAP transforms on the same element) */
+@keyframes ambient-drift {
+  0%   { translate: 0 0;        scale: 1; }
+  33%  { translate: -3vmax 2vmax; scale: 1.06; }
+  66%  { translate: 2vmax -2vmax; scale: 0.96; }
+  100% { translate: 0 0;        scale: 1; }
+}
+
+.ambient-drift { animation: ambient-drift 22s ease-in-out infinite; }
+.ambient-drift-slow { animation: ambient-drift 30s ease-in-out -9s infinite reverse; }
+
+/* ==========================================================================
    Reduced motion
    ========================================================================== */
 

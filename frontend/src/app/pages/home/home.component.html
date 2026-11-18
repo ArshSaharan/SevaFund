@@ -1,8 +1,8 @@
 <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
 <section class="hero" #hero aria-labelledby="hero-title">
   <div class="hero-bg" aria-hidden="true">
-    <span class="blob blob-a"></span>
-    <span class="blob blob-b"></span>
+    <span class="blob blob-a"><span class="blob-glow ambient-drift"></span></span>
+    <span class="blob blob-b"><span class="blob-glow ambient-drift-slow"></span></span>
   </div>
 
   <div class="container hero-grid">
@@ -22,13 +22,13 @@
       </p>
 
       <div class="hero-actions">
-        <a routerLink="/campaigns" class="btn btn-primary btn-lg">
+        <a routerLink="/campaigns" class="btn btn-primary btn-lg" appMagnetic>
           Explore verified causes
           <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
           </svg>
         </a>
-        <a routerLink="/how-it-works" class="btn btn-outline btn-lg">See how it works</a>
+        <a routerLink="/how-it-works" class="btn btn-outline btn-lg" appMagnetic>See how it works</a>
       </div>
     </div>
 
@@ -36,6 +36,8 @@
       <div class="receipt-wrap">
         <div
           class="receipt"
+          appTilt
+          [tiltMax]="6"
           role="img"
           aria-label="Example verification report: heart surgery request of ₹3,20,000 with all four checks passed, a trust score of 94 and a Verified stamp."
         >
@@ -61,7 +63,7 @@
           <div class="receipt-score">
             <span>Trust score</span>
             <span class="score-track"><span class="score-fill"></span></span>
-            <strong>94</strong>
+            <strong class="score-num">94</strong>
           </div>
 
           <span class="stamp">Verified</span>
@@ -183,6 +185,9 @@
 
     <div class="featured-grid" *ngIf="featuredState() === 'ready'">
       <app-campaign-card *ngFor="let c of featured()" [campaign]="c" class="featured-item"></app-campaign-card>
+
+      <!-- Fewer than three live causes: invite the next one instead of leaving a hole in the grid -->
+      <app-invite-card *ngIf="featured().length < 3" class="featured-item"></app-invite-card>
     </div>
 
     <p class="featured-empty" *ngIf="featuredState() === 'empty'">

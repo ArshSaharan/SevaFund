@@ -1,14 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Campaign } from '../../models/campaign.model';
+import { SpotlightDirective, isBrowser, prefersReducedMotion } from '../../animation';
 
 @Component({
   selector: 'app-campaign-card',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SpotlightDirective],
   template: `
-    <article class="campaign-card">
+    <article class="campaign-card" appSpotlight>
       <div class="card-image-wrap">
         <img
           [src]="campaign.cover_image_url || '/assets/default-campaign.jpg'"
@@ -50,7 +51,7 @@ import { Campaign } from '../../models/campaign.model';
 
         <div class="progress-section">
           <div class="progress-track" role="progressbar" [attr.aria-valuenow]="progress" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="progress + '% funded'">
-            <div class="progress-fill" [style.width.%]="progress"></div>
+            <div class="progress-fill" [class.sheen]="progress > 0" [style.width.%]="filled() ? progress : 0"></div>
           </div>
           <div class="funding-metrics">
             <p>
@@ -207,8 +208,21 @@ import { Campaign } from '../../models/campaign.model';
       max-width: 100%;
       border-radius: inherit;
       background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--leaf)));
-      transition: width 0.8s var(--ease-expo);
+      transition: width 1.6s var(--ease-expo) 0.15s;
     }
+
+    /* A soft shade over the photo on hover, so the badges stay legible as it zooms */
+    .card-image-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(20, 16, 11, 0.18), transparent 38%, transparent 62%, rgba(20, 16, 11, 0.28));
+      opacity: 0;
+      transition: opacity 0.6s var(--ease-expo);
+      pointer-events: none;
+    }
+
+    .campaign-card:hover .card-image-wrap::after { opacity: 1; }
 
     .funding-metrics {
       display: flex;
@@ -274,8 +288,34 @@ import { Campaign } from '../../models/campaign.model';
     .campaign-card:hover .donate-cta { gap: 10px; }
   `]
 })
-export class CampaignCardComponent {
+export class CampaignCardComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) campaign!: Campaign;
+
+  /** The progress bar fills when the card first scrolls into view. */
+  filled = signal(false);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private zone = inject(NgZone);
+  private observer?: IntersectionObserver;
+
+  ngAfterViewInit(): void {
+    if (!isBrowser || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
+      this.filled.set(true);
+      return;
+    }
+    this.zone.runOutsideAngular(() => {
+      this.observer = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          this.observer?.disconnect();
+          this.zone.run(() => this.filled.set(true));
+        }
+      }, { threshold: 0.35 });
+      this.observer.observe(this.host.nativeElement);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
 
   get trustScore(): number {
     return this.campaign.ai_trust_score ?? this.campaign.authenticity_score ?? 0;
