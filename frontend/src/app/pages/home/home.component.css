@@ -23,14 +23,22 @@
 .blob-a {
   right: -22vmax;
   top: -26vmax;
-  background: radial-gradient(closest-side, var(--accent-glow), transparent);
 }
 
 .blob-b {
   left: -26vmax;
   bottom: -34vmax;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--leaf) 16%, transparent), transparent);
 }
+
+/* The glow itself drifts slowly (ambient-drift), independently of the scroll-scrubbed blob */
+.blob-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.blob-a .blob-glow { background: radial-gradient(closest-side, var(--accent-glow), transparent); }
+.blob-b .blob-glow { background: radial-gradient(closest-side, color-mix(in srgb, var(--leaf) 16%, transparent), transparent); }
 
 .hero-grid {
   display: grid;
@@ -480,6 +488,7 @@
 }
 
 .featured-skel { height: 440px; border-radius: var(--radius-xl); }
+
 .featured-empty { font-size: 17px; color: var(--ink-2); }
 
 /* ─────────────── Responsive ─────────────── */

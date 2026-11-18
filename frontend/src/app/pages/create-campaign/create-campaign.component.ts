@@ -6,24 +6,30 @@ import { CampaignService } from '../../services/campaign.service';
 import { AiService } from '../../services/ai.service';
 import { Subject } from 'rxjs';
 import { debounceTime, finalize, takeUntil } from 'rxjs/operators';
+import { MOTION } from '../../animation';
 
 const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL', 'ANIMALS'];
 
 @Component({
   selector: 'app-create-campaign',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, ...MOTION],
   template: `
     <div class="create-page container">
       <!-- Page Header -->
       <div class="create-header">
-        <span class="sub-header-pill">Verified Crowdfunding</span>
-        <h1>Launch a Verified Fundraiser</h1>
-        <p>Our automated AI verification checks medical costs, diagnoses, and hospital bills to fast-track donor trust.</p>
+        <p class="eyebrow" appReveal>Start a fundraiser</p>
+        <h1 class="display-md" appSplit="words" [splitOnLoad]="true" [splitDelay]="0.1">
+          Launch a <em>verified</em> fundraiser.
+        </h1>
+        <p class="lede" appReveal [revealDelay]="0.3">
+          Four short steps. Our checks compare your costs, diagnosis and hospital documents before the fundraiser
+          goes live, so donors can give with confidence.
+        </p>
       </div>
 
       <!-- Step Indicator -->
-      <div class="steps-progress-bar">
+      <div class="steps-progress-bar" appReveal [revealDelay]="0.45">
         <div
           class="step-node"
           *ngFor="let s of steps; let i = index"
@@ -447,29 +453,8 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
       margin-bottom: 36px;
     }
 
-    .sub-header-pill {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-      display: inline-block;
-    }
-
-    .create-header h1 {
-      font-size: clamp(2rem, 3.5vw, 2.6rem);
-      font-weight: 600;
-      color: var(--slate-900);
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-    }
-
-    .create-header p {
-      font-size: 15px;
-      color: var(--slate-500);
-      max-width: 640px;
-    }
+    .create-header h1 { margin: 16px 0 14px; }
+    .create-header .lede { max-width: 620px; }
 
     /* Steps Progress Bar */
     .steps-progress-bar {
@@ -487,24 +472,34 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
       text-align: center;
     }
 
-    .step-node::before {
+    /* Connector to the next step: a track, and a fill that grows when this step is done */
+    .step-node::before,
+    .step-node::after {
       content: '';
       position: absolute;
       top: 17px;
-      right: -50%;
+      left: 50%;
       width: 100%;
       height: 2px;
-      background: var(--slate-200);
+      border-radius: 2px;
       z-index: 0;
     }
 
-    .step-node:last-child::before {
+    .step-node::before { background: var(--slate-200); }
+
+    .step-node::after {
+      background: linear-gradient(90deg, var(--secondary), var(--accent));
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      transition: transform 0.7s var(--ease-expo);
+    }
+
+    .step-node:last-child::before,
+    .step-node:last-child::after {
       display: none;
     }
 
-    .step-node.done::before {
-      background: var(--secondary);
-    }
+    .step-node.done::after { transform: scaleX(1); }
 
     .step-circle {
       width: 36px;
@@ -518,9 +513,11 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
       font-size: 13px;
       font-weight: 700;
       color: var(--slate-500);
+      position: relative;
       z-index: 1;
       margin-bottom: 6px;
-      transition: all 0.2s ease;
+      transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease,
+                  transform 0.5s var(--ease-spring), box-shadow 0.35s ease;
     }
 
     .step-node.active .step-circle {
@@ -528,12 +525,36 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
       border-color: var(--primary);
       color: var(--on-primary);
       box-shadow: 0 0 0 4px var(--primary-light);
+      transform: scale(1.08);
+    }
+
+    /* A soft ring that breathes around the current step */
+    .step-node.active .step-circle::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      opacity: 0;
+      animation: step-breathe 2.4s var(--ease-smooth) infinite;
+    }
+
+    @keyframes step-breathe {
+      0% { transform: scale(0.85); opacity: 0.5; }
+      100% { transform: scale(1.35); opacity: 0; }
     }
 
     .step-node.done .step-circle {
       background: var(--secondary);
       border-color: var(--secondary);
       color: var(--on-secondary);
+    }
+
+    .step-node.done .step-circle svg { animation: step-check 0.5s var(--ease-spring); }
+
+    @keyframes step-check {
+      from { transform: scale(0) rotate(-45deg); }
+      to { transform: scale(1) rotate(0); }
     }
 
     .step-label {
@@ -551,6 +572,12 @@ const CATEGORIES = ['MEDICAL', 'EMERGENCY', 'EDUCATION', 'COMMUNITY', 'MEMORIAL'
     .wizard-panel {
       padding: 36px;
       border-radius: var(--radius-xl);
+      animation: panel-in 0.6s var(--ease-expo);
+    }
+
+    @keyframes panel-in {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
     }
 
     .panel-header {

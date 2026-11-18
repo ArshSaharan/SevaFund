@@ -2,20 +2,24 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { RouteProgressComponent } from './components/route-progress/route-progress.component';
+import { BackToTopComponent } from './components/back-to-top/back-to-top.component';
 import { SmoothScrollService } from './services/smooth-scroll.service';
 import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, RouteProgressComponent, BackToTopComponent],
   template: `
+    <app-route-progress></app-route-progress>
     <a class="skip-link" href="#main" (click)="skipToContent($event)">Skip to content</a>
     <app-navbar></app-navbar>
     <main id="main" class="main-content" tabindex="-1">
       <router-outlet></router-outlet>
     </main>
     <app-footer></app-footer>
+    <app-back-to-top></app-back-to-top>
   `,
   styles: [`
     .main-content {

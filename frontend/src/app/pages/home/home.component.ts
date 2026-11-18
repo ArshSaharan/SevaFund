@@ -18,6 +18,7 @@ import { Campaign } from '../../models/campaign.model';
 import { CampaignCardComponent } from '../../components/campaign-card/campaign-card.component';
 import { MarqueeComponent } from '../../components/marquee/marquee.component';
 import { NextChapterComponent } from '../../components/next-chapter/next-chapter.component';
+import { InviteCardComponent } from '../../components/invite-card/invite-card.component';
 import { AuditRow, JourneyVisualComponent, JourneyVisualKind } from '../../components/journey-visual/journey-visual.component';
 import { MOTION, gsap, ScrollTrigger, isBrowser, prefersReducedMotion } from '../../animation';
 
@@ -35,7 +36,7 @@ interface Chapter {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, CampaignCardComponent, MarqueeComponent, NextChapterComponent, JourneyVisualComponent, ...MOTION],
+  imports: [CommonModule, RouterLink, CampaignCardComponent, InviteCardComponent, MarqueeComponent, NextChapterComponent, JourneyVisualComponent, ...MOTION],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -154,6 +155,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private playHeroIntro(): void {
     const q = gsap.utils.selector(this.heroRef.nativeElement);
+    const scoreEl = q('.score-num')[0] as HTMLElement | undefined;
+    const score = { v: Number(scoreEl?.textContent) || 94 };    // counts up in step with the bar
 
     gsap.timeline({ delay: 0.1 })
       .from(q('.hero-eyebrow'), { y: 20, autoAlpha: 0, duration: 0.9 })
@@ -161,6 +164,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       .from(q('.receipt'), { y: 140, rotate: 9, autoAlpha: 0, duration: 1.5 }, 0.35)
       .from(q('.receipt-checks li'), { x: -18, autoAlpha: 0, stagger: 0.09, duration: 0.7 }, 1.0)
       .from(q('.score-fill'), { scaleX: 0, duration: 1.6, ease: 'power3.out' }, 1.15)
+      .from(score, { v: 0, duration: 1.6, ease: 'power3.out', onUpdate: () => {
+        if (scoreEl) scoreEl.textContent = String(Math.round(score.v));
+      } }, 1.15)
       .from(q('.stamp'), { scale: 2.6, rotate: -32, autoAlpha: 0, duration: 0.55, ease: 'back.out(2.2)' }, 1.85)
       .from(q('.float-chip'), { scale: 0.7, autoAlpha: 0, stagger: 0.14, duration: 0.9, ease: 'back.out(1.8)' }, 1.4)
       .from(q('.scroll-cue'), { autoAlpha: 0, duration: 1 }, 1.9);

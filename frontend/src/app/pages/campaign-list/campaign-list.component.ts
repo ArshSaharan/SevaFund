@@ -8,6 +8,7 @@ import { SmoothScrollService } from '../../services/smooth-scroll.service';
 import { Campaign } from '../../models/campaign.model';
 import { CampaignCardComponent } from '../../components/campaign-card/campaign-card.component';
 import { NextChapterComponent } from '../../components/next-chapter/next-chapter.component';
+import { InviteCardComponent } from '../../components/invite-card/invite-card.component';
 import { MOTION, gsap, ScrollTrigger, isBrowser, prefersReducedMotion } from '../../animation';
 
 type SortKey = 'trending' | 'newest' | 'most_funded';
@@ -28,7 +29,7 @@ const VERIFIED_SCORE = 80;
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, CampaignCardComponent, NextChapterComponent, ...MOTION],
+  imports: [CommonModule, FormsModule, RouterModule, CampaignCardComponent, InviteCardComponent, NextChapterComponent, ...MOTION],
   template: `
     <!-- Page header -->
     <section class="explore-hero">
@@ -103,15 +104,25 @@ const VERIFIED_SCORE = 80;
       </div>
 
       <!-- Empty -->
-      <div class="empty-state" *ngIf="!loading() && campaigns().length === 0">
+      <div class="empty-state" *ngIf="!loading() && campaigns().length === 0" appReveal="scale">
+        <span class="empty-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
         <p class="display-sm">Nothing here <em>yet.</em></p>
         <p>Try a different search or category{{ verifiedOnly ? ', or include fundraisers still under review' : '' }}.</p>
-        <button class="btn btn-outline btn-sm" type="button" (click)="resetFilters()">Reset filters</button>
+        <div class="empty-actions">
+          <button class="btn btn-outline btn-sm" type="button" (click)="resetFilters()">Reset filters</button>
+          <a class="btn btn-primary btn-sm" routerLink="/create">Start a fundraiser</a>
+        </div>
       </div>
 
       <!-- Grid -->
       <div class="grid" #grid *ngIf="!loading() && campaigns().length > 0">
         <app-campaign-card *ngFor="let c of campaigns(); trackBy: trackById" [campaign]="c" class="grid-item"></app-campaign-card>
+        <!-- On the last page, the next slot invites a new fundraiser -->
+        <app-invite-card *ngIf="currentPage === totalPages" class="grid-item"></app-invite-card>
       </div>
 
       <!-- Pagination -->
@@ -257,6 +268,25 @@ const VERIFIED_SCORE = 80;
       border: 1px dashed var(--line);
       border-radius: var(--radius-2xl);
     }
+
+    .empty-icon {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 4px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      animation: empty-bob 4s ease-in-out infinite;
+    }
+
+    @keyframes empty-bob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(-6deg); }
+    }
+
+    .empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 4px; }
 
     .pagination {
       display: flex;
